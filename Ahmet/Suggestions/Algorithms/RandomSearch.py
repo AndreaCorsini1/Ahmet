@@ -7,12 +7,19 @@
         - Discrete values
         - Categorical values
 """
-from Suggestions.Algorithms.Util import *
+from Ahmet.Suggestions.Algorithms.Util import *
 
 class RandomSearch :
 
-    @staticmethod
-    def get_suggestion(space):
+    def __init__(self, function, configspace):
+        """
+
+        """
+        self.model = function
+        self.space = configspace
+
+
+    def get_suggestion(self):
         """
            Get the new suggested trials with random search.
         """
@@ -23,20 +30,20 @@ class RandomSearch :
         # trial = Trial.create(study.name, "RandomSearchTrial")
         trial = {}
 
-        for key, param in space.items():
+        for key, param in self.space.items():
 
-            if param["type"] == "DOUBLE":
+            if param["type"] == TYPE.DOUBLE:
                 suggest_value = get_random_value(
                         param["minValue"], param["maxValue"])
 
-            elif param["type"] == "INTEGER":
+            elif param["type"] == TYPE.INTEGER:
                 suggest_value = get_random_int_value(
                         param["minValue"], param["maxValue"])
 
-            elif param["type"] == "DISCRETE":
+            elif param["type"] == TYPE.DISCRETE:
                 suggest_value = get_random_item_from_list(param["values"])
 
-            elif param["type"] == "CATEGORICAL":
+            elif param["type"] == TYPE.CATEGORICAL:
                 suggest_value = get_random_item_from_list(param["values"])
 
             else:
@@ -48,3 +55,26 @@ class RandomSearch :
         # trial.save()
 
         return trial
+
+
+    def run(self, budget=10):
+        """
+
+        """
+
+        best_trial = {}
+        best_value = None
+
+        for i in range(budget):
+            trial = self.get_suggestion()
+            result = self.model(trial)
+
+            # Minimize
+            if not best_value or best_value > result['loss']:
+                best_trial = trial
+                best_value = result['loss']
+
+            msg = "Suggestion {}: ".format(i)
+            print(msg, result['loss'], trial)
+
+        return ({'loss':best_value}, best_trial)

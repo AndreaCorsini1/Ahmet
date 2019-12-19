@@ -1,6 +1,26 @@
 
 import random
+from enum import Enum
 
+
+class TYPE(Enum):
+    """
+    Define the hyper-parameter types supported by the algorithm.
+    Each hyper-parameter given in the input space must have one of the defined
+    types.
+    """
+
+    # Integer or float value
+    DISCRETE = 1
+    # String
+    CATEGORICAL = 2
+    # Double continuous values
+    DOUBLE = 3
+    # Integer continuous values
+    INTEGER = 4
+
+    def __str__(self):
+        return self.name
 
 def get_random_value(min_value, max_value):
     """
