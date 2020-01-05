@@ -41,7 +41,7 @@ Taxonomy:
 """
 import random
 from time import time
-from Ahmet.Suggestions.Algorithms.Util import TYPE
+from Suggestions.Algorithms.Util import TYPE
 
 class ScatterSearch:
 

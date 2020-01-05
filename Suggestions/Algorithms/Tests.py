@@ -1,8 +1,8 @@
 """
     Test the suggestion algorithm module
 """
-from Ahmet.Suggestions.Algorithms.RandomSearch import RandomSearch
-from Ahmet.Suggestions.Algorithms.ScatterSearch import ScatterSearch, TYPE
+from Suggestions.Algorithms.RandomSearch import RandomSearch
+from Suggestions.Algorithms.ScatterSearch import ScatterSearch, TYPE
 
 def model1(config):
     """

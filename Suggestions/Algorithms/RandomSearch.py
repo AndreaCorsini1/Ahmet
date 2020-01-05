@@ -7,7 +7,7 @@
         - Discrete values
         - Categorical values
 """
-from Ahmet.Suggestions.Algorithms.Util import *
+from Suggestions.Algorithms.Util import *
 
 class RandomSearch :
 
