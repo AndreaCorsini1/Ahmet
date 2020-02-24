@@ -1,0 +1,5 @@
+django
+numpy
+scikit-learn
+requests
+six

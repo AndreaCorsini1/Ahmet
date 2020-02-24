@@ -42,8 +42,11 @@ Taxonomy:
 import random
 from time import time
 from Suggestions.Algorithms.Util import TYPE
+from Suggestions.Algorithms.AbstractAlgorithm import AbstractAlgorithm
 
 class ScatterSearch:
+
+    #TODO: Adapt to the abstarct class
 
     def __init__(self, function, configspace, init_population=80,
                  elite_population=5, diverse_population=5):

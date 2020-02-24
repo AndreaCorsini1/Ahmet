@@ -3,6 +3,7 @@
 """
 from Suggestions.Algorithms.RandomSearch import RandomSearch
 from Suggestions.Algorithms.ScatterSearch import ScatterSearch, TYPE
+from Suggestions.Algorithms.GridSearch import GridSearch
 
 def model1(config):
     """
@@ -55,11 +56,21 @@ space2 = { 'par1': {'type': TYPE.DISCRETE,
           }
 
 if __name__ == "__main__":
+    # TODO: fix tests
 
     print("****************** RANDOM SEARCH *********************")
-    rs = RandomSearch(model1, space1)
+    rs = RandomSearch()
+    rs.test(model1, space1)
 
-    result, config = rs.run()
+    result, config = rs.run_test()
+    print("Best configuration: ", config,
+          " loss value: ", result['loss'])
+
+    print("****************** GRID SEARCH *********************")
+    rs = GridSearch()
+    #rs.test(model1, space1)
+
+    #result, config = rs.run_test()
     print("Best configuration: ", config,
           " loss value: ", result['loss'])
 
