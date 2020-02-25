@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
@@ -8,14 +7,6 @@ from Suggestions.Algorithms.RandomSearch import RandomSearch
 from Suggestions.Algorithms.ScatterSearch import ScatterSearch
 
 import json
-
-# View for organizing
-def index(request):
-    return HttpResponse("Hello Django, it's the suggestion view here!")
-
-def params(request, param):
-    msg = "Hello Django, the param is: {}".format(param)
-    return HttpResponse(msg)
 
 
 @csrf_exempt
@@ -36,15 +27,16 @@ def studies(request):
         name = data["name"]
 
         try:
-          study = Study.objects.get(name=name)
-          return JsonResponse({"error": "The study {} exists".format(name)})
+            study = Study.objects.get(name=name)
+            return JsonResponse({"error": "The study {} exists".format(name)})
 
         except Study.DoesNotExist:
-          study_configuration = json.dumps(data["study_configuration"])
-          algorithm = data.get("algorithm", "RandomSearchAlgorithm")
-          study = Study.create(name, study_configuration, algorithm)
+            print("HERE")
+            study_configuration = json.dumps(data["study_configuration"])
+            algorithm = data.get("algorithm", "RandomSearchAlgorithm")
+            study = Study.create(name, study_configuration, algorithm)
 
-          return JsonResponse({"data": study.to_json()})
+            return JsonResponse({"data": study.to_json()})
 
     # List the studies
     elif request.method == "GET":
@@ -88,6 +80,23 @@ def algorithms(request):
     else:
         return JsonResponse({"error": "Unsupported http method"})
 
+
+@csrf_exempt
+def trials(requests):
+    """
+    Function for getting all the trials.
+
+    Args:
+        :param requests: http request
+    :return: the list of all trials
+    """
+
+    # Return all the trials
+    if requests.method == "GET":
+        trials = [trial.to_json() for trial in Trial.objects.all()]
+        return JsonResponse({"data": trials})
+    else:
+        return JsonResponse({"error": "Unsupported http method"})
 
 @csrf_exempt
 def study(request, study_name):
@@ -255,6 +264,7 @@ def study_trial(request, study_name, trial_id):
 
     # Update the trial
     elif request.method == "PUT":
+
         trial = Trial.objects.get(study_name=study_name, id=trial_id)
         data = json.loads(request.body)
         if "status" in data:

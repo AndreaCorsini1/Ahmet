@@ -2,16 +2,15 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
-
-    # Example of param for the view
-    path('<int:param>', views.params, name='params'),
 
     # Ex: localhost:8080/Suggestion/v1/studies
     path('v1/studies', views.studies, name="studies"),
 
-    # EX:
+    # EX: localhost:8080/Suggestion/v1/algorithms
     path('v1/algorithms', views.algorithms, name="algorithms"),
+
+    # EX: localhost:8080/Suggestion/v1/trials
+    path('v1/trials', views.trials, name="trials"),
 
     # Ex: localhost:8080/Suggestions/v1/random001
     path('v1/<slug:study_name>', views.study, name="study"),

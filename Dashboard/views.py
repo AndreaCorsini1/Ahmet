@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 
 import json
 import requests
+import platform
 import six
 
 @login_required
@@ -16,9 +17,33 @@ def home(request):
     print(request.user.username)
   return render(request, "dashboard/home.html")
 
-# View for organizing
 def index(request):
-    return HttpResponse(render(request, 'dashboard/index.html'))
+    """
+
+    Args:
+        :param request:
+    :return:
+    """
+    # Studies
+    studies_url = "http://127.0.0.1:{}/suggestions/v1/studies".format(
+                                            request.META.get("SERVER_PORT"))
+    studies_resp = requests.get(studies_url)
+
+    # Trials
+    trials_url = "http://127.0.0.1:{}/suggestions/v1/trials".format(
+                                            request.META.get("SERVER_PORT"))
+    trials_resp = requests.get(trials_url)
+
+    studies = json.loads(studies_resp.text)["data"]
+    trials = json.loads(trials_resp.text)["data"]
+    context = {
+        "success": True,
+        "studies": studies,
+        "trials": trials,
+        "platform": platform
+    }
+
+    return render(request, "dashboard/index.html", context)
 
 
 @csrf_exempt
@@ -31,14 +56,14 @@ def studies(request):
     if request.method == "POST":
         name = request.POST.get("name", "")
         study_configuration = request.POST.get("study_configuration", "")
-        algorighm = request.POST.get("algorithm", "RandomSearchAlgorithm")
+        algorithm = request.POST.get("algorithm", "RandomSearchAlgorithm")
 
-        # Remove the charactors like \t and \"
+        # Remove the characters like \t and \"
         study_configuration_json = json.loads(study_configuration)
         data = {
             "name": name,
             "study_configuration": study_configuration_json,
-            "algorithm": algorighm
+            "algorithm": algorithm
         }
 
         url = "http://127.0.0.1:{}/suggestions/v1/studies".format(

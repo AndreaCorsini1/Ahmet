@@ -1,0 +1,115 @@
+swagger: "2.0"
+info:
+  version: "0.1"
+  title: "Colors API"
+host: "localhost:8080"
+basePath: "/api/v0.1"
+schemes:
+  - "http"
+  - "https"
+paths:
+  /color/<name>:
+    get:
+      description: Return the color registered with the given name.
+      produces:
+        - application/json
+      parameters:
+        - name: name
+          in: path
+          type: string
+          required: true
+          description: The name of the color.
+      responses:
+        200:
+          description: RGB values of the required color
+          schema:
+            $ref: '#/definitions/ColorResponse'
+        400:
+          description: Invalid input parameters
+    post:
+      description: Insert a new color
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: name
+          in: path
+          type: string
+          required: true
+          description: The name of the color.
+        - name: components
+          description: Color components
+          in: body
+          schema:
+            $ref: '#/definitions/Color'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ConfirmEmptyMessage"
+        400:
+          description: Invalid input parameters
+        409:
+          description: Color already exists
+    put:
+      description: Update an existing color
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: name
+          in: path
+          type: string
+          required: true
+          description: The name of the color.
+        - name: components
+          description: Color components
+          in: body
+          schema:
+            $ref: '#/definitions/Color'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/ConfirmEmptyMessage"
+        400:
+          description: Invalid input parameters
+        404:
+          description: Color does not exist
+
+
+definitions:
+  ConfirmEmptyMessage:
+    type: object
+    properties:
+      message:
+        type: string
+        format: string
+        description: Request executed successfully
+  ColorComponent:
+    type: integer
+    format: int32
+    minimum: 0
+    maximum: 255
+    description: Color component
+  Color:
+    type: object
+    properties:
+      r:
+        $ref: '#/definitions/ColorComponent'
+      b:
+        $ref: '#/definitions/ColorComponent'
+      g:
+        $ref: '#/definitions/ColorComponent'
+  ColorResponse:
+    type: object
+    properties:
+      message:
+        type: string
+        format: string
+        description: Confirm color retrieval.
+      data:
+        $ref: '#/definitions/Color'
+

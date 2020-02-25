@@ -83,7 +83,7 @@ class Study(models.Model):
             "id": self.id,
             "name": self.name,
             "study_configuration": self.study_configuration,
-            "algorithm": self.algorithm,
+            "algorithm": self.algorithm.name,
             "status": self.status,
             "created_time": self.created_time,
             "updated_time": self.updated_time
@@ -93,7 +93,7 @@ class Study(models.Model):
         return {
             "name": self.name,
             "study_configuration": self.study_configuration,
-            "algorithm": self.algorithm
+            "algorithm": self.algorithm.name
         }
 
 
