@@ -5,7 +5,9 @@ from django.http import JsonResponse
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
+import os
 import json
 import requests
 import platform
@@ -25,12 +27,12 @@ def index(request):
     :return:
     """
     # Studies
-    studies_url = "http://127.0.0.1:{}/suggestions/v1/studies".format(
+    studies_url = "http://localhost:{}/suggestions/v0.1/studies".format(
                                             request.META.get("SERVER_PORT"))
     studies_resp = requests.get(studies_url)
 
     # Trials
-    trials_url = "http://127.0.0.1:{}/suggestions/v1/trials".format(
+    trials_url = "http://localhost:{}/suggestions/v0.1/trials".format(
                                             request.META.get("SERVER_PORT"))
     trials_resp = requests.get(trials_url)
 
@@ -46,6 +48,20 @@ def index(request):
     return render(request, "dashboard/index.html", context)
 
 
+def openapi_yaml(request):
+    """
+    Get the api description file.
+
+    Args:
+        :param request:
+    :return:
+    """
+    openapi = open(os.path.join(settings.BASE_DIR,
+                       "Suggestions/swagger_editor/openapi.yaml"), 'rb')
+
+    return HttpResponse(openapi.read())
+
+
 @csrf_exempt
 def studies(request):
     """
@@ -56,7 +72,7 @@ def studies(request):
     if request.method == "POST":
         name = request.POST.get("name", "")
         study_configuration = request.POST.get("study_configuration", "")
-        algorithm = request.POST.get("algorithm", "RandomSearchAlgorithm")
+        algorithm = request.POST.get("algorithm", "RandomSearch")
 
         # Remove the characters like \t and \"
         study_configuration_json = json.loads(study_configuration)
@@ -66,7 +82,7 @@ def studies(request):
             "algorithm": algorithm
         }
 
-        url = "http://127.0.0.1:{}/suggestions/v1/studies".format(
+        url = "http://127.0.0.1:{}/suggestions/v0.1/studies".format(
                                             request.META.get("SERVER_PORT"))
         response = requests.post(url, json=data)
         messages.info(request, response.content)
@@ -87,13 +103,13 @@ def study(request, study_name):
     :param study_name:
     :return:
     """
-    url = "http://127.0.0.1:{}/suggestions/v1/{}".format(
+    url = "http://127.0.0.1:{}/suggestions/v0.1/{}".format(
                                     request.META.get("SERVER_PORT"), study_name)
 
     if request.method == "GET":
         response = requests.get(url)
 
-        trials_url = "http://127.0.0.1:{}/suggestions/v1/{}/trials".format(
+        trials_url = "http://127.0.0.1:{}/suggestions/v0.1/{}/trials".format(
             request.META.get("SERVER_PORT"), study_name)
         trials_response = requests.get(trials_url)
 
@@ -137,7 +153,7 @@ def study_suggestions(request, study_name):
         trials_number = int(trials_number_string)
 
         data = {"trials_number": trials_number}
-        url = "http://127.0.0.1:{}/suggestions/v1/{}/suggestions".format(
+        url = "http://127.0.0.1:{}/suggestions/v0.1/{}/suggestions".format(
                                 request.META.get("SERVER_PORT"), study_name)
         response = requests.post(url, json=data)
         messages.info(request, response.content)
@@ -159,7 +175,7 @@ def trials(request):
 
         data = {"name": name}
 
-        url = "http://127.0.0.1:{}/suggestions/v1/{}/trials".format(
+        url = "http://127.0.0.1:{}/suggestions/v0.1/{}/trials".format(
                                 request.META.get("SERVER_PORT"), study_name)
         response = requests.post(url, json=data)
         messages.info(request, response.content)
@@ -177,13 +193,13 @@ def trial(request, study_name, trial_id):
     :param trial_id:
     :return:
     """
-    url = "http://127.0.0.1:{}/suggestions/v1/{}/{}".format(
+    url = "http://127.0.0.1:{}/suggestions/v0.1/{}/{}".format(
             request.META.get("SERVER_PORT"), study_name, trial_id)
 
     if request.method == "GET":
         response = requests.get(url)
 
-        tiral_metrics_url = "http://127.0.0.1:{}/suggestions/v1/{}/{}/metrics" \
+        tiral_metrics_url = "http://127.0.0.1:{}/suggestions/v0.1/{}/{}/metrics" \
                             "".format(request.META.get("SERVER_PORT"),
                                       study_name, trial_id)
         tiral_metrics_response = requests.get(tiral_metrics_url)
@@ -250,7 +266,7 @@ def study_trial_metrics(request, study_name, trial_id):
         objective_value = float(objective_value_string)
 
         data = {"training_step": training_step, "objective_value": objective_value}
-        url = "http://127.0.0.1:{}/suggestions/v1/{}/{}/metrics".format(
+        url = "http://127.0.0.1:{}/suggestions/v0.1/{}/{}/metrics".format(
             request.META.get("SERVER_PORT"), study_name, trial_id)
         response = requests.post(url, json=data)
         messages.info(request, response.content)
@@ -269,7 +285,7 @@ def study_trial_metric(request, study_name, trial_id, metric_id):
     :param metric_id:
     :return:
     """
-    url = "http://127.0.0.1:{}/suggestions/v1/{}{}/{}".format(
+    url = "http://127.0.0.1:{}/suggestions/v0.1/{}{}/{}".format(
       request.META.get("SERVER_PORT"), study_name, trial_id, metric_id)
 
     if request.method == "GET":

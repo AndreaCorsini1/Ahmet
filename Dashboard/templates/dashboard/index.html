@@ -84,17 +84,19 @@
     "maxParallelTrials": 1,
     "params": [
         {
-            "parameterName": "hidden1",
+            "name": "hidden1",
             "type": "INTEGER",
-            "minValue": 1,
-            "maxValue": 10,
+            "values": [1, 10],
             "scalingType": "LINEAR"
         }, {
-            "parameterName": "learning_rate",
+            "name": "learning_rate",
             "type": "DOUBLE",
-            "minValue": 0.01,
-            "maxValue": 0.5,
+            "values": [0.01, 0.5],
             "scalingType": "LINEAR"
+        }, {
+            "name": "Optimizer",
+            "type": "CATEGORICAL",
+            "values": ["SGD", "RMSprop"]
         }
     ]
 }
@@ -107,7 +109,6 @@
                     </div>
                     <div class="col-sm-10">
                         <select class="form-control" id="algorithm" name="algorithm">
-                            <option>BayesianOptimization</option>
                             <option>RandomSearch</option>
                             <option>GridSearch</option>
                             <option>TPE</option>
@@ -115,6 +116,7 @@
                             <option>SimulateAnneal</option>
                             <option>QuasiRandomSearch</option>
                             <option>ScatterSearch</option>
+                            <option>BayesianOptimization</option>
                         </select>
                     </div>
                 </div>

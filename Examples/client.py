@@ -2,7 +2,7 @@ import os
 import json
 import requests
 
-from Suggestions.models import Study, Trial, TrialMetric
+from API.models import Study, Trial, TrialMetric
 
 
 class AhmetClient(object):

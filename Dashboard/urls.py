@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.generic.base import TemplateView
 from . import views
 
 urlpatterns = [
@@ -7,6 +8,10 @@ urlpatterns = [
 
     #
     path('studies', views.studies, name='studies'),
+
+    #
+    path('openapi', views.openapi_yaml, name='openapi'),
+    path('apidocs', TemplateView.as_view(template_name='dashboard/api.html')),
 
     #
     path('<slug:study_name>', views.study, name='study'),
