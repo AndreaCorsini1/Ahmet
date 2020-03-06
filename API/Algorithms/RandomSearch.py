@@ -7,128 +7,82 @@
         - Discrete values
         - Categorical values
 """
-from API.models import Study, Trial
-from API.utils import TYPE
-from API.Algorithms.Util import *
+from API.choices import TYPE
 from API.Algorithms.AbstractAlgorithm import AbstractAlgorithm
+import random
 
-import json
+
+class RandomSearch(AbstractAlgorithm):
+    """
 
 
-class RandomSearch(AbstractAlgorithm) :
+    """
+    supported_params = TYPE.choices()
 
-    def test(self, function, configspace):
+    def get_suggestion(self, space):
         """
+        Generate a single suggestion.
 
-        """
-        self.model = function
-        self.space = configspace
-
-
-    def get_suggestion_test(self):
-        """
-           Get the new suggested trials with random search.
-        """
-        trial = {}
-
-        for key, param in self.space.items():
-
-            if param["type"] == TYPE.DOUBLE:
-                suggest_value = get_random_value(
-                        param["minValue"], param["maxValue"])
-
-            elif param["type"] == TYPE.INTEGER:
-                suggest_value = get_random_int_value(
-                        param["minValue"], param["maxValue"])
-
-            elif param["type"] == TYPE.DISCRETE:
-                suggest_value = get_random_item_from_list(param["values"])
-
-            elif param["type"] == TYPE.CATEGORICAL:
-                suggest_value = get_random_item_from_list(param["values"])
-
-            else:
-                raise Exception("Unsupported type of hyper-parameter")
-
-            trial[key] = suggest_value
-
-        return trial
-
-
-    def run_test(self, budget=10):
-        """
-            Test function for the algorithm
-        """
-
-        best_trial = {}
-        best_value = None
-
-        for i in range(budget):
-            trial = self.get_suggestion_test()
-            result = self.model(trial)
-
-            # Minimize
-            if not best_value or best_value > result['loss']:
-                best_trial = trial
-                best_value = result['loss']
-
-            msg = "Suggestion {}: ".format(i)
-            print(msg, result['loss'], trial)
-
-        return ({'loss':best_value}, best_trial)
-
-
-    def get_suggestion(self, params):
-        """
-
-        :param params:
+        Args:
+            :param space: dictionary of parameters values from which the trials
+                          are sampled
         :return:
         """
         trial = {}
 
-        for param in params:
+        for param in space:
 
-            if param["type"] == TYPE.DOUBLE:
-                suggested_value = get_random_value(
-                        param["minValue"], param["maxValue"])
+            if TYPE[param["type"]] is TYPE.FLOAT:
+                value = random.uniform(param['min'], param['max'])
 
-            elif param["type"] == TYPE.INTEGER:
-                suggested_value = get_random_int_value(
-                        param["minValue"], param["maxValue"])
+            elif TYPE[param["type"]] is TYPE.INTEGER:
+                value = random.randint(param['min'], param['max'])
 
-            elif param["type"] == TYPE.DISCRETE:
-                suggested_value = get_random_item_from_list(param["values"])
+            elif TYPE[param["type"]] is TYPE.DISCRETE:
 
-            elif param["type"] == TYPE.CATEGORICAL:
-                suggested_value = get_random_item_from_list(param["values"])
+                value = random.choice(param["values"])
+
+            elif TYPE[param["type"]] is TYPE.CATEGORICAL:
+                value = random.choice(param["values"])
 
             else:
-                raise Exception("Unsupported type of hyper-parameter")
+                msg = "Unsupported parameter {}".format(param['type'])
+                raise Exception(msg)
 
-            trial[param["Name"]] = suggested_value
+            trial[param["name"]] = value
 
         return trial
 
-
-    def run(self, study_name, budget=10):
+    def get_suggestions(self, space, old_trials, num_suggestions=10, budget=20):
         """
+        Generate a list of suggestions. Each suggestion is shaped as a
+        dictionary of (key: value) pairs.
 
-        :param study_name:
-        :param budget:
+        Args:
+            :param space: the space from which the parameter configurations
+                          are sampled
+            :param old_trials: list of previously generated configurations
+            :param num_suggestions: maximum number of configurations
+                                    produced, it might be lower
+            :param budget: number of attempts for generating a single parameter
+                           configuration
+        :return: a list of sampled configurations
         :return:
         """
         trial_list = []
 
-        study = Study.objects.get(name=study_name)
-        study_configuration_json = json.loads(study.study_configuration)
-        params = study_configuration_json["params"]
+        if space:
+            # Generate the parameter configurations
+            for i in range(num_suggestions):
 
-        for i in range(budget):
-            trial = Trial.create(study.name, "RandomSearchTrial")
-            trial_values = self.get_suggestion(params)
+                # Attempts for generating a single tuple
+                for _ in range(budget):
+                    trial = self.get_suggestion(space)
 
-            trial.parameter_values = json.dumps(trial_values)
-            trial.save()
-            trial_list.append(trial)
+                    # The new trial could have the same values of an old one or
+                    # could be already generated during this run
+                    if trial not in old_trials and trial not in trial_list:
+                        trial_list.append(trial)
+                        break
 
         return trial_list

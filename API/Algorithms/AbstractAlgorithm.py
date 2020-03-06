@@ -7,48 +7,22 @@ class AbstractAlgorithm(object):
     """
     __metaclass__ = abc.ABCMeta
 
-    @abc.abstractmethod
-    def get_suggestion(self, params):
-        """
-
-
-        Args:
-          :param params: The study name.
-
-        :return: The array of trial objects.
-        """
-        raise NotImplementedError
+    # List of parameter types supported
+    supported_params = []
 
     @abc.abstractmethod
-    def run(self, study_name, budget=10):
+    def get_suggestions(self, space, old_trials, num_suggestions=10, budget=20):
         """
-        Run the algorithm body.
-
-        The study's study_configuration is like this.
-        {
-            "goal": "MAXIMIZE",
-            "maxTrials": 5,
-            "maxParallelTrials": 1,
-            "params": [
-                {
-                    "parameterName": "hidden1",
-                    "type": "INTEGER",
-                    "minValue": 40,
-                    "maxValue": 400,
-                    "scalingType": "LINEAR"
-                }
-            ]
-        }
-
-        The trial's parameter_values_ should be like this.
-        {
-              "hidden1": 40
-        }
+        Get a list of parameter configurations sampled from the input space.
 
         Args:
-            :param study_name:
-            :param budget:
-
-        :return:
+            :param space: the space from which the parameter configurations
+                          are sampled
+            :param old_trials: list of previously generated configurations
+            :param num_suggestions: maximum number of configurations
+                                    produced, it might be lower
+            :param budget: number of attempts for generating a single parameter
+                           configuration
+        :return: a list of sampled configurations
         """
         raise NotImplementedError

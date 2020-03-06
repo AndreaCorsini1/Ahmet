@@ -5,6 +5,9 @@ from API.models import *
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """
+
+    """
     studies = serializers.PrimaryKeyRelatedField(many=True,
                                                  queryset=Study.objects.all())
     class Meta:
@@ -13,6 +16,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class AlgorithmSerializer(serializers.ModelSerializer):
+    """
+
+    """
     class Meta:
         model = Algorithm
         fields = '__all__'
@@ -20,6 +26,9 @@ class AlgorithmSerializer(serializers.ModelSerializer):
 
 
 class MetricSerializer(serializers.ModelSerializer):
+    """
+
+    """
     class Meta:
         model = Metric
         fields = '__all__'
@@ -27,6 +36,9 @@ class MetricSerializer(serializers.ModelSerializer):
 
 
 class StudySerializer(serializers.ModelSerializer):
+    """
+
+    """
     owner = serializers.ReadOnlyField(source='owner.username')
 
     class Meta:
@@ -52,6 +64,46 @@ class StudySerializer(serializers.ModelSerializer):
 
 
 class ParameterSerializer(serializers.ModelSerializer):
+    """
+
+    """
+
+    def validate(self, attrs):
+        """
+        Additional validation for checking that the right fields are pass
+        for each type of parameter. In particular:
+            - CATEGORICAL and DISCRETE need values field
+            - INTEGER and DOUBLE need min and max fields
+
+        Args:
+            :param attrs:
+        :return:
+        """
+        if TYPE[attrs['type']] is TYPE.FLOAT or \
+                TYPE[attrs['type']] is TYPE.INTEGER:
+
+            if 'min' not in attrs or 'max' not in attrs:
+                msg = 'Fields \'min\' and \'max\' must be given for INTEGER ' \
+                      'or DOUBLE parameters'
+                raise serializers.ValidationError(msg)
+
+            if attrs['min'] >= attrs['max']:
+                msg = 'Field min must be lower than max'
+                raise serializers.ValidationError(msg)
+
+        elif TYPE[attrs['type']] is TYPE.DISCRETE or \
+                TYPE[attrs['type']] is TYPE.CATEGORICAL:
+
+            if 'values' not in attrs:
+                msg = 'Field \'values\' must be given for DISCRETE or ' \
+                      'CATEGORICAL parameters'
+                raise serializers.ValidationError(msg)
+
+        else:
+            raise serializers.ValidationError()
+
+        return attrs
+
     class Meta:
         model = Parameter
         fields = '__all__'
@@ -59,6 +111,9 @@ class ParameterSerializer(serializers.ModelSerializer):
 
 
 class TrialSerializer(serializers.ModelSerializer):
+    """
+
+    """
     class Meta:
         model = Trial
         fields = '__all__'

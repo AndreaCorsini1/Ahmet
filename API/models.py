@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.db import models
-from API.utils import TYPE, OBJECTIVE
+from API.choices import *
 
 
 class Algorithm(models.Model):
@@ -22,10 +22,7 @@ class Algorithm(models.Model):
     updated_time = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "{}-{}".format(self.id, self.name)
-
-    def to_json(self):
-        return {"name": self.name}
+        return "{}".format(self.name)
 
 
 class Metric(models.Model):
@@ -47,10 +44,7 @@ class Metric(models.Model):
     updated_time = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "{}-{}".format(self.id, self.name)
-
-    def to_json(self):
-        return {"name": self.name}
+        return "{}".format(self.name)
 
 
 class Study(models.Model):
@@ -64,8 +58,7 @@ class Study(models.Model):
         - Update time
     """
     name = models.CharField(max_length=128, blank=False, unique=True)
-    objective = models.IntegerField(choices=OBJECTIVE.choices(),
-                                    default=2)
+    objective = models.CharField(max_length=128, choices=OBJECTIVE.choices())
     algorithm = models.ForeignKey(Algorithm, on_delete=models.CASCADE,
                                   to_field='name', default='RandomSearch')
     metric = models.ForeignKey(Metric, on_delete=models.CASCADE,
@@ -73,43 +66,12 @@ class Study(models.Model):
 
     owner = models.ForeignKey('auth.User', related_name='studies',
                               to_field='username', on_delete=models.CASCADE)
-    status = models.CharField(max_length=128, blank=False, default='Pending')
+    status = models.CharField(max_length=128, blank=False, default='PENDING')
     created_time = models.DateTimeField(auto_now_add=True)
     updated_time = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "{}-{}".format(self.id, self.name)
-
-    @classmethod
-    def from_dict(cls, data):
-        return Study(data["id"],
-                     data["name"],
-                     data["objective"],
-                     data["algorithm"],
-                     data["metric"],
-                     data["status"],
-                     data["created_time"],
-                     data["updated_time"])
-
-    def to_json(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "goal": self.objective,
-            "algorithm": self.algorithm.name,
-            "metric": self.metric.name,
-            "status": self.status,
-            "created_time": self.created_time,
-            "updated_time": self.updated_time
-        }
-
-    def to_dict(self):
-        return {
-            "name": self.name,
-            "goal": self.objective,
-            "algorithm": self.algorithm.name,
-            "metric": self.metric.name
-        }
+        return "{}".format(self.name)
 
 
 class Parameter(models.Model):
@@ -123,139 +85,43 @@ class Parameter(models.Model):
         - Categorical: sequence of values
     """
     name = models.CharField(max_length=128, blank=False, null=False)
-    type = models.CharField(max_length=128, choices=TYPE.choices(),
-                            default=TYPE.CATEGORICAL.name)
-    study = models.ForeignKey(Study, on_delete=models.CASCADE,
-                              to_field='name')
+    type = models.CharField(max_length=128, choices=TYPE.choices())
+    study_name = models.ForeignKey(Study, on_delete=models.CASCADE,
+                                   to_field='name')
 
-    values = models.TextField(blank=False)
+    # Values used for storing discrete and categorical params
+    values = models.TextField(blank=True, null=True)
+    # Min and max for define interval for integer and float params
+    min = models.FloatField(blank=True, null=True)
+    max = models.FloatField(blank=True, null=True)
 
     def __str__(self):
-        return "{}-{}".format(self.name, self.values)
-
-    @classmethod
-    def from_dict(cls, data):
-        return Parameter(data["name"], data["type"], data["values"])
-
-    def to_dict(self):
-        return {
-            "name": self.name,
-            "type": self.type,
-            "values": self.values,
-        }
-
-    def to_json(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "type": self.type,
-            "values": self.values
-        }
+        return "{}".format(self.name)
 
 
 class Trial(models.Model):
     """
     This model defines the parameter values for a study. In particular,
     it defines:
-        - Name: name of the trial
         - Study name: foreign key of the study to which the trial belongs
-        - Parameters values: json text containing the parameter values
-        - Objective value
+        - Parameters: json text containing the parameter values
+        - Training step:
+        - Score:
         - Status of the trial
         - Created time
         - Update time
     """
-    name = models.CharField(max_length=128, blank=False)
     study_name = models.ForeignKey(Study, on_delete=models.CASCADE,
                                    to_field='name')
-    parameter_values = models.TextField(blank=True, null=True)
-    training_step = models.IntegerField(blank=True, null=True)
-    score = models.FloatField(blank=True, null=True)
+    parameters = models.TextField(blank=True, null=True)
+    training_step = models.IntegerField(blank=True, null=True, default=0)
+    score = models.FloatField(blank=True, null=True, default=0)
+    score_info = models.TextField(blank=True, null=True)
 
-    status = models.CharField(max_length=128, blank=False, default='Pending')
+    status = models.CharField(max_length=128, choices=STATUS.choices())
     created_time = models.DateTimeField(auto_now_add=True)
     updated_time = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "{}-{}".format(self.id, self.name)
-
-    @classmethod
-    def from_dict(cls, data):
-        return Trial(data["study_name"],
-                     data["name"],
-                     data["parameter_values"],
-                     data["score"],
-                     data["status"],
-                     data["created_time"],
-                     data["updated_time"])
-
-    def to_json(self):
-        return {
-            "id": self.id,
-            "study_name": self.study_name,
-            "name": self.name,
-            "parameter_values": self.parameter_values,
-            "objective_value": self.score,
-            "status": self.status,
-            "created_time": self.created_time,
-            "updated_time": self.updated_time
-        }
-
-    def to_dict(self):
-        return {
-            "study_name": self.study_name,
-            "name": self.name,
-            "parameter_values": self.parameter_values,
-            "score": self.score
-        }
-
-
-class TrialMetric(models.Model):
-    """
-    Not used. Deprecated by Metric.
-    """
-    trial_id = models.IntegerField(blank=False)
-    training_step = models.IntegerField(blank=True, null=True)
-    objective_value = models.FloatField(blank=True, null=True)
-
-    created_time = models.DateTimeField(auto_now_add=True)
-    updated_time = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return "Id: {}, trial id: {}, training_step: {}".format(
-            self.id, self.trial_id, self.training_step)
-
-    @classmethod
-    def create(cls, trial_id, training_step, objective_value):
-        trial_metric = cls()
-        trial_metric.trial_id = trial_id
-        trial_metric.training_step = training_step
-        trial_metric.objective_value = objective_value
-        trial_metric.save()
-        return trial_metric
-
-    @classmethod
-    def from_dict(cls, data):
-        return TrialMetric(data["trial_id"],
-                           data["training_step"],
-                           data["objective_value"],
-                           data["id"],
-                           data["created_time"],
-                           data["updated_time"])
-
-    def to_json(self):
-        return {
-            "id": self.id,
-            "trial_id": self.trial_id,
-            "training_step": self.training_step,
-            "objective_value": self.objective_value,
-            "created_time": self.created_time,
-            "updated_time": self.updated_time
-        }
-
-    def to_dict(self):
-        return {
-            "trial_id": self.trial_id,
-            "training_step": self.training_step,
-            "objective_value": self.objective_value
-        }
+        return "id: {}, study_name: {}, status: {}".format(
+            self.id, self.study_name, self.status)

@@ -22,7 +22,7 @@ urlpatterns = [
     #path('', include('Dashboard.urls')),
 
     # Ex: localhost:8080/Suggestions/... and localhost:8080/suggestions/...
-    path('api/v0.1/', include('API.urls')),
+    path('api/v0.1/', include('API.urls', namespace='api')),
     path('api-auth/', include('rest_framework.urls')),
 
     path('admin/', admin.site.urls),

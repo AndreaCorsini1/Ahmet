@@ -1,84 +1,105 @@
-import json
-import itertools
-
-from API.models import Study, Trial
 from API.Algorithms.AbstractAlgorithm import AbstractAlgorithm
+from API.choices import TYPE
+
+import random
 
 
 class GridSearch(AbstractAlgorithm):
     """
-     TODO: Clean and improve
+
+
     """
+    # TODO: extend to integer and double
+    supported_params = [(TYPE.CATEGORICAL.name, TYPE.CATEGORICAL.value),
+                        (TYPE.DISCRETE.name, TYPE.DISCRETE.value)]
 
-    def get_suggestion(self, params):
+    def setUp(self, space, shuffle=True):
         """
-            Get the new suggested trials with grid search.
+        Set up the space for making the parameter configurations with grid
+        search algorithm.
+        This function can shuffle the values for each parameter for fairly
+        sampling (default behaviour).
+
+        Args:
+            :param space: list of parameters (id, name, type, values, ...)
+            :param shuffle: shuffle the list of values for each parameter before
+                            making configuration
+        :return: list of names and list of values
         """
-        # [['8', '16', '32', '64'], ['sgd', 'adagrad', 'adam', 'ftrl'], ['true', 'false']]
-        param_values_list = []
+        values = []
+        names = []
 
-        for param in params:
-            # Check param type
-            if param["type"] == "DOUBLE" or param["type"] == "INTEGER":
-                raise Exception("Grid search does not support DOUBLE and INTEGER")
+        if space:
+            for param in space:
+                # Check param type
+                if TYPE[param["type"]] is TYPE.FLOAT or \
+                    TYPE[param["type"]] is TYPE.INTEGER:
+                    msg = "Unsupported parameter {}".format(param['type'])
+                    raise Exception(msg)
 
-            feasible_point_list = [
-                value.strip() for value in param["feasiblePoints"].split(",")
-            ]
-            param_values_list.append(feasible_point_list)
+                # Shuffle the list of values before making the grid
+                if shuffle:
+                    vls = random.sample(param['values'], len(param['values']))
+                else:
+                    vls = param['values']
 
-        # Example: [('8', 'sgd', 'true'), ('8', 'sgd', 'false'), ('8', 'adagrad', 'true'), ('8', 'adagrad', 'false'), ('8', 'adam', 'true'), ('8', 'adam', 'false'), ('8', 'ftrl', 'true'), ('8', 'ftrl', 'false'), ('16', 'sgd', 'true'), ('16', 'sgd', 'false'), ('16', 'adagrad', 'true'), ('16', 'adagrad', 'false'), ('16', 'adam', 'true'), ('16', 'adam', 'false'), ('16', 'ftrl', 'true'), ('16', 'ftrl', 'false'), ('32', 'sgd', 'true'), ('32', 'sgd', 'false'), ('32', 'adagrad', 'true'), ('32', 'adagrad', 'false'), ('32', 'adam', 'true'), ('32', 'adam', 'false'), ('32', 'ftrl', 'true'), ('32', 'ftrl', 'false'), ('64', 'sgd', 'true'), ('64', 'sgd', 'false'), ('64', 'adagrad', 'true'), ('64', 'adagrad', 'false'), ('64', 'adam', 'true'), ('64', 'adam', 'false'), ('64', 'ftrl', 'true'), ('64', 'ftrl', 'false')]
-        combination_values_list = list(itertools.product(*param_values_list))
+                values.append(vls)
+                names.append(param['name'])
 
-        combination_list = []
-        param_number = len(params)
+        return names, values
 
-        for combination_values in combination_values_list:
-            combination_values_json = {}
-
-            # Example: (u'8', u'sgd', u'true')
-            for i in range(param_number):
-                # Example: "sgd"
-                combination_values_json[params[i]["Name"]] = combination_values[i]
-
-            combination_list.append(combination_values_json)
-
-        return combination_list
-
-
-    def run(self, study_name, budget=10):
+    def suggestion_generator(self, names, param_values):
         """
+        Generator for making combinations of values.
+        Note: a parameter name in a specific place, for instance index j,
+        has the corresponding values in position j of param_values.
 
-        :param study_name:
-        :param budget:
-        :return:
+        Args:
+            :param names: list of name for each parameter
+            :param param_values: list of values for each parameter
+        :return dictionary of pair ('param_name': param_value)
         """
-        return_trial_list = []
+        combinations = [[]]
 
-        study = Study.objects.get(name=study_name)
-        study_configuration_json = json.loads(study.study_configuration)
-        params = study_configuration_json["params"]
+        # Generate all possible combinations
+        for values in param_values:
+            combinations = [x+[y] for x in combinations for y in values]
 
-        # Example: [{"hidden2": "8", "optimizer": "sgd", "batch_normalization": "true"}, ......]
-        combination_values_json = self.get_suggestion(params)
-        combination_number = len(combination_values_json)
+        # Return sequentially the combinations
+        for values in combinations:
+            yield dict(zip(names, values))
 
-        # Compute how many grid search params have been allocated
-        allocated_trials = Trial.objects.filter(study_name=study_name)
-        start_index = len(allocated_trials)
+    def get_suggestions(self, space, old_trials, num_suggestions=10, budget=50):
+        """
+        Make all combinations of the parameter values and return
+        num_suggestions configurations.
+        NB: the function initially shuffles the values for each parameters.
 
-        if start_index > combination_number:
-            start_index = 0
-        elif start_index + budget > combination_number:
-            start_index = combination_number - budget
+        Args:
+            :param space: the space from which the parameter configurations
+                          are sampled
+            :param old_trials: list of previously generated configurations
+            :param num_suggestions: maximum number of configurations
+                                    produced, it might be lower
+            :param budget: number of attempts for generating a single parameter
+                           configuration
+        :return: a list of sampled configurations
+        """
+        trials = []
+        names, values = self.setUp(space)
 
-        assert combination_number >= budget
-        for i in range(budget):
-            trial = Trial.create(study.name, "GridSearchTrial")
-            trial.parameter_values = json.dumps(
-                combination_values_json[start_index + i])
-            trial.save()
-            return_trial_list.append(trial)
+        if values:
+            # Create the suggestions generator
+            suggestions = self.suggestion_generator(names, values)
 
-        return return_trial_list
+            for _ in range(num_suggestions):
 
+                # Attempts for generating a single new configuration
+                for _ in range(budget):
+                    trial = next(suggestions)
+
+                    if trial not in old_trials:
+                        trials.append(trial)
+                        break
+
+        return trials

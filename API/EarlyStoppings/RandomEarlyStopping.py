@@ -5,5 +5,15 @@ from API.EarlyStoppings.AbstractEarlyStopping import \
 
 class RandomEarlyStopping(AbstractEarlyStopAlgorithm):
 
-    def get_trials_to_stop(self, trials):
-        return [random.choice[trials]]
+    def get_trials_to_stop(self, trials, old_trials):
+        """
+
+        Args:
+            :param trials:
+            :param old_trials:
+        :return:
+        """
+        if len(trials) > 1:
+            return [random.choice(trials)]
+        else:
+            return []

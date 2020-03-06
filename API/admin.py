@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Study, Trial, Algorithm, TrialMetric
+from .models import *
 
 # Register your models here.
-admin.register(Study, Trial, TrialMetric, Algorithm)
+admin.register(Study, Trial, Algorithm, Metric, Parameter)

@@ -1,17 +1,41 @@
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, \
     IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import mixins, generics
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework import status, views
+from rest_framework import mixins, generics, decorators
 
 from API.permissions import *
 from API.serializers import *
+
 from API.Algorithms.GridSearch import GridSearch
 from API.Algorithms.RandomSearch import RandomSearch
 from API.Algorithms.ScatterSearch import ScatterSearch
 
-from API.utils import *
+from API.Models.SimpleFunction import SimpleFunction
+from API.Models.KNeighbors import KNeighbors
+from API.Models.RandomForest import RandomForest
+from API.Models.SVM import SVM
+
+from API.EarlyStoppings.NoEarlyStopping import NoEarlyStopping
+from API.EarlyStoppings.RandomEarlyStopping import RandomEarlyStopping
+
+import json
+
+
+class UserList(generics.ListAPIView):
+    """
+
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
+class UserDetail(generics.RetrieveAPIView):
+    """
+
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 
 class StudyList(mixins.CreateModelMixin,
@@ -22,7 +46,7 @@ class StudyList(mixins.CreateModelMixin,
         - POST: create a brand new study
         - GET: list all the available studies
     """
-    queryset = Study.objects.all().order_by('-updated_time', '-owner')
+    queryset = Study.objects.order_by('-updated_time', 'owner')
     serializer_class = StudySerializer
 
     # Set the permissions for this view
@@ -93,7 +117,7 @@ class AlgorithmList(mixins.CreateModelMixin,
     Note: this function should be call by a post method only if a new algorithm
     file has been uploaded.
     """
-    queryset = Algorithm.objects.all().order_by('-name')
+    queryset = Algorithm.objects.all().order_by('name')
     serializer_class = AlgorithmSerializer
 
     # Set the permissions for this view
@@ -107,9 +131,39 @@ class AlgorithmList(mixins.CreateModelMixin,
         return self.create(request, *args, **kwargs)
 
 
+@decorators.api_view(['GET'])
+@decorators.permission_classes([IsAuthenticated])
+def study_trials(request, study_name):
+    """
+
+    Args:
+        :param request:
+        :param study_name:
+    :return:
+    """
+    trials = Trial.objects.filter(study_name=study_name)
+    serializer = TrialSerializer(trials, many=True)
+    return Response(serializer.data)
+
+
+@decorators.api_view(['GET'])
+@decorators.permission_classes([IsAuthenticated])
+def study_parameters(request, study_name):
+    """
+
+    Args:
+        :param request:
+        :param study_name:
+    :return:
+    """
+    params = Parameter.objects.filter(study_name=study_name)
+    serializer = ParameterSerializer(params, many=True)
+    return Response(serializer.data)
+
+
 class AlgorithmDetail(mixins.RetrieveModelMixin,
-                  mixins.DestroyModelMixin,
-                  generics.GenericAPIView):
+                      mixins.DestroyModelMixin,
+                      generics.GenericAPIView):
     """
     Function to work on a single study. The allowed operations are:
         - GET: get the information about a study by its name
@@ -144,7 +198,7 @@ class MetricList(mixins.CreateModelMixin,
     Note: this function should be call by a post method only if a new algorithm
     file has been uploaded.
     """
-    queryset = Metric.objects.all().order_by('-name')
+    queryset = Metric.objects.order_by('name')
     serializer_class = MetricSerializer
 
     # Set the permissions for this view
@@ -159,9 +213,9 @@ class MetricList(mixins.CreateModelMixin,
 
 
 class MetricDetail(mixins.RetrieveModelMixin,
-                  mixins.DestroyModelMixin,
-                  mixins.UpdateModelMixin,
-                  generics.GenericAPIView):
+                   mixins.DestroyModelMixin,
+                   mixins.UpdateModelMixin,
+                   generics.GenericAPIView):
     """
     Function to work on a single study. The allowed operations are:
         - GET: get the information about a study by its name
@@ -196,7 +250,7 @@ class TrialList(mixins.ListModelMixin, generics.GenericAPIView):
     Note: this function should be call by a post method only if a new algorithm
     file has been uploaded.
     """
-    queryset = Trial.objects.all().order_by('-study_name', '-status')
+    queryset = Trial.objects.order_by('study_name', 'status')
     serializer_class = TrialSerializer
 
     def get(self, request, *args, **kwargs):
@@ -205,7 +259,6 @@ class TrialList(mixins.ListModelMixin, generics.GenericAPIView):
 
 class TrialDetail(mixins.RetrieveModelMixin,
                   mixins.DestroyModelMixin,
-                  mixins.UpdateModelMixin,
                   generics.GenericAPIView):
     """
     Function to work on a single study. The allowed operations are:
@@ -226,33 +279,29 @@ class TrialDetail(mixins.RetrieveModelMixin,
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
-    # TODO: is it really necessary?
-    def put(self, request, *args, **kwargs):
-        return self.update(request, *args, **kwargs)
-
 
 class ParameterList(mixins.CreateModelMixin,
                     mixins.ListModelMixin,
                     generics.GenericAPIView):
-        """
-        Function for work on generic algorithms. The operation permitted are:
-            - POST: create a new algorithms
-            - GET: list all the available algorithms
-        Note: this function should be call by a post method only if a new algorithm
-        file has been uploaded.
-        """
-        queryset = Parameter.objects.all().order_by('-name', '-study')
-        serializer_class = ParameterSerializer
+    """
+    Function for work on generic algorithms. The operation permitted are:
+        - POST: create a new algorithms
+        - GET: list all the available algorithms
+    Note: this function should be call by a post method only if a new algorithm
+    file has been uploaded.
+    """
+    queryset = Parameter.objects.order_by('study_name', 'name')
+    serializer_class = ParameterSerializer
 
-        # Set the permissions for this view
-        permission_classes = [IsAuthenticatedOrReadOnly,
-                              IsAdminUser]
+    # Set the permissions for this view
+    permission_classes = [IsAuthenticatedOrReadOnly,
+                          IsAdminUser]
 
-        def get(self, request, *args, **kwargs):
-            return self.list(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
-        def post(self, request, *args, **kwargs):
-            return self.create(request, *args, **kwargs)
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
 class ParameterDetail(mixins.RetrieveModelMixin,
@@ -278,145 +327,207 @@ class ParameterDetail(mixins.RetrieveModelMixin,
         return self.destroy(request, *args, **kwargs)
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def suggestions(request, study_name):
+class Worker(views.APIView):
     """
-    # TODO
-    :param request:
-    :param study_name:
-    :return:
+    TODO: implement hook for early stopping
     """
-    # Create the trial
-    trials_number = 1
+    # Set the permissions for this view
+    permission_classes = [IsAuthenticated]
 
-    study = Study.objects.get(name=study_name)
-    trials = Trial.objects.filter(study_name=study_name)
+    def get_model(self, name):
+        """
+        TODO: add type and dataset
 
-    if study.algorithm == "RandomSearch":
-        algorithm = RandomSearch()
-    elif study.algorithm == "GridSearch":
-        algorithm = GridSearch()
-    #elif study.algorithm == "ScatterSearch":
-    #  algorithm = ScatterSearch()
-    #elif study.algorithm == "BayesianOptimization":
-    #  algorithm = BayesianOptimization()
-    #elif study.algorithm == "TPE":
-    #  algorithm = TpeAlgorithm()
-    else:
-        return Response(request.data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        :param name:
+        :return:
+        """
+        if name == 'Svm':
+            model = SVM()
+        elif name == 'SimpleFunction':
+            model = SimpleFunction()
+        elif name == 'KNeighbors':
+            model = KNeighbors()
+        elif name == 'RandomForest':
+            model = RandomForest()
+        else:
+            model = None
 
-    new_trials = algorithm.run(study.name, trials_number)
-    serializer = TrialSerializer(new_trials, many=True)
+        return model
 
-    return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def early_stopping(self, study_name):
+        """
+
+        :param study_name:
+        :return:
+        """
+        old_trial = []
+        pending_trial = []
+
+        trials = Trial.objects.filter(study_name=study_name)
+        serializer = TrialSerializer(trials, many=True)
+
+        for trial in serializer.data:
+            # TODO: started?
+            if STATUS[trial['status']] is STATUS.PENDING:
+                pending_trial.append(trial)
+            elif STATUS[trial['status']] is STATUS.COMPLETED:
+                old_trial.append(trial)
+
+        e_stopper = RandomEarlyStopping()
+        trials_to_stop = e_stopper.get_trials_to_stop(pending_trial, old_trial)
+
+        print(trials_to_stop)
+        if trials_to_stop:
+            for trial in trials_to_stop:
+                obj = trials.get(id=trial['id'])
+                obj.status = STATUS.STOPPED.name
+                obj.save()
+
+    def get(self, request, study_name, pk, format=None):
+        """
+
+        Args:
+            :param request:
+            :param study_name:
+            :param pk:
+            :param format:
+        :return:
+        """
+        trial = Trial.objects.get(id=pk, study_name=study_name)
+        if not trial:
+            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+
+        if STATUS[trial.status] is STATUS.PENDING:
+
+            study = Study.objects.get(name=study_name)
+            if not study:
+                return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
+
+            model = self.get_model(study.metric.name)
+            if not model:
+                return Response(request.data,
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            params = json.loads(trial.parameters)
+            trial.status = STATUS.STARTED.name
+            trial.save(update_fields=['status'])
+
+            print(params)
+            results = model.evaluate(params)
+            if 'score' not in results:
+                return Response(results, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            trial.score = results.pop('score', 0)
+            trial.status = STATUS.COMPLETED.name
+            # TODO: trial.score_info = json.dumps(results)
+            trial.save()
+
+            self.early_stopping(study_name)
+
+        return Response(request.data, status=status.HTTP_200_OK)
 
 
-class UserList(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-class UserDetail(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-
-def study_trials(request, study_name):
+class Suggestion(views.APIView):
     """
-    Function to work on generic trials. It is able to:
-        - POST: create a new trial for a specific study
-        - GET: list all the trials for a study
 
-    Args:
+    """
+    # Set the permissions for this view
+    permission_classes = [IsAuthenticated]
+
+    def get_algorithm(self, name):
+        """
+
+        :param name:
+        :return:
+        """
+        if name == "RandomSearch":
+            algorithm = RandomSearch()
+        elif name == "GridSearch":
+            algorithm = GridSearch()
+        # elif name == "ScatterSearch":
+        #    algorithm = ScatterSearch()
+        # elif study.algorithm == "BayesianOptimization":
+        #  algorithm = BayesianOptimization()
+        # elif study.algorithm == "TPE":
+        #  algorithm = TpeAlgorithm()
+        else:
+            algorithm = None
+
+        return algorithm
+
+    def get_space(self, study_name):
+        """
+
+        :param study_name:
+        :return:
+        """
+        space = Parameter.objects.filter(study_name=study_name).values()
+
+        for param in space:
+
+            if TYPE[param['type']] is TYPE.INTEGER:
+                param['min'] = int(param['min'])
+                param['max'] = int(param['max'])
+
+            elif TYPE[param['type']] is TYPE.DISCRETE:
+                param['values'] = [float(val)
+                                   for val in param['values'].split(',')]
+
+            elif TYPE[param['type']] is TYPE.CATEGORICAL:
+                param['values'] = [val.strip()
+                                   for val in param['values'].split(',')]
+
+        return space
+
+    def save_trials(self, study_name, new_trials):
+        """
+
+        Args:
+            :param study_name:
+            :param new_trials:
+        :return:
+        """
+        if new_trials:
+
+            trials = [{
+                'study_name': study_name,
+                'status': STATUS.PENDING.name,
+                'parameters': json.dumps(values)
+            } for values in new_trials]
+
+            serializer = TrialSerializer(data=trials, many=True)
+            if not serializer.is_valid():
+                return Response(serializer.errors,
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response({}, status=status.HTTP_200_OK)
+
+    def get(self, request, study_name, format=None):
+        """
+        TODO: expose num suggestions and budget (and runs)
+
         :param request:
         :param study_name:
-    :return:
-    """
+        :return:
+        """
+        study = Study.objects.get(name=study_name)
+        if not study:
+            return Response(request.data, status=status.HTTP_400_BAD_REQUEST)
 
-    # Create the trial
-    #if request.method == "POST":
-    #    data = json.loads(request.body)
-    #    name = data["name"]
+        algorithm = self.get_algorithm(study.algorithm.name)
+        if not algorithm:
+            return Response(request.data,
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    #    trial = Trial.create(study_name, name)
-    #    return JsonResponse({"data": trial.to_json()})
+        space = self.get_space(study_name)
+        if not space:
+            return Response(request.data, status=status.HTTP_404_NOT_FOUND)
 
-    # List the studies
-    #elif request.method == "GET":
-    #    trial_list = Trial.objects.filter(study_name=study_name)
-    #    response_data = [trial.to_json() for trial in trial_list]
-    #    return JsonResponse({"data": response_data})
-    #else:
-    #    return JsonResponse({"error": "Unsupported http method"})
+        trials_obj = Trial.objects.filter(study_name=study_name)
+        trials = [json.loads(trial.parameters) for trial in trials_obj]
+        new_trials = algorithm.get_suggestions(space, trials)
 
-
-def study_trial_metrics(request, study_name, trial_id):
-    """
-    Function working on generic metrics. The function can:
-        - POST: create a new metric
-        - GET: list all the available metrics
-
-    Args:
-        :param request: http request
-        :param study_name:
-        :param trial_id:
-    :return:
-    """
-
-    # Create the trial metric
-    #if request.method == "POST":
-    #    data = json.loads(request.body)
-    #    training_step = data["training_step"]
-    #    objective_value = data["objective_value"]
-
-    #    trial_metric = TrialMetric.create(trial_id, training_step, objective_value)
-    #    return JsonResponse({"data": trial_metric.to_json()})
-
-    # List the trial metrics
-    #elif request.method == "GET":
-    #    trial_metrics = TrialMetric.objects.filter(trial_id=trial_id)
-    #    response_data = [trial_metric.to_json() for trial_metric in trial_metrics]
-    #    return JsonResponse({"data": response_data})
-    #else:
-    #    return JsonResponse({"error": "Unsupported http method"})
-
-
-def study_trial_metric(request, study_name, trial_id, metric_id):
-    """
-    Function for manipulating a metric. Supported operations:
-        - GET: return information on the metric
-        - PATCH:
-        - DELETE:
-
-    Args:
-        :param request:
-        :param study_name:
-        :param trial_id:
-        :param metric_id:
-    :return:
-    """
-
-    # Describe the trial metric
-    #if request.method == "GET":
-    #    trial_metric = TrialMetric.objects.get(id=metric_id)
-    #    return JsonResponse({"data": trial_metric.to_json()})
-
-    # Update the trial metric
-    #elif request.method == "PATCH":
-    #    trial_metric = TrialMetric.objects.get(id=metric_id)
-    #    data = json.loads(request.body)
-    #    if "training_step" in data:
-    #        trial_metric.training_step = data["training_step"]
-    #    if "objective_value" in data:
-    #        trial_metric.objective_value = data["objective_value"]
-    #    trial_metric.save()
-    #    return JsonResponse({"data": trial_metric.to_json()})
-
-    # Delete the trial metric
-    #elif request.method == "DELETE":
-    #    trial_metric = TrialMetric.objects.get(id=metric_id)
-    #    trial_metric.delete()
-    #    return JsonResponse({"message": "Success to delete"})
-    #else:
-    #    return JsonResponse({"error": "Unsupported http method"})
+        return self.save_trials(study_name, new_trials)

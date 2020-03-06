@@ -41,7 +41,7 @@ Taxonomy:
 """
 import random
 from time import time
-from API.utils import TYPE
+from API.choices import TYPE
 from API.Algorithms.AbstractAlgorithm import AbstractAlgorithm
 
 class ScatterSearch:

@@ -9,6 +9,7 @@ from API.Models.datasets import regression_dataset
 
 from API.Models.AbstractModel import Model
 
+
 class RandomForest(Model):
     """
     Parameter accepted:
@@ -18,28 +19,7 @@ class RandomForest(Model):
         - min_split: the minimum number of samples to split an internal node
 
     Example:
-        "params": [ {
-              "Name": "gamma",
-              "type": "DOUBLE",
-              "values": [0.001, 0.01],
-              "scalingType": "LINEAR"
-            }, {
-              "Name": "C",
-              "type": "DOUBLE",
-              "values": [0.5, 1],
-              "scalingType": "LINEAR"
-            }, {
-              "Name": "kernel",
-              "type": "CATEGORICAL",
-              "values": ["linear", "poly", "rbf", "sigmoid", "precomputed"],
-              "scalingType": "LINEAR"
-            }, {
-              "Name": "coef0",
-              "type": "DOUBLE",
-              "values": [0.5, 1],
-              "scalingType": "LINEAR"
-            }]
-        }
+
     """
 
     def __init__(self, type='classification', dataset_name='iris'):
@@ -70,15 +50,17 @@ class RandomForest(Model):
         # TODO: add check on params
 
         if self.type == 'clf':
-            model = RandomForestClassifier(n_estimators=params["n_estimators"],
-                                           max_depth=params['max_depth'],
-                                           max_features=params["max_features"],
-                                           min_samples_split=params["min_split"])
+            model = RandomForestClassifier(
+                n_estimators=int(params["n_estimators"]),
+                max_depth=int(params['max_depth']),
+                max_features=int(params["max_features"]),
+                min_samples_split=int(params["min_split"]))
         else:
-            model = RandomForestRegressor(n_estimators=params["n_estimators"],
-                                          max_depth=params['max_depth'],
-                                          max_features=params["max_features"],
-                                          min_samples_split=params["min_split"])
+            model = RandomForestRegressor(
+                n_estimators=int(params["n_estimators"]),
+                max_depth=int(params['max_depth']),
+                max_features=int(params["max_features"]),
+                min_samples_split=int(params["min_split"]))
 
         # train
         model.fit(self.X_train, self.Y_train)
@@ -100,7 +82,7 @@ class RandomForest(Model):
 
         if self.type == 'clf':
             result = {
-                'accuracy': accuracy_score(self.Y_test, Y_pred),
+                'score': accuracy_score(self.Y_test, Y_pred),
                 'matrix': confusion_matrix(self.Y_test, Y_pred),
                 'report': classification_report(self.Y_test, Y_pred,
                                                 target_names=self.labels)

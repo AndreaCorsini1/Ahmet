@@ -1,14 +1,14 @@
 from rest_framework.test import APITestCase
 from rest_framework import status
 from django.contrib.auth.models import User
-from API.utils import *
+from API.choices import *
 
 
 class BaseTest(APITestCase):
 
     def setUp(self):
         """
-        
+
         """
         self.user = User.objects.create(username='test', is_staff=True)
         self.user.set_password('12345')
@@ -163,11 +163,10 @@ class StudyTests(BaseTest):
 
         """
         self.populateDB()
-
         data = {
             'name': 'fake_stu',
             'owner': 'test',
-            # 'objective': '1'
+            'objective': OBJECTIVE.MAXIMIZE.name
         }
         response = self.perform_test('studies', 'post', data)
         # print(response.data)
@@ -181,20 +180,20 @@ class StudyTests(BaseTest):
         """
 
         """
+        self.populateDB()
         response = self.perform_test('studies')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # print(response.data)
 
         # Get specific study
-        self.populateDB()
         data = {
             'name': 'fake_stu',
+            'objective': OBJECTIVE.MINIMIZE.name,
             'owner': 'test',
         }
         self.perform_test('studies', 'post', data)
-        response = self.perform_test(data['name'])
+        response = self.perform_test("studies/{}".format(data['name']))
         self.assertEqual(data['name'], response.data['name'])
-        # print(response.data)
 
     def test_update(self):
         """
@@ -203,19 +202,22 @@ class StudyTests(BaseTest):
         self.populateDB()
         data = {
             'name': 'fake_stu1',
+            'objective': OBJECTIVE.MINIMIZE.name,
             'owner': 'test'
         }
         response = self.perform_test('studies', 'post', data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # print(response.data)
 
-        data = {'name': 'fake_stu1', 'status': 'Nooooo'}
-        response = self.perform_test('fake_stu1', 'put', data)
-        # print(response.data)
+        # TODO: fix name
+        data = {'name': 'fake_stu1', 'objective': OBJECTIVE.MINIMIZE.name,
+                'status': 'Nooooo'}
+        response = self.perform_test('studies/fake_stu1', 'put', data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class ParamTest(BaseTest):
+
     def populateDB(self):
         """
         Set the FK for param table.
@@ -226,6 +228,7 @@ class ParamTest(BaseTest):
         self.perform_test('metrics', 'post', data)
         data = {
             'name': 'fake_stu',
+            'objective': OBJECTIVE.MINIMIZE.name,
             'owner': 'test',
         }
         self.perform_test('studies', 'post', data)
@@ -254,9 +257,10 @@ class ParamTest(BaseTest):
         self.populateDB()
         data = {
             "name": "hidden1",
-            "study": 'fake_stu',
+            "study_name": 'fake_stu',
             "type": TYPE.INTEGER.name,
-            "values": str([1, 10]),
+            "min": 1,
+            "max": 10,
             "scalingType": "LINEAR"
         }
         response = self.perform_test('parameters', 'post', data)

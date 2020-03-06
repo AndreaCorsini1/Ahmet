@@ -9,33 +9,22 @@ from API.Models.datasets import regression_dataset
 
 from API.Models.AbstractModel import Model
 
+
 class KNeighbors(Model):
     """
     Parameter accepted:
         - n_neighbors: integer number of nearest neighbors (K).
-        - algorithm: algorithm used to compute the neighbors ('ball_tree',
-                     'kd_tree' and 'brute')
+        - algorithm: algorithm used to compute the neighbors ('auto',
+                     'ball_tree', 'kd_tree' and 'brute')
         - dist_power: power parameter for the minkowski metric (p=1 -> L1,
                       P=2 -> L2)
 
 
-    Example:
-        "params": [{
-              "Name": "C",
-              "type": "DOUBLE",
-              "values": [0.5, 1],
-              "scalingType": "LINEAR"
-            }, {
-              "Name": "kernel",
-              "type": "CATEGORICAL",
-              "values": ["linear", "poly", "rbf", "sigmoid", "precomputed"],
-              "scalingType": "LINEAR"
-            }, {
-              "Name": "coef0",
-              "type": "DOUBLE",
-              "values": [0.5, 1],
-              "scalingType": "LINEAR"
-            }]
+    Example of param:
+        {
+            'num_neighbors': 5,
+            'algorithm': 'kd_tree',
+            'dist_power': 2
         }
     """
 
@@ -65,15 +54,18 @@ class KNeighbors(Model):
         :return:
         """
         # TODO: add check on params
+        print(params)
 
         if self.type == 'clf':
-            model = KNeighborsClassifier(n_neighbors=params["n_neighbors"],
-                                         algorithm=params['algorithm'],
-                                         p=params["dist_power"])
+            model = KNeighborsClassifier(
+                n_neighbors=int(params["num_neighbors"]),
+                algorithm=params['algorithm'],
+                p=int(params["dist_power"]))
         else:
-            model = KNeighborsRegressor(n_neighbors=params["n_neighbors"],
-                                         algorithm=params['algorithm'],
-                                         p=params["dist_power"])
+            model = KNeighborsRegressor(
+                n_neighbors=int(params["num_neighbors"]),
+                algorithm=params['algorithm'],
+                p=int(params["dist_power"]))
 
         # train
         model.fit(self.X_train, self.Y_train)
@@ -95,7 +87,7 @@ class KNeighbors(Model):
 
         if self.type == 'clf':
             result = {
-                'accuracy': accuracy_score(self.Y_test, Y_pred),
+                'score': accuracy_score(self.Y_test, Y_pred),
                 'matrix': confusion_matrix(self.Y_test, Y_pred),
                 'report': classification_report(self.Y_test, Y_pred,
                                                 target_names=self.labels)

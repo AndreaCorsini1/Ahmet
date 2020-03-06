@@ -31,4 +31,4 @@ class SimpleFunction(Model):
         for id, (_, value) in enumerate(params.items()):
             f += terms[id] * value
 
-        return {'loss': f}
+        return {'score': f}

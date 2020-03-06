@@ -3,7 +3,7 @@ from API.models import Study, Trial
 
 class DescendingEarlyStopping(AbstractEarlyStopAlgorithm):
 
-    def get_trials_to_stop(self, trials):
+    def get_trials_to_stop(self, trials, old_trials):
         """
         Sort the pending trials based on the score and stop the worst.
 

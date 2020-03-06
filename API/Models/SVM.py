@@ -9,6 +9,7 @@ from API.Models.datasets import regression_dataset
 
 from API.Models.AbstractModel import Model
 
+
 class SVM(Model):
     """
     Parameter accepted:
@@ -21,28 +22,7 @@ class SVM(Model):
                  in ‘poly’ and ‘sigmoid’.
 
     Example:
-        "params": [ {
-              "Name": "gamma",
-              "type": "DOUBLE",
-              "values": [0.001, 0.01],
-              "scalingType": "LINEAR"
-            }, {
-              "Name": "C",
-              "type": "DOUBLE",
-              "values": [0.5, 1],
-              "scalingType": "LINEAR"
-            }, {
-              "Name": "kernel",
-              "type": "CATEGORICAL",
-              "values": ["linear", "poly", "rbf", "sigmoid", "precomputed"],
-              "scalingType": "LINEAR"
-            }, {
-              "Name": "coef0",
-              "type": "DOUBLE",
-              "values": [0.5, 1],
-              "scalingType": "LINEAR"
-            }]
-        }
+
     """
 
     def __init__(self, type='classification', dataset_name='iris'):
@@ -73,15 +53,15 @@ class SVM(Model):
         # TODO: add check on params
 
         if self.type == 'clf':
-            model = SVC(C=params["C"],
+            model = SVC(C=float(params["C"]),
                         kernel=params['kernel'],
                         gamma=params["gamma"],
-                        coef0=params["coef0"])
+                        coef0=float(params["coef0"]))
         else:
-            model = SVR(C=params["C"],
+            model = SVR(C=float(params["C"]),
                         kernel=params['kernel'],
                         gamma=params["gamma"],
-                        coef0=params["coef0"])
+                        coef0=float(params["coef0"]))
 
         # train
         model.fit(self.X_train, self.Y_train)
@@ -103,7 +83,7 @@ class SVM(Model):
 
         if self.type == 'clf':
             result = {
-                'accuracy': accuracy_score(self.Y_test, Y_pred),
+                'score': accuracy_score(self.Y_test, Y_pred),
                 'matrix': confusion_matrix(self.Y_test, Y_pred),
                 'report': classification_report(self.Y_test, Y_pred,
                                                 target_names=self.labels)

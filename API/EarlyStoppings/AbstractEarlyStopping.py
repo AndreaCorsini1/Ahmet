@@ -5,12 +5,14 @@ class AbstractEarlyStopAlgorithm(object):
     __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
-    def get_trials_to_stop(self, trials):
+    def get_trials_to_stop(self, trials, old_trials):
         """
-        Pass the trials and return the list of trials to early stop.
+        The method takes the trials of a study and returns a list of trials
+        to stop early.
 
         Args:
-          :param trials: all trials of a study.
+          :param trials: list of pending trials.
+          :param old_trials: list of completed trials.
         :return The array of trial objects.
         """
         raise NotImplementedError
