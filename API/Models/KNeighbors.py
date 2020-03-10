@@ -28,14 +28,14 @@ class KNeighbors(Model):
         }
     """
 
-    def __init__(self, type='classification', dataset_name='iris'):
+    def __init__(self, type='c', dataset_name='iris'):
         """
 
         :param type:
         :param dataset_name:
         """
 
-        if type.lower() == 'classification':
+        if type.lower() == 'c':
             data = classification_dataset(name=dataset_name)
             self.type = 'clf'
         else:
@@ -44,7 +44,7 @@ class KNeighbors(Model):
 
         self.X_train, self.Y_train = data['train']
         self.X_test, self.Y_test = data['test']
-        self.labels = data['labels']
+        self.labels = [str(label) for label in  data['labels']]
 
     def train(self, params):
         """
@@ -88,7 +88,7 @@ class KNeighbors(Model):
         if self.type == 'clf':
             result = {
                 'score': accuracy_score(self.Y_test, Y_pred),
-                'matrix': confusion_matrix(self.Y_test, Y_pred),
+                'matrix': confusion_matrix(self.Y_test, Y_pred).tolist(),
                 'report': classification_report(self.Y_test, Y_pred,
                                                 target_names=self.labels)
             }

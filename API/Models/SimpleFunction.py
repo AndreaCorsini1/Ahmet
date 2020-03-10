@@ -18,6 +18,16 @@ class SimpleFunction(Model):
 
     """
 
+    def __init__(self, type=None, dataset_name=None):
+        """
+        Compatibility with other models.
+
+        Args:
+            :param type:
+            :param dataset_name:
+        """
+        pass
+
     def evaluate(self, params):
         """
         Function to optimize
@@ -28,7 +38,7 @@ class SimpleFunction(Model):
         f = 0
         terms = [12, 45, 100, 27]
 
-        for id, (_, value) in enumerate(params.items()):
-            f += terms[id] * value
+        for idx, (_, value) in enumerate(params.items()):
+            f += terms[idx] * value
 
         return {'score': f}

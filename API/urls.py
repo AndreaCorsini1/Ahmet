@@ -46,11 +46,8 @@ urlpatterns = [
     path('studies/<slug:study_name>/trials/', views.study_trials,
          name="study_trials"),
     # Ex: localhost:8080/api/v1/random001/suggestions
-    path('studies/<slug:study_name>/suggestions/', views.Suggestion.as_view(),
-         name="study_suggestions"),
-    # Ex: localhost:8080/api/v1/scatter001/001
-    path('studies/<slug:study_name>/<int:pk>/run/', views.Worker.as_view(),
-         name='study_trial_run')
+    path('studies/<slug:study_name>/start/', views.StartStudy.as_view(),
+         name="study_start"),
 ]
 
 # Enable different response type based on request 'Accept' tag (JSON, HTML, ...)

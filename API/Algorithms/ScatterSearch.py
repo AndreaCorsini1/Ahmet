@@ -44,11 +44,9 @@ from time import time
 from API.choices import TYPE
 from API.Algorithms.AbstractAlgorithm import AbstractAlgorithm
 
-class ScatterSearch:
+class ScatterSearch(AbstractAlgorithm):
 
-    #TODO: Adapt to the abstarct class
-
-    def __init__(self, function, configspace, init_population=80,
+    def setUp(self, function, configspace, init_population=80,
                  elite_population=5, diverse_population=5):
         """
         Class constructor.
@@ -449,3 +447,15 @@ class ScatterSearch:
               "trials {}".format(len(self.seen_trials), self.max_hash))
 
         return best['result'], best['trial']
+
+    def get_suggestions(self, space, old_trials, num_suggestions=10, budget=20):
+        """
+        TODO
+
+        :param space:
+        :param old_trials:
+        :param num_suggestions:
+        :param budget:
+        :return:
+        """
+        return []

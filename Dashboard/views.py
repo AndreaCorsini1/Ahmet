@@ -6,18 +6,23 @@ from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.urls import reverse
+
+from Ahmet.settings import BASE_URL
 
 import os
 import json
 import requests
 import platform
-import six
+
 
 @login_required
 def home(request):
-  if request.user and request.user.is_authenticated:
-    print(request.user.username)
-  return render(request, "dashboard/home.html")
+    if request.user and request.user.is_authenticated:
+        print(request.user.username)
+
+    return render(request, "registration/home.html")
+
 
 def index(request):
     """
@@ -27,17 +32,13 @@ def index(request):
     :return:
     """
     # Studies
-    studies_url = "http://localhost:{}/suggestions/v0.1/studies".format(
-                                            request.META.get("SERVER_PORT"))
-    studies_resp = requests.get(studies_url)
+    studies_resp = requests.get(BASE_URL + reverse('api:studies'))
 
     # Trials
-    trials_url = "http://localhost:{}/suggestions/v0.1/trials".format(
-                                            request.META.get("SERVER_PORT"))
-    trials_resp = requests.get(trials_url)
+    trials_resp = requests.get(BASE_URL + reverse('api:trials'))
 
-    studies = json.loads(studies_resp.text)["data"]
-    trials = json.loads(trials_resp.text)["data"]
+    studies = json.loads(studies_resp.text)
+    trials = json.loads(trials_resp.text)
     context = {
         "success": True,
         "studies": studies,
@@ -65,6 +66,7 @@ def openapi_yaml(request):
 @csrf_exempt
 def studies(request):
     """
+    TODO:
 
     :param request:
     :return:
@@ -82,9 +84,7 @@ def studies(request):
             "algorithm": algorithm
         }
 
-        url = "http://127.0.0.1:{}/suggestions/v0.1/studies".format(
-                                            request.META.get("SERVER_PORT"))
-        response = requests.post(url, json=data)
+        response = requests.post(BASE_URL + reverse('api:studies'), json=data)
         messages.info(request, response.content)
         return redirect("index")
     else:
@@ -103,31 +103,29 @@ def study(request, study_name):
     :param study_name:
     :return:
     """
-    url = "http://127.0.0.1:{}/suggestions/v0.1/{}".format(
-                                    request.META.get("SERVER_PORT"), study_name)
+    url = BASE_URL + reverse('api:study_info', {'study_name': study_name})
 
     if request.method == "GET":
-        response = requests.get(url)
+        study_info = requests.get(url)
+        study_trials = requests.get(BASE_URL + reverse('api:study_trials',
+                                                    {'study_name': study_name}))
 
-        trials_url = "http://127.0.0.1:{}/suggestions/v0.1/{}/trials".format(
-            request.META.get("SERVER_PORT"), study_name)
-        trials_response = requests.get(trials_url)
-
-        if response.ok and trials_response.ok:
-          if six.PY2:
-            study = json.loads(response.content.decode("utf-8"))["data"]
-            trials = json.loads(trials_response.content.decode("utf-8"))["data"]
-          else:
-            study = json.loads(response.text)["data"]
-            trials = json.loads(trials_response.text)["data"]
-          context = {"success": True, "study": study, "trials": trials}
-          return render(request, "dashboard/study_detail.html", context)
+        if study_info.ok and study_trials.ok:
+            study = json.loads(study_info.text)["data"]
+            trials = json.loads(study_trials.text)["data"]
+            context = {
+                "success": True,
+                "study": study,
+                "trials": trials
+            }
+            return render(request, "dashboard/study_detail.html", context)
         else:
-          response = {
-              "error": True,
-              "message": "Fail to request the url: {}".format(url)
-          }
-          return JsonResponse(response, status=405)
+            response = {
+                "error": True,
+                "message": "Fail to request the url: {}".format(url)
+            }
+            return JsonResponse(response, status=405)
+
     elif request.method == "DELETE" or request.method == "POST":
         response = requests.delete(url)
         messages.info(request, response.content)
@@ -148,38 +146,12 @@ def study_suggestions(request, study_name):
     :param study_name:
     :return:
     """
-    if request.method == "POST":
-        trials_number_string = request.POST.get("trials_number", "1")
-        trials_number = int(trials_number_string)
-
-        data = {"trials_number": trials_number}
-        url = "http://127.0.0.1:{}/suggestions/v0.1/{}/suggestions".format(
-                                request.META.get("SERVER_PORT"), study_name)
-        response = requests.post(url, json=data)
+    if request.method == "GET":
+        trials_number = request.POST.get("trials_number", "1")
+        response = requests.get(BASE_URL + reverse('api:study_start',
+                                                   {'study_name': study_name}))
         messages.info(request, response.content)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    else:
-        return JsonResponse({"error": "Unsupported http method"})
-
-
-@csrf_exempt
-def trials(request):
-    """
-
-    :param request:
-    :return:
-    """
-    if request.method == "POST":
-        study_name = request.POST.get("study_name", "")
-        name = request.POST.get("name", "")
-
-        data = {"name": name}
-
-        url = "http://127.0.0.1:{}/suggestions/v0.1/{}/trials".format(
-                                request.META.get("SERVER_PORT"), study_name)
-        response = requests.post(url, json=data)
-        messages.info(request, response.content)
-        return redirect("index")
     else:
         return JsonResponse({"error": "Unsupported http method"})
 
@@ -193,25 +165,16 @@ def trial(request, study_name, trial_id):
     :param trial_id:
     :return:
     """
-    url = "http://127.0.0.1:{}/suggestions/v0.1/{}/{}".format(
-            request.META.get("SERVER_PORT"), study_name, trial_id)
+    url = reverse('api:trial_info', {'pk': trial_id})
 
     if request.method == "GET":
         response = requests.get(url)
+        trial_metrics = requests.get(BASE_URL + reverse('metric_info',
+                                                    {'study_name': study_name}))
 
-        tiral_metrics_url = "http://127.0.0.1:{}/suggestions/v0.1/{}/{}/metrics" \
-                            "".format(request.META.get("SERVER_PORT"),
-                                      study_name, trial_id)
-        tiral_metrics_response = requests.get(tiral_metrics_url)
-
-        if response.ok and tiral_metrics_response.ok:
-            if six.PY2:
-                trial = json.loads(response.content.decode("utf-8"))["data"]
-                trial_metrics = json.loads(
-                         tiral_metrics_response.content.decode("utf-8"))["data"]
-            else:
-                trial = json.loads(response.text)["data"]
-                trial_metrics = json.loads(tiral_metrics_response.text)["data"]
+        if response.ok and trial_metrics.ok:
+            trial = json.loads(response.text)["data"]
+            trial_metrics = json.loads(trial_metrics.text)["data"]
             context = {
                 "success": True,
                 "trial": trial,
@@ -224,10 +187,12 @@ def trial(request, study_name, trial_id):
                 "message": "Fail to request the url: {}".format(url)
             }
             return JsonResponse(response, status=405)
+
     elif request.method == "DELETE":
         response = requests.delete(url)
         messages.info(request, response.content)
         return redirect("index")
+
     elif request.method == "PUT" or request.method == "POST":
         objective_value_string = request.POST.get("objective_value", "1.0")
         objective_value = float(objective_value_string)
@@ -236,80 +201,9 @@ def trial(request, study_name, trial_id):
         response = requests.put(url, json=data)
         messages.info(request, response.content)
 
-        if six.PY2:
-            trial = json.loads(response.content.decode("utf-8"))["data"]
-        else:
-            trial = json.loads(response.text)["data"]
+        trial = json.loads(response.text)
         context = {"success": True, "trial": trial, "trial_metrics": []}
         return render(request, "dashboard/trial_detail.html", context)
-    else:
-        response = {
-            "error": True,
-            "message": "{} method not allowed".format(request.method)
-        }
-        return JsonResponse(response, status=405)
-
-
-@csrf_exempt
-def study_trial_metrics(request, study_name, trial_id):
-    """
-
-    :param request:
-    :param study_name:
-    :param trial_id:
-    :return:
-    """
-    if request.method == "POST":
-        training_step_string = request.POST.get("training_step", "1")
-        training_step = int(training_step_string)
-        objective_value_string = request.POST.get("objective_value", "1.0")
-        objective_value = float(objective_value_string)
-
-        data = {"training_step": training_step, "objective_value": objective_value}
-        url = "http://127.0.0.1:{}/suggestions/v0.1/{}/{}/metrics".format(
-            request.META.get("SERVER_PORT"), study_name, trial_id)
-        response = requests.post(url, json=data)
-        messages.info(request, response.content)
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    else:
-        return JsonResponse({"error": "Unsupported http method"})
-
-
-@csrf_exempt
-def study_trial_metric(request, study_name, trial_id, metric_id):
-    """
-
-    :param request:
-    :param study_name:
-    :param trial_id:
-    :param metric_id:
-    :return:
-    """
-    url = "http://127.0.0.1:{}/suggestions/v0.1/{}{}/{}".format(
-      request.META.get("SERVER_PORT"), study_name, trial_id, metric_id)
-
-    if request.method == "GET":
-        response = requests.get(url)
-
-        if response.ok:
-            if six.PY2:
-                trial_metric = json.loads(response.content.decode("utf-8"))[
-                    "data"]
-            else:
-                trial_metric = json.loads(response.text)["data"]
-            context = {"success": True, "trial_metric": trial_metric}
-            # TODO: Add the detail page of trial metric
-            return render(request, "dashboard/trial_detail.html", context)
-        else:
-            response = {
-                "error": True,
-                "message": "Fail to request the url: {}".format(url)
-            }
-            return JsonResponse(response, status=405)
-    elif request.method == "DELETE" or request.method == "POST":
-        response = requests.delete(url)
-        messages.info(request, response.content)
-        return redirect("index")
     else:
         response = {
             "error": True,
