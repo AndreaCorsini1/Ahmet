@@ -30,9 +30,13 @@ class KNeighbors(Model):
 
     def __init__(self, type='c', dataset_name='iris'):
         """
+        Model initialization.
 
-        :param type:
-        :param dataset_name:
+        Args:
+            :param type: problem type (c = classification, r = regression)
+            :param dataset_name: name of dataset; classification: (iris,
+                digits, wine, breast_cancer), regression: (boston, diabetes,
+                linnerud)
         """
 
         if type.lower() == 'c':
@@ -48,10 +52,12 @@ class KNeighbors(Model):
 
     def train(self, params):
         """
+        Train the model with the given hyper-parameters.
 
         Args:
-            :param params:
+            :param params: dictionary of hyper-parameters.
         :return:
+            trained model.
         """
         # TODO: add check on params
         print(params)
@@ -79,7 +85,8 @@ class KNeighbors(Model):
         Predict the test set of the chosen dataset and produce the result
         corresponding to the hyper-parameters given as input.
 
-        :param params:
+        Args:
+            :param params:
         :return:
         """
         model = self.train(params)
@@ -90,7 +97,8 @@ class KNeighbors(Model):
                 'score': accuracy_score(self.Y_test, Y_pred),
                 'matrix': confusion_matrix(self.Y_test, Y_pred).tolist(),
                 'report': classification_report(self.Y_test, Y_pred,
-                                                target_names=self.labels)
+                                                target_names=self.labels,
+                                                zero_division=1)
             }
         else:
             result = {

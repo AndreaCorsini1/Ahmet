@@ -53,7 +53,7 @@ class RandomSearch(AbstractAlgorithm):
 
         return trial
 
-    def get_suggestions(self, space, old_trials, num_suggestions=10, budget=20):
+    def get_suggestions(self, space, old_trials, num_suggestions=10, budget=50):
         """
         Generate a list of suggestions. Each suggestion is shaped as a
         dictionary of (key: value) pairs.
@@ -66,10 +66,11 @@ class RandomSearch(AbstractAlgorithm):
                                     produced, it might be lower
             :param budget: number of attempts for generating a single parameter
                            configuration
-        :return: a list of sampled configurations
         :return:
+            a list of sampled configurations
         """
-        trial_list = []
+        new_trials = []
+        old_trials_params = [trial['parameters'] for trial in old_trials]
 
         if space:
             # Generate the parameter configurations
@@ -81,8 +82,8 @@ class RandomSearch(AbstractAlgorithm):
 
                     # The new trial could have the same values of an old one or
                     # could be already generated during this run
-                    if trial not in old_trials and trial not in trial_list:
-                        trial_list.append(trial)
+                    if trial not in old_trials_params and trial not in new_trials:
+                        new_trials.append(trial)
                         break
 
-        return trial_list
+        return new_trials

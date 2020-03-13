@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from API.models import *
+import json
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -10,6 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
     """
     studies = serializers.PrimaryKeyRelatedField(many=True,
                                                  queryset=Study.objects.all())
+
     class Meta:
         model = User
         fields = ['id', 'username', 'studies']
@@ -112,12 +114,44 @@ class ParameterSerializer(serializers.ModelSerializer):
 
 class TrialSerializer(serializers.ModelSerializer):
     """
-
+    Serialize and deserialized trial instances.
+    Ensure to pass from the serializer for adjusting the parameters for backend.
     """
     class Meta:
         model = Trial
         fields = '__all__'
         read_only_fields = ['id', 'created_time']
+
+    def to_representation(self, instance):
+        """
+        Convert the serialized parameters dict to a real dictionary.
+
+        Args:
+            :param instance: instance to be deserialized
+        :return: deserialized instance
+        """
+        ret = super().to_representation(instance)
+
+        if ret.get('parameters', False):
+            ret['parameters'] = json.loads(ret['parameters'])
+
+        return ret
+
+    def to_internal_value(self, data):
+        """
+        Convert the input parameter dictionary to a serialized string.
+
+        Args:
+            :param data: unvalidated data that may contain the parameters field
+        :return: the serialized data
+        """
+        if data.get('parameters', False):
+            data['parameters'] = json.dumps(data['parameters'])
+
+        if data.get('score_info', False):
+            data['score_info'] = json.dumps(data['score_info'])
+
+        return super().to_internal_value(data)
 
     def update(self, instance, validated_data):
         """

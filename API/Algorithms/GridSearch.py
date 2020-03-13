@@ -87,6 +87,7 @@ class GridSearch(AbstractAlgorithm):
         """
         trials = []
         names, values = self.setUp(space)
+        old_trials_params = [trial['parameters'] for trial in old_trials]
 
         if values:
             # Create the suggestions generator
@@ -98,7 +99,7 @@ class GridSearch(AbstractAlgorithm):
                 for _ in range(budget):
                     trial = next(suggestions)
 
-                    if trial not in old_trials:
+                    if trial not in old_trials_params:
                         trials.append(trial)
                         break
 

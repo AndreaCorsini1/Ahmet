@@ -24,6 +24,7 @@ def home(request):
     return render(request, "registration/home.html")
 
 
+@login_required
 def index(request):
     """
 
@@ -64,6 +65,7 @@ def openapi_yaml(request):
 
 
 @csrf_exempt
+@login_required
 def studies(request):
     """
     TODO:
@@ -95,7 +97,7 @@ def studies(request):
         return JsonResponse(response, status=405)
 
 
-@csrf_exempt
+@login_required
 def study(request, study_name):
     """
 
@@ -138,7 +140,7 @@ def study(request, study_name):
         return JsonResponse(response, status=405)
 
 
-@csrf_exempt
+@login_required
 def study_suggestions(request, study_name):
     """
 
@@ -156,7 +158,7 @@ def study_suggestions(request, study_name):
         return JsonResponse({"error": "Unsupported http method"})
 
 
-@csrf_exempt
+@login_required
 def trial(request, study_name, trial_id):
     """
 

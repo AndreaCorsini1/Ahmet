@@ -1,29 +1,28 @@
 {% include "dashboard/header.html" %}
 
-
 {% block content %}
 
 <div class="container">
-
-  <div class="text-center">
-
-  <h2>Login with password</h2>
-
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Login</button>
-  </form>
-  <br>
-
-
-  <h2>Login with Github</h2>
-
-  </div>
-
+    <div class="text-center">
+        <h2>Login with password</h2>
+        {% if form.errors %}
+            <p>Your username and password didn't match, please try again.</p>
+        {% endif %}
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Login</button>
+                {% if next %}
+                    <input type="hidden" name="next" value="{{ next }}" />
+                {% else %}
+                    <input type="hidden" name="next" value="/home/" />
+                {% endif %}
+            </form>
+        <br>
+        <h2>Login with Github</h2>
+    </div>
 </div>
 
 {% endblock %}
-
 
 {% include "dashboard/footer.html" %}

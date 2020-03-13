@@ -7,7 +7,7 @@ class DescendingEarlyStopping(AbstractEarlyStopAlgorithm):
         """
         Sort the pending trials based on the score and stop the worst.
 
-        TODO: How do I manage pending trials?
+        TODO: Not implemented
 
         Args:
             :param trials:
@@ -30,4 +30,4 @@ class DescendingEarlyStopping(AbstractEarlyStopAlgorithm):
                     if metrics[0].objective_value > metrics[1].objective_value:
                         result.append(trial)
 
-        return result
+        return []

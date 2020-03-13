@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 import multiprocessing as mp
-from traceback import print_exc
+import traceback
 
 from threading import Thread
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -11,6 +12,7 @@ from API.Models.SVM import SVM
 
 from API.EarlyStoppings.NoEarlyStopping import NoEarlyStopping
 from API.EarlyStoppings.RandomEarlyStopping import RandomEarlyStopping
+from API.EarlyStoppings.SimilarityEarlyStopping import SimilarityEarlyStopping
 
 from API.Algorithms.GridSearch import GridSearch
 from API.Algorithms.RandomSearch import RandomSearch
@@ -22,49 +24,45 @@ from API.choices import TYPE, STATUS
 from API.models import Parameter, Trial
 from API.serializers import TrialSerializer
 
-import json
 
-
-def early_stopping(study_name):
+def early_stopping(trials, old_trials):
     """
+    Pipeline of early stopping algorithms for detecting similar trials already
+    explored or worth to explore them.
 
-    :param study_name:
+    Args:
+        :param trials:
+        :param old_trials:
     :return:
     """
-    old_trial = []
-    pending_trial = []
 
-    trials = Trial.objects.filter(study_name=study_name)
-    serializer = TrialSerializer(trials, many=True)
+    stopper = NoEarlyStopping()
+    _ = stopper.get_trials_to_stop(trials, old_trials)
 
-    for trial in serializer.data:
-        # TODO: started?
-        if STATUS[trial['status']] is STATUS.PENDING:
-            pending_trial.append(trial)
-        elif STATUS[trial['status']] is STATUS.COMPLETED:
-            old_trial.append(trial)
+    stopper = RandomEarlyStopping()
+    for trial in stopper.get_trials_to_stop(trials, old_trials):
+        trials.remove(trial)
+        yield trial
 
-    e_stopper = RandomEarlyStopping()
-    trials_to_stop = e_stopper.get_trials_to_stop(pending_trial, old_trial)
-
-    print(trials_to_stop)
-    if trials_to_stop:
-        for trial in trials_to_stop:
-            obj = trials.get(id=trial['id'])
-            obj.status = STATUS.STOPPED.name
-            obj.save()
+    stopper = SimilarityEarlyStopping()
+    for trial in stopper.get_trials_to_stop(trials, old_trials):
+        trials.remove(trial)
+        yield trial
 
 
 def worker(model_name, type='c', dataset='iris', **trial):
     """
+    Evaluation worker. Take a trial and a model and evaluates the trial
+    against the model.
 
     Args:
-        :param model_name:
-        :param type:
-        :param dataset:
-        :param trial:
+        :param model_name: name of the model to use as a metric
+        :param type: type of model ('c' or 'r')
+        :param dataset: name of the dataset to use with the model
+        :param trial: dictionary of param names and values
     :return:
     """
+
     if model_name == 'Svm':
         model = SVM(type=type, dataset_name=dataset)
     elif model_name == 'SimpleFunction':
@@ -81,7 +79,6 @@ def worker(model_name, type='c', dataset='iris', **trial):
         msg = "Model {} does not return score".format(trial['model'])
         raise ValueError(msg)
 
-    #self.early_stopping(study_name)
     return results
 
 
@@ -91,10 +88,19 @@ class Suggestion(Thread):
                  dataset='iris', runs=5, budget=30, num_suggestions=10,
                  name=None, daemon=True):
         """
+        Initialize the suggestion worker.
 
         Args:
-            :param name:
-            :param daemon:
+            :param study_name: name of the study
+            :param alg_name: name of the algorithm
+            :param model_name: name of the model to use as a metric
+            :param model_type: type of model ('c' or 'r')
+            :param dataset: name of the dataset to use with the model
+            :param runs: how many times the algorithm is launched
+            :param budget: budget available for each suggestion generation
+            :param num_suggestions: number of suggestions to generate
+            :param name: thread name (default None)
+            :param daemon: daemon thread (the thread is killed with the app)
         """
         Thread.__init__(self, name=name, daemon=daemon)
 
@@ -106,16 +112,15 @@ class Suggestion(Thread):
         self.model_type = model_type
         self.dataset = dataset
 
-        self.algorithm = self.get_algorithm(alg_name)
-        self.space = self.get_space(study_name)
-        self.old_trials = [json.loads(trial.parameters) for trial
-                           in Trial.objects.filter(study_name=study_name)]
+        self.algorithm = self.__algorithm(alg_name)
+        self.space = self.__space(study_name)
 
-    def get_algorithm(self, name):
+    def __algorithm(self, name):
         """
+        Get the algorithm object associated to the name or raise and exception.
 
         Args:
-            :param name:
+            :param name: algorithm name
         :return:
         """
         if name == "RandomSearch":
@@ -133,7 +138,7 @@ class Suggestion(Thread):
 
         return algorithm
 
-    def get_space(self, study_name):
+    def __space(self, study_name):
         """
         Get a dictionary of parameter name and corresponding values for a
         specific study.
@@ -160,6 +165,29 @@ class Suggestion(Thread):
 
         return space
 
+    def __save(self, trial, result, status):
+        """
+        Save a trial that has been completed of stopped.
+
+        Args:
+            :param trial: trial to save as a dict of param-name: value
+            :param result: result after evaluation on model of empty dict
+            :param status: trial status (stopped or completed)
+        """
+        data = {
+            'study_name': self.study_name,
+            'parameters': trial,
+            'status': status.name
+        }
+        if result:
+            data['score'] = result.pop('score', 0)
+            data['score_info'] = result
+
+        # Save the evaluated trial
+        serializer = TrialSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+
     def run(self):
         """
         Run the body of the thread asynchronously.
@@ -172,8 +200,15 @@ class Suggestion(Thread):
         with ThreadPoolExecutor(max_workers=mp.cpu_count()) as pool:
 
             for _ in range(self.runs):
-                trials = self.algorithm.get_suggestions(self.space,
-                                                        self.old_trials)
+                # Filter only completed trials
+                queryset = Trial.objects.filter(study_name=self.study_name)
+                old_trials = TrialSerializer(queryset, many=True).data
+
+                trials = self.algorithm.get_suggestions(self.space, old_trials)
+
+                # Remove and save the trials to be stopped
+                for trial in early_stopping(trials, old_trials):
+                    self.__save(trial, {}, STATUS.STOPPED)
 
                 threads = {pool.submit(worker,
                                        model_name=self.model_name,
@@ -184,26 +219,9 @@ class Suggestion(Thread):
                 # The threads do not finish in order, here I collect the
                 # unordered results
                 for thread in as_completed(threads):
-                    trial = threads[thread]
-
                     try:
                         result = thread.result()
-                    except Exception as exc:
-                        print_exc()
-                        print("Trial: {} generated an exception: {}".format(
-                                    threads[thread], exc))
+                    except Exception:
+                        traceback.print_exc()
                     else:
-                        # Save the evaluated trial
-                        serializer = TrialSerializer(data={
-                            'study_name': self.study_name,
-                            'parameters': json.dumps(trial),
-                            'score': result.pop('score', 0),
-                            'score_info': json.dumps(result),
-                            'status': STATUS.COMPLETED.name
-                        })
-
-                        if serializer.is_valid():
-                            serializer.save()
-                        else:
-                            msg = "Internal error: {}".format(serializer.errors)
-                            raise ValueError(msg)
+                        self.__save(threads[thread], result, STATUS.COMPLETED)

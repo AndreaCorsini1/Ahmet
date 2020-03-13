@@ -1,14 +1,18 @@
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework.authtoken.views import obtain_auth_token
 from . import views
 
 app_name = 'api'
 
 urlpatterns = [
     #
-    path('users/', views.UserList.as_view()),
+    path('users/', views.UserList.as_view(), name="users"),
     #
-    path('users/<int:pk>/', views.UserDetail.as_view()),
+    path('users/<int:pk>/', views.UserDetail.as_view(), name="user"),
+
+    #
+    path('token-auth/', obtain_auth_token, name='token-auth'),
 
     # EX: localhost:8080/api/v1/algorithms
     path('algorithms/', views.AlgorithmList.as_view(), name="algorithms"),

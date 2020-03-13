@@ -16,7 +16,7 @@ class SVM(Model):
         - C: strength of regularization (it is inversely proportional to C).
              Must be strictly positive.
         - kernel: kernel type to be used in the algorithm. It must be one of
-                  'linear', 'poly', 'rbf', 'sigmoid' and 'precomputed'
+                  'linear', 'poly', 'rbf', 'sigmoid'
         - gamma: kernel coefficient for ‘rbf’, ‘poly’ and ‘sigmoid’.
         - coef0: independent term in kernel function. It is only significant
                  in ‘poly’ and ‘sigmoid’.
@@ -27,9 +27,13 @@ class SVM(Model):
 
     def __init__(self, type='c', dataset_name='iris'):
         """
+        Model initialization.
 
-        :param type:
-        :param dataset_name:
+        Args:
+            :param type: problem type (c = classification, r = regression)
+            :param dataset_name: name of dataset; classification: (iris,
+                digits, wine, breast_cancer), regression: (boston, diabetes,
+                linnerud)
         """
 
         if type.lower() == 'c':
@@ -45,10 +49,12 @@ class SVM(Model):
 
     def train(self, params):
         """
+        Train the model with the given hyper-parameters.
 
         Args:
-            :param params:
+            :param params: dictionary of hyper-parameters.
         :return:
+            trained model.
         """
         # TODO: add check on params
 
@@ -86,7 +92,8 @@ class SVM(Model):
                 'score': accuracy_score(self.Y_test, Y_pred),
                 'matrix': confusion_matrix(self.Y_test, Y_pred).tolist(),
                 'report': classification_report(self.Y_test, Y_pred,
-                                                target_names=self.labels)
+                                                target_names=self.labels,
+                                                zero_division=1)
             }
         else:
             result = {

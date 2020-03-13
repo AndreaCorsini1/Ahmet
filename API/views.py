@@ -12,7 +12,7 @@ from API.tasks import Suggestion
 
 class UserList(generics.ListAPIView):
     """
-
+    View for getting the studies associated to each user
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -20,7 +20,7 @@ class UserList(generics.ListAPIView):
 
 class UserDetail(generics.RetrieveAPIView):
     """
-
+    Return studies for a specific user
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -38,8 +38,7 @@ class StudyList(mixins.CreateModelMixin,
     serializer_class = StudySerializer
 
     # Set the permissions for this view
-    permission_classes = [IsAuthenticatedOrReadOnly,
-                          IsOwnerOrReadOnly,
+    permission_classes = [IsOwnerOrReadOnly,
                           IsAdminUser]
 
     def perform_create(self, serializer):
@@ -81,8 +80,7 @@ class StudyDetail(mixins.RetrieveModelMixin,
     lookup_url_kwarg = 'study_name'
 
     # Set the permissions for this view
-    permission_classes = [IsAuthenticatedOrReadOnly,
-                          IsOwnerOrReadOnly,
+    permission_classes = [IsOwnerOrReadOnly,
                           IsAdminUser]
 
     def get(self, request, *args, **kwargs):
