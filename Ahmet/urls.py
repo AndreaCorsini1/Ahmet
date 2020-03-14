@@ -19,14 +19,15 @@ from django.contrib.auth.views import LoginView, LogoutView
 from Dashboard.views import home
 
 urlpatterns = [
-    # Ex: localhost:8080/dashboard/... and localhost:8080/Dashboard/...
+    # Ex: localhost:8080/dashboard/...
     path('dashboard/', include('Dashboard.urls', namespace='dashboard')),
     path('', include('Dashboard.urls')),
 
-    # Ex: localhost:8080/Suggestions/... and localhost:8080/suggestions/...
+    # Ex: localhost:8080/api/v0.1/...
     path('api/v0.1/', include('API.urls', namespace='api')),
     path('api-auth/', include('rest_framework.urls')),
 
+    # General page of django
     path('admin/', admin.site.urls),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),

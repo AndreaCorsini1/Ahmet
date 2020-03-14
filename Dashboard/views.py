@@ -59,7 +59,7 @@ def openapi_yaml(request):
     :return:
     """
     openapi = open(os.path.join(settings.BASE_DIR,
-                       "Suggestions/swagger_editor/openapi.yaml"), 'rb')
+                       "API/swagger_editor/openapi.yml"), 'rb')
 
     return HttpResponse(openapi.read())
 

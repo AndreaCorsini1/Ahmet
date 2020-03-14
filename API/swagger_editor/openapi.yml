@@ -1,0 +1,2469 @@
+openapi: 3.0.2
+
+info:
+  description: "Suggestion API for creating and querying Ahmet's studies"
+  version: "0.1"
+  title: "Ahmet API"
+  contact:
+    email: "andrea.cors95@gmail.com"
+
+servers:
+  - url: http://localhost:8080/suggestions/v0.1
+    description: Development server API v0.1
+
+tags:
+  - name: "studies"
+    description: "Manage the studies"
+  - name: "algorithms"
+    description: "Manage the algorithms"
+  - name: "trials"
+    description: "Manage the trials"
+  - name: "parameters"
+    description: "Manage the parameters of studies"
+  - name: "metrics"
+    description: "Manage the metrics/models"
+
+paths:
+  /api/v0.1/users/:
+    get:
+      operationId: listUsers
+      description: View for getting the studies associated to each user
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                  previous:
+                    type: string
+                    nullable: true
+                  results:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: integer
+                          readOnly: true
+                        username:
+                          type: string
+                          description: Required. 150 characters or fewer. Letters,
+                            digits and @/./+/-/_ only.
+                          maxLength: 150
+                        studies:
+                          type: array
+                          items:
+                            type: integer
+                      required:
+                      - username
+                      - studies
+          description: ''
+  /api/v0.1/users{format}:
+    get:
+      operationId: RetrieveUser
+      description: View for getting the studies associated to each user
+      parameters:
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  username:
+                    type: string
+                    description: Required. 150 characters or fewer. Letters, digits
+                      and @/./+/-/_ only.
+                    maxLength: 150
+                  studies:
+                    type: array
+                    items:
+                      type: integer
+                required:
+                - username
+                - studies
+          description: ''
+  /api/v0.1/users/{id}/:
+    get:
+      operationId: RetrieveUser1
+      description: Return studies for a specific user
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this user.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  username:
+                    type: string
+                    description: Required. 150 characters or fewer. Letters, digits
+                      and @/./+/-/_ only.
+                    maxLength: 150
+                  studies:
+                    type: array
+                    items:
+                      type: integer
+                required:
+                - username
+                - studies
+          description: ''
+  /api/v0.1/users/{id}{format}:
+    get:
+      operationId: RetrieveUserF
+      description: Return studies for a specific user
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this user.
+        schema:
+          type: string
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  username:
+                    type: string
+                    description: Required. 150 characters or fewer. Letters, digits
+                      and @/./+/-/_ only.
+                    maxLength: 150
+                  studies:
+                    type: array
+                    items:
+                      type: integer
+                required:
+                - username
+                - studies
+          description: ''
+  /api/v0.1/algorithms/:
+    get:
+      tags:
+        - "algorithms"
+      operationId: listAlgorithms
+      description: "Function for work on generic algorithms. The operation permitted\
+        \ are:\n    - POST: create a new algorithms\n    - GET: list all the available\
+        \ algorithms"
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                  previous:
+                    type: string
+                    nullable: true
+                  results:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: integer
+                          readOnly: true
+                        name:
+                          type: string
+                          maxLength: 128
+                        status:
+                          type: string
+                          maxLength: 128
+                        created_time:
+                          type: string
+                          format: date-time
+                          readOnly: true
+                        updated_time:
+                          type: string
+                          format: date-time
+                          readOnly: true
+                      required:
+                      - name
+          description: ''
+    post:
+      tags:
+        - "algorithms"
+      operationId: CreateAlgorithm
+      description: "Function for work on generic algorithms. The operation permitted\
+        \ are:\n    - POST: create a new algorithms\n    - GET: list all the available\
+        \ algorithms"
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: &id001
+              properties:
+                name:
+                  type: string
+                  maxLength: 128
+                status:
+                  type: string
+                  maxLength: 128
+              required:
+              - name
+          application/x-www-form-urlencoded:
+            schema: *id001
+          multipart/form-data:
+            schema: *id001
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                required:
+                - name
+          description: ''
+  /api/v0.1/algorithms{format}:
+    get:
+      tags:
+        - "algorithms"
+      operationId: RetrieveAlgorithm
+      description: "Function for work on generic algorithms. The operation permitted\
+        \ are:\n    - POST: create a new algorithms\n    - GET: list all the available\
+        \ algorithms"
+      parameters:
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                required:
+                - name
+          description: ''
+    post:
+      operationId: CreateAlgorithmF
+      description: "Function for work on generic algorithms. The operation permitted\
+        \ are:\n    - POST: create a new algorithms\n    - GET: list all the available\
+        \ algorithms"
+      parameters:
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id002
+              properties:
+                name:
+                  type: string
+                  maxLength: 128
+                status:
+                  type: string
+                  maxLength: 128
+              required:
+              - name
+          application/x-www-form-urlencoded:
+            schema: *id002
+          multipart/form-data:
+            schema: *id002
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                required:
+                - name
+          description: ''
+  /api/v0.1/algorithms/{alg_name}/:
+    get:
+      tags:
+        - "algorithms"
+      operationId: RetrieveStudy
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: alg_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  owner:
+                    type: string
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  objective:
+                    enum:
+                    - MAXIMIZE
+                    - MINIMIZE
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  algorithm:
+                    type: string
+                  metric:
+                    type: string
+                required:
+                - name
+                - objective
+          description: ''
+    delete:
+      tags:
+        - "algorithms"
+      operationId: DestroyStudy
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: alg_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+  /api/v0.1/algorithms/{alg_name}{format}:
+    get:
+      tags:
+        - "algorithms"
+      operationId: RetrieveStudyF
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: alg_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  owner:
+                    type: string
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  objective:
+                    enum:
+                    - MAXIMIZE
+                    - MINIMIZE
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  algorithm:
+                    type: string
+                  metric:
+                    type: string
+                required:
+                - name
+                - objective
+          description: ''
+    delete:
+      tags:
+        - "algorithms"
+      operationId: DestroyStudyF
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: alg_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+  /api/v0.1/metrics/:
+    get:
+      tags:
+        - "metrics"
+      operationId: listMetrics
+      description: "Function for work on generic algorithms. The operation permitted\
+        \ are:\n    - POST: create a new algorithms\n    - GET: list all the available\
+        \ algorithms"
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                  previous:
+                    type: string
+                    nullable: true
+                  results:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: integer
+                          readOnly: true
+                        name:
+                          type: string
+                          maxLength: 128
+                        status:
+                          type: string
+                          maxLength: 128
+                        created_time:
+                          type: string
+                          format: date-time
+                          readOnly: true
+                        updated_time:
+                          type: string
+                          format: date-time
+                          readOnly: true
+                      required:
+                      - name
+          description: ''
+    post:
+      tags:
+        - "metrics"
+      operationId: CreateMetric
+      description: "Function for work on generic algorithms. The operation permitted\
+        \ are:\n    - POST: create a new algorithms\n    - GET: list all the available\
+        \ algorithms"
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: &id003
+              properties:
+                name:
+                  type: string
+                  maxLength: 128
+                status:
+                  type: string
+                  maxLength: 128
+              required:
+              - name
+          application/x-www-form-urlencoded:
+            schema: *id003
+          multipart/form-data:
+            schema: *id003
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                required:
+                - name
+          description: ''
+  /api/v0.1/metrics{format}:
+    get:
+      tags:
+        - "metrics"
+      operationId: RetrieveMetric
+      description: "Function for work on generic algorithms. The operation permitted\
+        \ are:\n    - POST: create a new algorithms\n    - GET: list all the available\
+        \ algorithms"
+      parameters:
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                required:
+                - name
+          description: ''
+    post:
+      tags:
+        - "metrics"
+      operationId: CreateMetricF
+      description: "Function for work on generic algorithms. The operation permitted\
+        \ are:\n    - POST: create a new algorithms\n    - GET: list all the available\
+        \ algorithms"
+      parameters:
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id004
+              properties:
+                name:
+                  type: string
+                  maxLength: 128
+                status:
+                  type: string
+                  maxLength: 128
+              required:
+              - name
+          application/x-www-form-urlencoded:
+            schema: *id004
+          multipart/form-data:
+            schema: *id004
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                required:
+                - name
+          description: ''
+  /api/v0.1/metrics/{metric_name}/:
+    get:
+      tags:
+        - "metrics"
+      operationId: RetrieveMetric1
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: metric_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                required:
+                - name
+          description: ''
+    put:
+      tags:
+        - "metrics"
+      operationId: UpdateMetric
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: metric_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id005
+              properties:
+                name:
+                  type: string
+                  maxLength: 128
+                status:
+                  type: string
+                  maxLength: 128
+              required:
+              - name
+          application/x-www-form-urlencoded:
+            schema: *id005
+          multipart/form-data:
+            schema: *id005
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                required:
+                - name
+          description: ''
+    delete:
+      tags:
+        - "metrics"
+      operationId: DestroyMetric
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: metric_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+  /api/v0.1/metrics/{metric_name}{format}:
+    get:
+      tags:
+        - "metrics"
+      operationId: RetrieveMetricF
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: metric_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                required:
+                - name
+          description: ''
+    put:
+      tags:
+        - "metrics"
+      operationId: UpdateMetricF
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: metric_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id006
+              properties:
+                name:
+                  type: string
+                  maxLength: 128
+                status:
+                  type: string
+                  maxLength: 128
+              required:
+              - name
+          application/x-www-form-urlencoded:
+            schema: *id006
+          multipart/form-data:
+            schema: *id006
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                required:
+                - name
+          description: ''
+    delete:
+      tags:
+        - "metrics"
+      operationId: DestroyMetricF
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: metric_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+  /api/v0.1/parameters/:
+    get:
+      tags:
+        - "parameters"
+      operationId: listParameters
+      description: "Function for work on generic algorithms. The operation permitted\
+        \ are:\n    - POST: create a new algorithms\n    - GET: list all the available\
+        \ algorithms"
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                  previous:
+                    type: string
+                    nullable: true
+                  results:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: integer
+                          readOnly: true
+                        name:
+                          type: string
+                          maxLength: 128
+                        type:
+                          enum:
+                          - DISCRETE
+                          - CATEGORICAL
+                          - FLOAT
+                          - INTEGER
+                        values:
+                          type: string
+                          nullable: true
+                        min:
+                          type: number
+                          nullable: true
+                        max:
+                          type: number
+                          nullable: true
+                        study_name:
+                          type: string
+                      required:
+                      - name
+                      - type
+                      - study_name
+          description: ''
+    post:
+      tags:
+        - "parameters"
+      operationId: CreateParameter
+      description: "Function for work on generic algorithms. The operation permitted\
+        \ are:\n    - POST: create a new algorithms\n    - GET: list all the available\
+        \ algorithms"
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: &id007
+              properties:
+                name:
+                  type: string
+                  maxLength: 128
+                type:
+                  enum:
+                  - DISCRETE
+                  - CATEGORICAL
+                  - FLOAT
+                  - INTEGER
+                values:
+                  type: string
+                  nullable: true
+                min:
+                  type: number
+                  nullable: true
+                max:
+                  type: number
+                  nullable: true
+                study_name:
+                  type: string
+              required:
+              - name
+              - type
+              - study_name
+          application/x-www-form-urlencoded:
+            schema: *id007
+          multipart/form-data:
+            schema: *id007
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  type:
+                    enum:
+                    - DISCRETE
+                    - CATEGORICAL
+                    - FLOAT
+                    - INTEGER
+                  values:
+                    type: string
+                    nullable: true
+                  min:
+                    type: number
+                    nullable: true
+                  max:
+                    type: number
+                    nullable: true
+                  study_name:
+                    type: string
+                required:
+                - name
+                - type
+                - study_name
+          description: ''
+  /api/v0.1/parameters{format}:
+    get:
+      tags:
+        - "parameters"
+      operationId: RetrieveParameter
+      description: "Function for work on generic algorithms. The operation permitted\
+        \ are:\n    - POST: create a new algorithms\n    - GET: list all the available\
+        \ algorithms"
+      parameters:
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  type:
+                    enum:
+                    - DISCRETE
+                    - CATEGORICAL
+                    - FLOAT
+                    - INTEGER
+                  values:
+                    type: string
+                    nullable: true
+                  min:
+                    type: number
+                    nullable: true
+                  max:
+                    type: number
+                    nullable: true
+                  study_name:
+                    type: string
+                required:
+                - name
+                - type
+                - study_name
+          description: ''
+    post:
+      tags:
+        - "parameters"
+      operationId: CreateParameterF
+      description: "Function for work on generic algorithms. The operation permitted\
+        \ are:\n    - POST: create a new algorithms\n    - GET: list all the available\
+        \ algorithms"
+      parameters:
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id008
+              properties:
+                name:
+                  type: string
+                  maxLength: 128
+                type:
+                  enum:
+                  - DISCRETE
+                  - CATEGORICAL
+                  - FLOAT
+                  - INTEGER
+                values:
+                  type: string
+                  nullable: true
+                min:
+                  type: number
+                  nullable: true
+                max:
+                  type: number
+                  nullable: true
+                study_name:
+                  type: string
+              required:
+              - name
+              - type
+              - study_name
+          application/x-www-form-urlencoded:
+            schema: *id008
+          multipart/form-data:
+            schema: *id008
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  type:
+                    enum:
+                    - DISCRETE
+                    - CATEGORICAL
+                    - FLOAT
+                    - INTEGER
+                  values:
+                    type: string
+                    nullable: true
+                  min:
+                    type: number
+                    nullable: true
+                  max:
+                    type: number
+                    nullable: true
+                  study_name:
+                    type: string
+                required:
+                - name
+                - type
+                - study_name
+          description: ''
+  /api/v0.1/parameters/{id}/:
+    get:
+      tags:
+        - "parameters"
+      operationId: RetrieveParameterId
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this parameter.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  type:
+                    enum:
+                    - DISCRETE
+                    - CATEGORICAL
+                    - FLOAT
+                    - INTEGER
+                  values:
+                    type: string
+                    nullable: true
+                  min:
+                    type: number
+                    nullable: true
+                  max:
+                    type: number
+                    nullable: true
+                  study_name:
+                    type: string
+                required:
+                - name
+                - type
+                - study_name
+          description: ''
+    delete:
+      tags:
+        - "parameters"
+      operationId: DestroyParameter
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this parameter.
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+  /api/v0.1/parameters/{id}{format}:
+    get:
+      tags:
+        - "parameters"
+      operationId: RetrieveParameterIdF
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this parameter.
+        schema:
+          type: string
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  type:
+                    enum:
+                    - DISCRETE
+                    - CATEGORICAL
+                    - FLOAT
+                    - INTEGER
+                  values:
+                    type: string
+                    nullable: true
+                  min:
+                    type: number
+                    nullable: true
+                  max:
+                    type: number
+                    nullable: true
+                  study_name:
+                    type: string
+                required:
+                - name
+                - type
+                - study_name
+          description: ''
+    delete:
+      tags:
+        - "parameters"
+      operationId: DestroyParameterF
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this parameter.
+        schema:
+          type: string
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+  /api/v0.1/trials/:
+    get:
+      tags:
+        - "trials"
+      operationId: listTrials
+      description: "Function for work on generic algorithms. The operation permitted\
+        \ are:\n    - GET: list all the available algorithms"
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                  previous:
+                    type: string
+                    nullable: true
+                  results:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: integer
+                          readOnly: true
+                        parameters:
+                          type: string
+                          nullable: true
+                        training_step:
+                          type: integer
+                          nullable: true
+                        score:
+                          type: number
+                          nullable: true
+                        score_info:
+                          type: string
+                          nullable: true
+                        status:
+                          enum:
+                          - PENDING
+                          - STARTED
+                          - COMPLETED
+                          - STOPPED
+                        created_time:
+                          type: string
+                          format: date-time
+                          readOnly: true
+                        updated_time:
+                          type: string
+                          format: date-time
+                          readOnly: true
+                        study_name:
+                          type: string
+                      required:
+                      - status
+                      - study_name
+          description: ''
+  /api/v0.1/trials{format}:
+    get:
+      tags:
+        - "trials"
+      operationId: RetrieveTrial
+      description: "Function for work on generic algorithms. The operation permitted\
+        \ are:\n    - GET: list all the available algorithms"
+      parameters:
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  parameters:
+                    type: string
+                    nullable: true
+                  training_step:
+                    type: integer
+                    nullable: true
+                  score:
+                    type: number
+                    nullable: true
+                  score_info:
+                    type: string
+                    nullable: true
+                  status:
+                    enum:
+                    - PENDING
+                    - STARTED
+                    - COMPLETED
+                    - STOPPED
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  study_name:
+                    type: string
+                required:
+                - status
+                - study_name
+          description: ''
+  /api/v0.1/trials/{id}/:
+    get:
+      tags:
+        - "trials"
+      operationId: RetrieveTrialId
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this trial.
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  parameters:
+                    type: string
+                    nullable: true
+                  training_step:
+                    type: integer
+                    nullable: true
+                  score:
+                    type: number
+                    nullable: true
+                  score_info:
+                    type: string
+                    nullable: true
+                  status:
+                    enum:
+                    - PENDING
+                    - STARTED
+                    - COMPLETED
+                    - STOPPED
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  study_name:
+                    type: string
+                required:
+                - status
+                - study_name
+          description: ''
+    delete:
+      tags:
+        - "trials"
+      operationId: DestroyTrial
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this trial.
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+  /api/v0.1/trials/{id}{format}:
+    get:
+      tags:
+        - "trials"
+      operationId: RetrieveTrialIdF
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this trial.
+        schema:
+          type: string
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  parameters:
+                    type: string
+                    nullable: true
+                  training_step:
+                    type: integer
+                    nullable: true
+                  score:
+                    type: number
+                    nullable: true
+                  score_info:
+                    type: string
+                    nullable: true
+                  status:
+                    enum:
+                    - PENDING
+                    - STARTED
+                    - COMPLETED
+                    - STOPPED
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  study_name:
+                    type: string
+                required:
+                - status
+                - study_name
+          description: ''
+    delete:
+      tags:
+        - "trials"
+      operationId: DestroyTrialIdF
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: A unique integer value identifying this trial.
+        schema:
+          type: string
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+  /api/v0.1/studies/:
+    get:
+      tags:
+        - "studies"
+      operationId: listStudys
+      description: "Function for work on generic studies. The operation permitted\
+        \ are:\n    - POST: create a brand new study\n    - GET: list all the available\
+        \ studies"
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    example: 123
+                  next:
+                    type: string
+                    nullable: true
+                  previous:
+                    type: string
+                    nullable: true
+                  results:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: integer
+                          readOnly: true
+                        owner:
+                          type: string
+                          readOnly: true
+                        name:
+                          type: string
+                          maxLength: 128
+                        objective:
+                          enum:
+                          - MAXIMIZE
+                          - MINIMIZE
+                        status:
+                          type: string
+                          maxLength: 128
+                        created_time:
+                          type: string
+                          format: date-time
+                          readOnly: true
+                        updated_time:
+                          type: string
+                          format: date-time
+                          readOnly: true
+                        algorithm:
+                          type: string
+                        metric:
+                          type: string
+                      required:
+                      - name
+                      - objective
+          description: ''
+    post:
+      tags:
+        - "studies"
+      operationId: CreateStudy
+      description: "Function for work on generic studies. The operation permitted\
+        \ are:\n    - POST: create a brand new study\n    - GET: list all the available\
+        \ studies"
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema: &id009
+              properties:
+                name:
+                  type: string
+                  maxLength: 128
+                objective:
+                  enum:
+                  - MAXIMIZE
+                  - MINIMIZE
+                status:
+                  type: string
+                  maxLength: 128
+                algorithm:
+                  type: string
+                metric:
+                  type: string
+              required:
+              - name
+              - objective
+          application/x-www-form-urlencoded:
+            schema: *id009
+          multipart/form-data:
+            schema: *id009
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  owner:
+                    type: string
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  objective:
+                    enum:
+                    - MAXIMIZE
+                    - MINIMIZE
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  algorithm:
+                    type: string
+                  metric:
+                    type: string
+                required:
+                - name
+                - objective
+          description: ''
+  /api/v0.1/studies{format}:
+    get:
+      tags:
+        - "studies"
+      operationId: RetrieveStudy1
+      description: "Function for work on generic studies. The operation permitted\
+        \ are:\n    - POST: create a brand new study\n    - GET: list all the available\
+        \ studies"
+      parameters:
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  owner:
+                    type: string
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  objective:
+                    enum:
+                    - MAXIMIZE
+                    - MINIMIZE
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  algorithm:
+                    type: string
+                  metric:
+                    type: string
+                required:
+                - name
+                - objective
+          description: ''
+    post:
+      tags:
+        - "studies"
+      operationId: CreateStudyF
+      description: "Function for work on generic studies. The operation permitted\
+        \ are:\n    - POST: create a brand new study\n    - GET: list all the available\
+        \ studies"
+      parameters:
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id010
+              properties:
+                name:
+                  type: string
+                  maxLength: 128
+                objective:
+                  enum:
+                  - MAXIMIZE
+                  - MINIMIZE
+                status:
+                  type: string
+                  maxLength: 128
+                algorithm:
+                  type: string
+                metric:
+                  type: string
+              required:
+              - name
+              - objective
+          application/x-www-form-urlencoded:
+            schema: *id010
+          multipart/form-data:
+            schema: *id010
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  owner:
+                    type: string
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  objective:
+                    enum:
+                    - MAXIMIZE
+                    - MINIMIZE
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  algorithm:
+                    type: string
+                  metric:
+                    type: string
+                required:
+                - name
+                - objective
+          description: ''
+  /api/v0.1/studies/{study_name}/:
+    get:
+      tags:
+        - "studies"
+      operationId: RetrieveStudy2
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: study_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  owner:
+                    type: string
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  objective:
+                    enum:
+                    - MAXIMIZE
+                    - MINIMIZE
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  algorithm:
+                    type: string
+                  metric:
+                    type: string
+                required:
+                - name
+                - objective
+          description: ''
+    put:
+      tags:
+        - "studies"
+      operationId: UpdateStudy
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: study_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id011
+              properties:
+                name:
+                  type: string
+                  maxLength: 128
+                objective:
+                  enum:
+                  - MAXIMIZE
+                  - MINIMIZE
+                status:
+                  type: string
+                  maxLength: 128
+                algorithm:
+                  type: string
+                metric:
+                  type: string
+              required:
+              - name
+              - objective
+          application/x-www-form-urlencoded:
+            schema: *id011
+          multipart/form-data:
+            schema: *id011
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  owner:
+                    type: string
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  objective:
+                    enum:
+                    - MAXIMIZE
+                    - MINIMIZE
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  algorithm:
+                    type: string
+                  metric:
+                    type: string
+                required:
+                - name
+                - objective
+          description: ''
+    delete:
+      tags:
+        - "studies"
+      operationId: DestroyStudy1
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: study_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+  /api/v0.1/studies/{study_name}{format}:
+    get:
+      tags:
+        - "studies"
+      operationId: RetrieveStudy3
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: study_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  owner:
+                    type: string
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  objective:
+                    enum:
+                    - MAXIMIZE
+                    - MINIMIZE
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  algorithm:
+                    type: string
+                  metric:
+                    type: string
+                required:
+                - name
+                - objective
+          description: ''
+    put:
+      tags:
+        - "studies"
+      operationId: UpdateStudy2
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: study_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema: &id012
+              properties:
+                name:
+                  type: string
+                  maxLength: 128
+                objective:
+                  enum:
+                  - MAXIMIZE
+                  - MINIMIZE
+                status:
+                  type: string
+                  maxLength: 128
+                algorithm:
+                  type: string
+                metric:
+                  type: string
+              required:
+              - name
+              - objective
+          application/x-www-form-urlencoded:
+            schema: *id012
+          multipart/form-data:
+            schema: *id012
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: integer
+                    readOnly: true
+                  owner:
+                    type: string
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 128
+                  objective:
+                    enum:
+                    - MAXIMIZE
+                    - MINIMIZE
+                  status:
+                    type: string
+                    maxLength: 128
+                  created_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  updated_time:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  algorithm:
+                    type: string
+                  metric:
+                    type: string
+                required:
+                - name
+                - objective
+          description: ''
+    delete:
+      tags:
+        - "studies"
+      operationId: DestroyStudy4
+      description: "Function to work on a single study. The allowed operations are:\n\
+        \    - GET: get the information about a study by its name\n    - PUT: update\
+        \ the status of a study\n    - DELETE: delete a study by its name"
+      parameters:
+      - name: study_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+  /api/v0.1/studies/{study_name}/parameters/:
+    get:
+      tags:
+        - "studies"
+      operationId: liststudy_parameters
+      description: ''
+      parameters:
+      - name: study_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: ''
+  /api/v0.1/studies/{study_name}/parameters{format}:
+    get:
+      tags:
+        - "studies"
+      operationId: Retrievestudy_parameters
+      description: ''
+      parameters:
+      - name: study_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: ''
+  /api/v0.1/studies/{study_name}/trials/:
+    get:
+      tags:
+        - "studies"
+      operationId: liststudy_trials
+      description: ''
+      parameters:
+      - name: study_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: ''
+  /api/v0.1/studies/{study_name}/trials{format}:
+    get:
+      tags:
+        - "studies"
+      operationId: Retrievestudy_trials
+      description: ''
+      parameters:
+      - name: study_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: ''
+  /api/v0.1/studies/{study_name}/start/:
+    get:
+      tags:
+        - "studies"
+      operationId: listStartStudys
+      description: ''
+      parameters:
+      - name: study_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+          description: ''
+  /api/v0.1/studies/{study_name}/start{format}:
+    get:
+      tags:
+        - "studies"
+      operationId: RetrieveStartStudy
+      description: ''
+      parameters:
+      - name: study_name
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: ''
+  /api/v0.1/token-auth/:
+    post:
+      operationId: CreateObtainAuthToken
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: ''
+  /api/v0.1/token-auth{format}:
+    post:
+      operationId: CreateObtainAuthTokenF
+      description: ''
+      parameters:
+      - name: format
+        in: path
+        required: true
+        description: ''
+        schema:
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: ''
+
+components:
+  schemas:
+    Algorithm:
+      type: object
+      description: Optimization algorithm
+      properties:
+        name:
+          type: string
+          format: string
+          description: Name of the algorithm
+    Metric:
+      type: object
+      description: Model to evaluate trials
+      properties:
+        name:
+          type: string
+          format: string
+          description: Name of the metric
+    Study:
+      type: object
+      properties:
+        algorithm:
+          $ref: '#/components/schemas/Algorithm'
+        metric:
+          $ref: '#/components/schemas/Metric'
+    Parameter:
+      type: object
+      properties:
+        study name:
+          $ref: '#/components/schemas/Study'
+    Trial:
+      type: object
+      description: Color component
+      properties:
+        parameters:
+          type: string
+          format: string
+          description: Dumps of json parameters.
+        study name:
+          $ref: '#/components/schemas/Study'

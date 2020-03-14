@@ -35,7 +35,6 @@ def early_stopping(trials, old_trials):
         :param old_trials:
     :return:
     """
-
     stopper = NoEarlyStopping()
     _ = stopper.get_trials_to_stop(trials, old_trials)
 
@@ -62,7 +61,6 @@ def worker(model_name, type='c', dataset='iris', **trial):
         :param trial: dictionary of param names and values
     :return:
     """
-
     if model_name == 'Svm':
         model = SVM(type=type, dataset_name=dataset)
     elif model_name == 'SimpleFunction':
