@@ -5,10 +5,10 @@ import traceback
 from threading import Thread
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from API.Models.SimpleFunction import SimpleFunction
-from API.Models.KNeighbors import KNeighbors
-from API.Models.RandomForest import RandomForest
-from API.Models.SVM import SVM
+from API.Metric.SimpleFunction import SimpleFunction
+from API.Metric.KNeighbors import KNeighbors
+from API.Metric.RandomForest import RandomForest
+from API.Metric.SVM import SVM
 
 from API.EarlyStoppings.NoEarlyStopping import NoEarlyStopping
 from API.EarlyStoppings.RandomEarlyStopping import RandomEarlyStopping
@@ -56,7 +56,7 @@ def worker(model_name, type='c', dataset='iris', **trial):
 
     Args:
         :param model_name: name of the model to use as a metric
-        :param type: type of model ('c' or 'r')
+        :param type: type of model ('c' = classifier or 'r' = regressor)
         :param dataset: name of the dataset to use with the model
         :param trial: dictionary of param names and values
     :return:
@@ -82,9 +82,9 @@ def worker(model_name, type='c', dataset='iris', **trial):
 
 class Suggestion(Thread):
 
-    def __init__(self, study_name, alg_name, model_name, model_type='c',
-                 dataset='iris', runs=5, budget=30, num_suggestions=10,
-                 name=None, daemon=True):
+    def __init__(self, study_name, alg_name, model_name,
+                 model_type='c', dataset='iris', runs=5,
+                 budget=30, num_suggestions=10, name=None, daemon=True):
         """
         Initialize the suggestion worker.
 
@@ -92,7 +92,7 @@ class Suggestion(Thread):
             :param study_name: name of the study
             :param alg_name: name of the algorithm
             :param model_name: name of the model to use as a metric
-            :param model_type: type of model ('c' or 'r')
+            :param model_type: type of model (c = classifier or r = regressor)
             :param dataset: name of the dataset to use with the model
             :param runs: how many times the algorithm is launched
             :param budget: budget available for each suggestion generation
@@ -149,15 +149,15 @@ class Suggestion(Thread):
 
         for param in space:
 
-            if TYPE[param['type']] is TYPE.INTEGER:
+            if param['type'] == TYPE.INTEGER:
                 param['min'] = int(param['min'])
                 param['max'] = int(param['max'])
 
-            elif TYPE[param['type']] is TYPE.DISCRETE:
+            elif param['type'] == TYPE.DISCRETE:
                 param['values'] = [float(val)
                                    for val in param['values'].split(',')]
 
-            elif TYPE[param['type']] is TYPE.CATEGORICAL:
+            elif param['type'] == TYPE.CATEGORICAL:
                 param['values'] = [val.strip()
                                    for val in param['values'].split(',')]
 

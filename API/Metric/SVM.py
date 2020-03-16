@@ -1,22 +1,25 @@
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.metrics import accuracy_score
-from API.Models.datasets import classification_dataset
+from API.Metric.datasets import classification_dataset
 
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.svm import SVR
 from sklearn.metrics import mean_absolute_error, mean_squared_error, max_error
-from API.Models.datasets import regression_dataset
+from API.Metric.datasets import regression_dataset
 
-from API.Models.AbstractModel import Model
+from API.Metric.AbstractModel import Model
 
 
-class RandomForest(Model):
+class SVM(Model):
     """
     Parameter accepted:
-        - n_estimators: number of trees in the forest.
-        - max_depth: maximum depth of the trees
-        - max_features: number of features to consider when looking for a split
-        - min_split: the minimum number of samples to split an internal node
+        - C: strength of regularization (it is inversely proportional to C).
+             Must be strictly positive.
+        - kernel: kernel type to be used in the algorithm. It must be one of
+                  'linear', 'poly', 'rbf', 'sigmoid'
+        - gamma: kernel coefficient for ‘rbf’, ‘poly’ and ‘sigmoid’.
+        - coef0: independent term in kernel function. It is only significant
+                 in ‘poly’ and ‘sigmoid’.
 
     Example:
 
@@ -56,17 +59,15 @@ class RandomForest(Model):
         # TODO: add check on params
 
         if self.type == 'clf':
-            model = RandomForestClassifier(
-                n_estimators=int(params["n_estimators"]),
-                max_depth=int(params['max_depth']),
-                max_features=int(params["max_features"]),
-                min_samples_split=int(params["min_split"]))
+            model = SVC(C=float(params["C"]),
+                        kernel=params['kernel'],
+                        gamma=params["gamma"],
+                        coef0=float(params["coef0"]))
         else:
-            model = RandomForestRegressor(
-                n_estimators=int(params["n_estimators"]),
-                max_depth=int(params['max_depth']),
-                max_features=int(params["max_features"]),
-                min_samples_split=int(params["min_split"]))
+            model = SVR(C=float(params["C"]),
+                        kernel=params['kernel'],
+                        gamma=params["gamma"],
+                        coef0=float(params["coef0"]))
 
         # train
         model.fit(self.X_train, self.Y_train)

@@ -17,21 +17,9 @@ class TYPE(Enum):
     def __str__(self):
         return self.value
 
-    @classmethod
-    def choices(cls):
-        return [(field.name, field.value) for field in cls]
-
-
-@unique
-class OBJECTIVE(Enum):
-    """
-    Study objective.
-    """
-    MAXIMIZE = 'Maximize'
-    MINIMIZE = 'Minimize'
-
-    def __str__(self):
-        return self.value
+    def __eq__(self, other):
+        """Override for comparing string and enum. Django stores the name."""
+        return self.name == other
 
     @classmethod
     def choices(cls):
@@ -50,6 +38,10 @@ class STATUS(Enum):
 
     def __str__(self):
         return self.value
+
+    def __eq__(self, other):
+        """Override for comparing string and enum. Django stores the name."""
+        return self.name == other
 
     @classmethod
     def choices(cls):

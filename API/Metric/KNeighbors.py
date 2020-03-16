@@ -1,13 +1,13 @@
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.metrics import accuracy_score
-from API.Models.datasets import classification_dataset
+from API.Metric.datasets import classification_dataset
 
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, max_error
-from API.Models.datasets import regression_dataset
+from API.Metric.datasets import regression_dataset
 
-from API.Models.AbstractModel import Model
+from API.Metric.AbstractModel import Model
 
 
 class KNeighbors(Model):

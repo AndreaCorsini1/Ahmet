@@ -41,8 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+
+    #graph_models -a -X Session,AbstractBaseSession,LogEntry,AbstractUser,ContentType
+    'django_extensions'
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

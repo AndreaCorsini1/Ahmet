@@ -1,9 +1,13 @@
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 
+
 def classification_dataset(name='iris', test_size=0.33, seed=12345,
                            shuffle=True):
     """
+    Load and prepare a classification dataset. The available dataset are the
+    ones provided by the sklearn package (iris, digits, wine and breast cancer).
+
     Iris:
         - 150 samples
         - 3 labels/classes (0 = setosa, 1 = virginica and 2 = versicolor)
@@ -22,11 +26,24 @@ def classification_dataset(name='iris', test_size=0.33, seed=12345,
         - 30 features per sample
 
     Args:
-        :param name
-        :param test_size
-        :param seed
-        :param shuffle
+        :param name: name of the dataset (iris, digits, wine and breast cancer)
+        :param test_size: (optional) size of the test set, must be within (0, 1)
+        :param seed: (optional) integer seed for reproducibility
+        :param shuffle: (optional) bool value used to decide if shuffling
+        should be done
+            before train-test split
     :return:
+        A dictionary containing the train, test and labels for the selected
+        dataset.
+
+        Example:
+            {
+                'train': (X, Y),
+                'test': (X, Y),
+                'labels': {0: 'class1', 1: 'class2', ...}
+            }
+        Where labels dictionary is used to convert back the Y indices to the
+        original classes.
     """
     if name.lower() == 'iris':
         data = datasets.load_iris()
@@ -57,14 +74,31 @@ def classification_dataset(name='iris', test_size=0.33, seed=12345,
     }
     return dataset
 
-def regression_dataset(name='iris', test_size=0.33, seed=12345, shuffle=True):
-    """
 
-    :param name:
-    :param test_size:
-    :param seed:
-    :param shuffle:
+def regression_dataset(name='boston', test_size=0.33, seed=12345, shuffle=True):
+    """
+    Load and prepare a regression dataset. The available dataset are the ones
+    provided by the sklearn package (boston, diabetes and linnerud).
+
+    Args:
+        :param name: name of the dataset (boston, diabetes and linnerud)
+        :param test_size: (optional) size of the test set, must be within (0, 1)
+        :param seed: (optional) integer seed for reproducibility
+        :param shuffle: (optional) bool value used to decide if shuffling
+        should be done
+            before train-test split
     :return:
+        A dictionary containing the train, test and labels for the selected
+        dataset.
+
+        Example:
+            {
+                'train': (X, Y),
+                'test': (X, Y),
+                'labels': {0: 'class1', 1: 'class2', ...}
+            }
+        Where labels dictionary is used to convert back the Y indices to the
+        original classes.
     """
     if name.lower() == 'boston':
         data = datasets.load_boston()
@@ -76,8 +110,7 @@ def regression_dataset(name='iris', test_size=0.33, seed=12345, shuffle=True):
     # Get the features (X) and the labels (Y)
     X = data['data']
     Y = data['target']
-
-    labels = {idx : name for idx, name in enumerate(data['target_names'])}
+    labels = data['target_names']
 
     # TODO: Add pre-processing for regression
 

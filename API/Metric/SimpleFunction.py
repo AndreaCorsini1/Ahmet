@@ -1,4 +1,4 @@
-from API.Models.AbstractModel import Model
+from API.Metric.AbstractModel import Model
 
 
 class SimpleFunction(Model):

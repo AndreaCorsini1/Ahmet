@@ -6,8 +6,15 @@ import random
 
 class GridSearch(AbstractAlgorithm):
     """
+    Grid Search is the most basic algorithmic method for hyper-parameter
+    optimisation. It’s like running nested loops on all possible values of
+    your inbuilt features making combinations of them.
+    The result of the algorithm is a grid, where each node is a combinations
+    of the hyper-parameter values.
 
-
+    In this version, I added an initial shuffle for starting to generate
+    configurations from a different initial point each time the algorithm is
+    called.
     """
     # TODO: extend to integer and double
     supported_params = [(TYPE.CATEGORICAL.name, TYPE.CATEGORICAL.value),

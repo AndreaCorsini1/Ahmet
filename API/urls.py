@@ -20,6 +20,12 @@ urlpatterns = [
          name="algorithm_info"),
 
     # Ex: localhost:8080/api/v1/metrics
+    path('datasets/', views.DatasetList.as_view(), name="datasets"),
+    # Ex: localhost:8080/api/v1/metric/svm
+    path('datasets/<slug:dataset_name>/', views.DatasetDetail.as_view(),
+         name="dataset_info"),
+
+    # Ex: localhost:8080/api/v1/metrics
     path('metrics/', views.MetricList.as_view(), name="metrics"),
     # Ex: localhost:8080/api/v1/metric/svm
     path('metrics/<slug:metric_name>/', views.MetricDetail.as_view(),

@@ -166,7 +166,6 @@ class StudyTests(BaseTest):
         data = {
             'name': 'fake_stu',
             'owner': 'test',
-            'objective': OBJECTIVE.MAXIMIZE.name
         }
         response = self.perform_test('studies', 'post', data)
         # print(response.data)
@@ -188,7 +187,6 @@ class StudyTests(BaseTest):
         # Get specific study
         data = {
             'name': 'fake_stu',
-            'objective': OBJECTIVE.MINIMIZE.name,
             'owner': 'test',
         }
         self.perform_test('studies', 'post', data)
@@ -202,7 +200,6 @@ class StudyTests(BaseTest):
         self.populateDB()
         data = {
             'name': 'fake_stu1',
-            'objective': OBJECTIVE.MINIMIZE.name,
             'owner': 'test'
         }
         response = self.perform_test('studies', 'post', data)
@@ -210,8 +207,7 @@ class StudyTests(BaseTest):
         # print(response.data)
 
         # TODO: fix name
-        data = {'name': 'fake_stu1', 'objective': OBJECTIVE.MINIMIZE.name,
-                'status': 'Nooooo'}
+        data = {'name': 'fake_stu1', 'status': 'Nooooo'}
         response = self.perform_test('studies/fake_stu1', 'put', data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -228,7 +224,6 @@ class ParamTest(BaseTest):
         self.perform_test('metrics', 'post', data)
         data = {
             'name': 'fake_stu',
-            'objective': OBJECTIVE.MINIMIZE.name,
             'owner': 'test',
         }
         self.perform_test('studies', 'post', data)
