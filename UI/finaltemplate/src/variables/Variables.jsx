@@ -149,16 +149,7 @@ var style = {
       WebkitBoxShadow: 0,
       MozBoxShadow: 0,
       boxShadow: 0
-    },
-
-     KNN:{
-      borderTop: 0,
-      backgroundColor: "#03EED8",
-      WebkitBoxShadow: 0,
-      MozBoxShadow: 0,
-      boxShadow: 0
-    },
-
+    }
   },
 
   Title: {
@@ -257,7 +248,7 @@ var style = {
     },
 
     KNN:{
-      backgroundColor: "#03EED8",
+      backgroundColor: "#cd00ee",
       color: "#ffffff"
     },
 
@@ -274,21 +265,6 @@ var style = {
     }
   }
 };
-
-//
-// //
-// // // For tables
-// //
-//
-const thArray = ["ID", "Name", "Salary", "Country", "City"];
-const tdArray = [
-  ["1", "Dakota Rice", "$36,738", "Niger", "Oud-Turnhout"],
-  ["2", "Minerva Hooper", "$23,789", "Curaçao", "Sinaai-Waas"],
-  ["3", "Sage Rodriguez", "$56,142", "Netherlands", "Baileux"],
-  ["4", "Philip Chaney", "$38,735", "Korea, South", "Overland Park"],
-  ["5", "Doris Greene", "$63,542", "Malawi", "Feldkirchen in Kärnten"],
-  ["6", "Mason Porter", "$78,615", "Chile", "Gloucester"]
-];
 
 //
 // //
@@ -505,39 +481,67 @@ const iconsArray = [
 // // // // For dashboard's charts
 // //
 //
-// Data for Pie Chart
-var dataPie = {
-  labels: ["40%", "20%", "40%"],
-  series: [40, 20, 40]
-};
-var legendPie = {
-  names: ["Open", "Bounce", "Unsubscribe"],
-  types: ["info", "danger", "warning"]
-};
 
 
 
 //------------------------------Data for card at the top--------------------------------
 //NB-> ogni volta che crei una variabile la devi esportare in fondo e importare nel file che importa varible.jsx
-var Nstudy = "555";
-var Nrunning = "4"
+var Nstudy = "10";
+var Nrunning = "4";
 
-// Data for Line Chart
+//array che contiene tutti i valori dei lambda calcolati per quel modello
+//array dimanico contenete i risultati dei moelli
 
-//labels = nome dei parametri
+var Bayes_result = [2000, 2500, 3000, 200, 400, 500, 600, 800, 900, 1000, 300];
+var KNN_result = [800, 1500];
+var SVM_result = [287, 385, 490, 492, 554, 586, 698, 695];
+var RandomForest_result =  [67, 152, 143, 240, 287, 335, 435, 437];
+
+
+// Data for Pie Chart
+
+var Total_study = KNN_result.length + SVM_result.length + RandomForest_result.length + Bayes_result.length;
+
+
+
+var dataPie = {
+  labels: [KNN_result.length, SVM_result.length, RandomForest_result.length, Bayes_result.length],
+  series: [KNN_result.length, SVM_result.length, RandomForest_result.length, Bayes_result.length],
+};
+var legendPie = {
+  names: ["KNN", "SVM", "Random Forest", "Bayes"],
+  types: ["info", "danger", "warning", "error"]
+};
+
+//
+// //
+//------------------------------varibles for studies----------------------------------
+// //
+//
+var test = ["ID", "Name", "Salary", "Country", "City", "Analize"];
+var prova = ["a","s","c","d"];
+
+var thArray = ["ID", "Name", "Salary", "Country", "City"];
+var tdArray = [
+  ["1", "Dakota Rice", "$36,738", "Niger", "Oud-Turnhout"],
+  ["2", "Minerva Hooper", "$23,789", "Curaçao", "Sinaai-Waas"],
+  ["3", "Sage Rodriguez", "$56,142", "Netherlands", "Baileux"],
+  ["4", "Philip Chaney", "$38,735", "Korea, South", "Overland Park"],
+  ["5", "Doris Greene", "$63,542", "Malawi", "Feldkirchen in Kärnten"],
+  ["6", "Mason Porter", "$78,615", "Chile", "Gloucester"]
+];
+
+//var thArray = ["ID", "Name", "Salary", "Country", "City", "test"];
+//var tdArray = [prova, prova];
+//---------------------------------Line Chart-------------------------
+
 //series = valore dei parametri in ref al modello
 var dataSales = {
-  labels: [
-    "lambda 1",
-    "lambda 2",
-    "lambda 3",
-    "lambda 4"
-  ],
   series: [
-    [287, 385, 490, 492, 554, 586, 698, 695],
-    [67, 152, 143, 240, 287, 335, 435, 437],
-    [23, 113, 67, 108, 190, 239, 307, 308],
-    [50, 100, 150, 200, 250, 300, 350, 400]
+    SVM_result,
+    RandomForest_result,
+    KNN_result,
+    Bayes_result
   ]
 };
 var optionsSales = {
@@ -569,29 +573,28 @@ var responsiveSales = [
   ]
 ];
 var legendSales = {
-  names: ["SVM", "Random Forest", "Bayes", "KNN"],
-  types: ["info", "danger", "warning", "KNN"]
+  names: ["KNN", "SVM", "Random Forest", "Bayes"],
+  types: ["info", "danger", "warning", "error"]
 };
 
 // Data for Bar Chart
 var dataBar = {
   labels: [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "Mai",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec"
+    "Study 1",
+    "Study 2",
+    "Study 3",
+    "Study 4",
+    "Study 5",
+    "Study 6",
+    "Study 7",
+    "Study 8",
+    "Study 9",
+    "Study 10",
+    "Study 11",
+    "Study 12"
   ],
   series: [
-    [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895],
-    [412, 243, 280, 580, 453, 353, 300, 364, 368, 410, 636, 695]
+    KNN_result, SVM_result, RandomForest_result, Bayes_result
   ]
 };
 var optionsBar = {
@@ -615,8 +618,8 @@ var responsiveBar = [
   ]
 ];
 var legendBar = {
-  names: ["Tesla Model S", "BMW 5 Series"],
-  types: ["info", "danger"]
+  names: ["KNN", "SVM", "Random Forest", "Bayes"],
+  types: ["info", "danger", "warning", "error"]
 };
 
 module.exports = {
@@ -635,5 +638,5 @@ module.exports = {
   responsiveBar,
   Nstudy, //numero studi svolti
   Nrunning, //study running
-  legendBar // For charts (Dashboard view)
+  legendBar, // For charts (Dashboard view)
 };

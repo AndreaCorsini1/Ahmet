@@ -37,34 +37,17 @@ class App extends React.Component {
 
   handleNotificationClick = position => {
     let color = Math.floor(Math.random() * 4 + 1);
-    let level;
-    switch (color) {
-      case 1:
-        level = "success";
-        break;
-      case 2:
-        level = "warning";
-        break;
-      case 3:
-        level = "error";
-        break;
-      case 4:
-        level = "info";
-        break;
-      default:
-        break;
-    }
+    let level = "warning";
     this.state._notificationSystem.addNotification({
-      title: <span data-notify="icon" className="pe-7s-gift" />,
+      title: <span/>,
       message: (
         <div>
-          Welcome to <b>Light Bootstrap Dashboard</b> - a beautiful freebie for
-          every web developer.
+          Your Model has been deleted
         </div>
       ),
       level: level,
       position: position,
-      autoDismiss: 15
+      autoDismiss: 3
     });
   };
 

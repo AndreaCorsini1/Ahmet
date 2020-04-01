@@ -47,10 +47,19 @@ constructor(props){
       }
       {/*<form onSubmit = {this.onSubmit}>*/}
           <div className="form-group">
-            <button className="btn btn-primary"
+              <Button
+                  bsStyle="info"
+                  pullRight fill type="submit"
+                  onClick = {() =>(onSubmit(passparameter))}>
+
+                    Submit
+
+              </Button>
+
+            {/*<button className="btn btn-primary"
              onClick = {() =>(onSubmit(passparameter))}>
               Submit
-            </button>
+            </button>*/}
           </div>
          {/*</form>*/}
     </div>

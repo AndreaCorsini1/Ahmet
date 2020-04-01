@@ -15,6 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
+/*
 import React, { Component } from "react";
 import { Grid, Row, Col } from "react-bootstrap";
 
@@ -99,9 +100,9 @@ class Typography extends Component {
                       </p>
                     </div>
                     <div className="typo-line">
-                      {/* <!--
+                      {/!* <!--
                                              there are also "text-info", "text-success", "text-warning", "text-danger" clases for the text
-                                             --> */}
+                                             --> *!/}
                       <p className="category">Coloured Text</p>
                       <p className="text-primary">
                         Text Primary - Light Bootstrap Table Heading and complex
@@ -144,3 +145,4 @@ class Typography extends Component {
 }
 
 export default Typography;
+*/

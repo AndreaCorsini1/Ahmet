@@ -4,7 +4,6 @@
 import React, {Component} from "react";
 import { Card } from "components/Card/Card.jsx";
 import { Grid, Row, Col } from "react-bootstrap";
-import { StatsCard } from "components/StatsCard/StatsCard.jsx";
 import { Tasksmodel } from "components/Tasks/Tasksmodel.jsx";
 import {TasksParameter} from "../components/Tasks/TasksParameter";
 
@@ -14,7 +13,7 @@ class NewStudy extends React.Component {
   render() {
     return (
       <div className="content">
-        <h2>New Study</h2>
+        <h2>Start a new study</h2>
         <Grid fluid>
           <Row>
             <Col /*md={8}*/>

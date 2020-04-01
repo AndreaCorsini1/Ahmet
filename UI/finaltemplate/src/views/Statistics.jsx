@@ -20,7 +20,7 @@ import {
   responsiveBar,
   legendBar,
   Nstudy,
-  Nrunning
+  Nrunning,
 } from "variables/Variables.jsx";
 import {onSubmit} from "../components/Checkboxparameter/Checkboxparameter";
 
@@ -45,19 +45,19 @@ class Statistics extends Component {
     }
     return legend;
   }
+
+
   render() {
     return (
       <div className="content">
-        <h3>Here we place a top bar with some indices and some plots below</h3>
-        <h4>I tried something in the following and seems pretty nice.</h4>
+        <h3>Statistics of the terminated studies</h3>
+        <h4>Update your studies to see updated graphs</h4>
               <div
                     style={{
                       display: "flex",
                       justifyContent: "center",
                       alignItems: "center"
                     }}>
-
-                   <h4>Update your studies</h4>
 
               </div>
 
@@ -106,7 +106,7 @@ class Statistics extends Component {
           </Row>
           <Row>
               <Card
-                statsIcon="fa fa-history"
+                //statsIcon="fa fa-history"
                 id="chartHours"
                 title="Graph of parameter related to study"
                 //category="24 Hours performance"
@@ -127,10 +127,10 @@ class Statistics extends Component {
                 }
               />
              <Card
-                statsIcon="fa fa-clock-o"
-                title="Email Statistics"
-                category="Last Campaign Performance"
-                stats="Campaign sent 2 days ago"
+                //statsIcon="fa fa-clock-o"
+                title="Ripartition of studies by model used"
+                //category="Last Campaign Performance"
+                //stats="Campaign sent 2 days ago"
                 content={
                   <div
                     id="chartPreferences"
@@ -146,10 +146,10 @@ class Statistics extends Component {
             <Col>
               <Card
                 id="chartActivity"
-                title="2014 Sales"
-                category="All products including Taxes"
-                stats="Data information certified"
-                statsIcon="fa fa-check"
+                title="Comparison of the last 12 studies"
+                //category="All products including Taxes"
+                //stats="Data information certified"
+                //statsIcon="fa fa-check"
                 content={
                   <div className="ct-chart">
                     <ChartistGraph
@@ -167,6 +167,7 @@ class Statistics extends Component {
             </Col>
           </Row>
         </Grid>
+
       </div>
     );
   }
