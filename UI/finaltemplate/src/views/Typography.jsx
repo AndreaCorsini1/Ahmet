@@ -14,135 +14,287 @@
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
+
+link code : https://css-tricks.com/the-magic-of-react-based-multi-step-forms/
+
+
 */
-/*
+
 import React, { Component } from "react";
 import { Grid, Row, Col } from "react-bootstrap";
+import { Tasksmodel } from "components/Tasks/Tasksmodel.jsx";
 
 import Card from "components/Card/Card.jsx";
+import {TasksParameter} from "../components/Tasks/TasksParameter";
 
 class Typography extends Component {
+constructor(props) {
+    super(props)
+    this.state = {
+      currentStep: 0,
+      newstudy: '',
+      algorithm: '',
+      metrics: '',
+      dataset: '',
+      parameter: '',
+      recap: '',
+    }
+  }
+
+  handleChange = event => {
+    const {name, value} = event.target
+    this.setState({
+      [name]: value
+    })
+  }
+
+  handleSubmit = event => {
+    event.preventDefault()
+    const { newstudy, algorithm, metrics, dataset, parameter, recap } = this.state
+    alert(`Your registration detail: \n 
+           Newstudy: ${newstudy} \n
+           Algorithm: ${algorithm} \n 
+           Metrics: ${metrics} \n
+           Dataset: ${dataset} \n
+           Parameter: ${parameter} \n
+           Recap: ${recap}`)
+  }
+
+  _next = () => {
+    let currentStep = this.state.currentStep
+    if (currentStep < 5)
+      currentStep = currentStep + 1;
+    this.setState({
+      currentStep: currentStep
+    })
+      //alert("premuto next")
+  }
+
+  _prev = () => {
+    let currentStep = this.state.currentStep
+    if (currentStep != 0)
+        currentStep = currentStep -1;
+    this.setState({
+      currentStep: currentStep
+    })
+      //alert("premuto previus")
+  }
+
+/*
+* the functions for our button
+*/
+previousButton() {
+  let currentStep = this.state.currentStep;
+  if(currentStep !==0){
+    return (
+      <button
+        className="btn btn-secondary"
+        type="button" onClick={this._prev}>
+      Previous
+      </button>
+    )
+  }
+  return null;
+}
+
+nextButton(){
+  let currentStep = this.state.currentStep;
+  if(currentStep < 5){
+    return (
+      <button
+        className="btn btn-primary float-right"
+        type="button" onClick={this._next}>
+      Next
+      </button>
+    )
+  }
+  return null;
+}
+
   render() {
     return (
-      <div className="content">
-        <Grid fluid>
-          <Row>
-            <Col md={12}>
-              <Card
-                title="Light Bootstrap Table Heading"
-                category="Created using Roboto Font Family"
-                content={
-                  <div>
-                    <div className="typo-line">
-                      <h1>
-                        <p className="category">Header 1</p>Light Bootstrap
-                        Table Heading{" "}
-                      </h1>
-                    </div>
+      <React.Fragment>
+      <h1>Insert data for create a new study️</h1>
 
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Header 2</p>Light Bootstrap
-                        Table Heading
-                      </h2>
-                    </div>
-                    <div className="typo-line">
-                      <h3>
-                        <p className="category">Header 3</p>Light Bootstrap
-                        Table Heading
-                      </h3>
-                    </div>
-                    <div className="typo-line">
-                      <h4>
-                        <p className="category">Header 4</p>Light Bootstrap
-                        Table Heading
-                      </h4>
-                    </div>
-                    <div className="typo-line">
-                      <h5>
-                        <p className="category">Header 5</p>Light Bootstrap
-                        Table Heading
-                      </h5>
-                    </div>
-                    <div className="typo-line">
-                      <h6>
-                        <p className="category">Header 6</p>Light Bootstrap
-                        Table Heading
-                      </h6>
-                    </div>
-                    <div className="typo-line">
-                      <p>
-                        <span className="category">Paragraph</span>Lorem ipsum
-                        dolor sit amet, consectetuer adipiscing elit, sed diam
-                        nonummy nibh euismod tincidunt ut laoreet dolore magna
-                        aliquam erat volutpat. Ut wisi enim ad minim veniam.
-                      </p>
-                    </div>
-                    <div className="typo-line">
-                      <p className="category">Quote</p>
-                      <blockquote>
-                        <p>
-                          Lorem ipsum dolor sit amet, consectetuer adipiscing
-                          elit, sed diam nonummy nibh euismod tincidunt ut
-                          laoreet dolore magna aliquam erat volutpat. Ut wisi
-                          enim ad minim veniam.
-                        </p>
-                        <small>Steve Jobs, CEO Apple</small>
-                      </blockquote>
-                    </div>
+      <form onSubmit={this.handleSubmit}>
+      {/*
+        render the form steps and pass required props in
+      */
+      }
 
-                    <div className="typo-line">
-                      <p className="category">Muted Text</p>
-                      <p className="text-muted">
-                        Lorem ipsum dolor sit amet, consectetuer adipiscing
-                        elit, sed diam nonummy nibh euismod tincidunt ut
-                        laoreet.
-                      </p>
-                    </div>
-                    <div className="typo-line">
-                      {/!* <!--
-                                             there are also "text-info", "text-success", "text-warning", "text-danger" clases for the text
-                                             --> *!/}
-                      <p className="category">Coloured Text</p>
-                      <p className="text-primary">
-                        Text Primary - Light Bootstrap Table Heading and complex
-                        bootstrap dashboard you've ever seen on the internet.
-                      </p>
-                      <p className="text-info">
-                        Text Info - Light Bootstrap Table Heading and complex
-                        bootstrap dashboard you've ever seen on the internet.
-                      </p>
-                      <p className="text-success">
-                        Text Success - Light Bootstrap Table Heading and complex
-                        bootstrap dashboard you've ever seen on the internet.
-                      </p>
-                      <p className="text-warning">
-                        Text Warning - Light Bootstrap Table Heading and complex
-                        bootstrap dashboard you've ever seen on the internet.
-                      </p>
-                      <p className="text-danger">
-                        Text Danger - Light Bootstrap Table Heading and complex
-                        bootstrap dashboard you've ever seen on the internet.
-                      </p>
-                    </div>
+       <Step0
+          currentStep={this.state.currentStep}
+          handleChange={this.handleChange}
+          newstudy={this.state.newstudy}
+        />
+        <Step1
+          currentStep={this.state.currentStep}
+          handleChange={this.handleChange}
+          algorithm={this.state.algorithm}
+        />
+        <Step2
+          currentStep={this.state.currentStep}
+          handleChange={this.handleChange}
+          algorithm={this.state.algorithm}
+          metrics={this.state.metrics}
+        />
+        <Step3
+          currentStep={this.state.currentStep}
+          handleChange={this.handleChange}
+          dataset={this.state.dataset}
+        />
+        <Step4
+          currentStep={this.state.currentStep}
+          handleChange={this.handleChange}
+          parameter={this.state.parameter}
+        />
+        <Step5
+          currentStep={this.state.currentStep}
+          handleChange={this.handleChange}
+          recap={this.state.recap}
+        />
 
-                    <div className="typo-line">
-                      <h2>
-                        <p className="category">Small Tag</p>Header with small
-                        subtitle <br />
-                        <small>".small" is a tag for the headers</small>{" "}
-                      </h2>
-                    </div>
-                  </div>
-                }
-              />
-            </Col>
-          </Row>
-        </Grid>
-      </div>
+        {this.previousButton()}
+        {this.nextButton()}
+
+      </form>
+      </React.Fragment>
     );
   }
 }
 
+function Step0 (props){
+  if (props.currentStep !== 0) {
+    return null
+  }
+   return(
+    <div className="form-group">
+        <label htmlFor="email">Press next to start a new study</label>
+    </div>
+  );
+}
+
+function Step1(props) {
+  if (props.currentStep !== 1) {
+    return null
+  }
+
+  return(
+    <div className="form-group">
+      <label htmlFor="email">Insert an algorithm</label>
+      <input
+        className="form-control"
+        id="algorithm"
+        name="algorithm"
+        type="text"
+        placeholder="Algorithm"
+        value={props.algorithm}
+        onChange={props.handleChange}
+        />
+    </div>
+  );
+}
+
+function Step2(props) {
+  if (props.currentStep !== 2) {
+    return null
+  }
+
+  var al = JSON.stringify(props);
+  //var test = JSON.parse(props);
+  //alert(al);
+  //alert('props: ' + JSON.stringify(props));
+  //alert(al);
+  alert(al[0]);
+
+  return(
+    <div className="content">
+      <label htmlFor="username">Choose a Metrics</label>
+        <Col /*md={4}*/>
+               <Card
+                //title="Choice of parameter for the current model"
+                category={"choose a metrics for: " + { al } }
+                content={
+                  <div className="table-full-width">
+                    <table className="table">
+                      <TasksParameter />
+                    </table>
+                  </div>
+                }
+              />
+            </Col>
+
+    </div>
+  );
+}
+
+function Step3(props) {
+  if (props.currentStep !== 3) {
+    return null
+  }
+  return(
+    <React.Fragment>
+    <div className="content">
+      <label htmlFor="password">Dataset</label>
+      <input
+        className="form-control"
+        id="dataset"
+        name="dataset"
+        type="text"
+        placeholder="Dataset"
+        value={props.dataset}
+        onChange={props.handleChange}
+        />
+    </div>
+    </React.Fragment>
+  );
+}
+
+function Step4 (props){
+  if (props.currentStep !== 4) {
+    return null
+  }
+   return(
+    <React.Fragment>
+    <div className="content">
+      <label htmlFor="password">parameter</label>
+      <input
+        className="form-control"
+        id="parameter"
+        name="parameter"
+        type="text"
+        placeholder="Parameter"
+        value={props.parameter}
+        onChange={props.handleChange}
+        />
+    </div>
+    </React.Fragment>
+  );
+}
+
+
+function Step5 (props){
+  if (props.currentStep !== 5) {
+    return null
+  }
+   return(
+    <React.Fragment>
+    <div className="content">
+      <label htmlFor="password">recap</label>
+      <input
+        className="form-control"
+        id="recap"
+        name="recap"
+        type="text"
+        placeholder="Recap"
+        value={props.recap}
+        onChange={props.handleChange}
+        />
+    </div>
+    <button className="btn btn-success btn-block">Submit a study</button>
+    </React.Fragment>
+  );
+}
+
 export default Typography;
-*/
+

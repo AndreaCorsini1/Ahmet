@@ -5,7 +5,7 @@ import NewStudy from "./views/NewStudy";
 import Statistics from "views/Statistics.jsx";
 import UserProfile from "views/UserProfile.jsx";
 import Studies from "views/Studies.jsx";
-//import Typography from "views/Typography.jsx";
+import Typography from "views/Typography.jsx";
 //import Icons from "views/Icons.jsx";
 //import Notifications from "views/Notifications.jsx";
 
@@ -31,13 +31,13 @@ const dashboardRoutes = [
     component: Studies,
     layout: "/ahmet"
   },
-/*  {
+{
     path: "/typography",
     name: "Typography",
     icon: "pe-7s-news-paper",
     component: Typography,
     layout: "/ahmet"
-  },*/
+  },
   /*{
     path: "/icons",
     name: "Icons (temporary)",

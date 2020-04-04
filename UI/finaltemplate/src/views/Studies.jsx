@@ -8,7 +8,7 @@ import Card from "components/Card/Card.jsx";
 import { thArray, tdArray } from "variables/Variables.jsx";
 import Button from "components/CustomButton/CustomButton.jsx";
 
-import axios from 'axios'
+//import axios from 'axios'
 
 export const onDelete = (ID, prop) => {
   //dentro prop ho la stringa completa dello studio
