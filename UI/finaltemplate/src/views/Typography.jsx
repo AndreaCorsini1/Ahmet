@@ -21,11 +21,14 @@ link code : https://css-tricks.com/the-magic-of-react-based-multi-step-forms/
 */
 
 import React, { Component } from "react";
-import { Grid, Row, Col } from "react-bootstrap";
-import { Tasksmodel } from "components/Tasks/Tasksmodel.jsx";
+import {Grid, Row, Col, Table} from "react-bootstrap";
 
 import Card from "components/Card/Card.jsx";
+import { Tasksmodel } from "../components/Tasks/Tasksmodel";
+import {value, recap} from "variables/Variables.jsx";
+import {Taskdataset} from "../components/Tasks/Taskdataset";
 import {TasksParameter} from "../components/Tasks/TasksParameter";
+import FormControlStatic from "react-bootstrap/lib/FormControlStatic";
 
 class Typography extends Component {
 constructor(props) {
@@ -50,19 +53,30 @@ constructor(props) {
 
   handleSubmit = event => {
     event.preventDefault()
-    const { newstudy, algorithm, metrics, dataset, parameter, recap } = this.state
-    alert(`Your registration detail: \n 
-           Newstudy: ${newstudy} \n
-           Algorithm: ${algorithm} \n 
-           Metrics: ${metrics} \n
-           Dataset: ${dataset} \n
-           Parameter: ${parameter} \n
-           Recap: ${recap}`)
+    const { algorithm, metrics, dataset, parameter } = this.state;
+      alert(`Your registration detail: \n
+           Algorithm: ${recap.algorithm} \n 
+           Metrics: ${value.name_model} \n
+           Dataset: ${recap.dataset} \n
+           Parameter: ${recap.parameter} \n`)
   }
 
   _next = () => {
-    let currentStep = this.state.currentStep
-    if (currentStep < 5)
+
+    //qua dentro devi fare tutti case per leggere api, aggiori le var globali con risposta api e via
+
+
+    let currentStep = this.state.currentStep;
+
+      //controllo su ogni step per vedere se è stato inserito un campo
+
+      if (this.state.algorithm == ''&& this.state.currentStep == 1){
+          alert("insert alg before procede");
+           this.setState({
+                currentStep: currentStep
+        })
+      }
+    else if (currentStep < 5)
       currentStep = currentStep + 1;
     this.setState({
       currentStep: currentStep
@@ -141,11 +155,16 @@ nextButton(){
         <Step3
           currentStep={this.state.currentStep}
           handleChange={this.handleChange}
+          algorithm={this.state.algorithm}
           dataset={this.state.dataset}
+          metrics={this.state.metrics}
         />
         <Step4
           currentStep={this.state.currentStep}
           handleChange={this.handleChange}
+          algorithm={this.state.algorithm}
+          dataset={this.state.dataset}
+          metrics={this.state.metrics}
           parameter={this.state.parameter}
         />
         <Step5
@@ -200,30 +219,23 @@ function Step2(props) {
     return null
   }
 
-  var al = JSON.stringify(props);
-  //var test = JSON.parse(props);
-  //alert(al);
-  //alert('props: ' + JSON.stringify(props));
-  //alert(al);
-  alert(al[0]);
+  //inserisco alg
+    recap.algorithm = props.algorithm;
 
   return(
     <div className="content">
-      <label htmlFor="username">Choose a Metrics</label>
-        <Col /*md={4}*/>
+      <label htmlFor="username">Algorithm: {recap.algorithm}</label>
+        <Col>
                <Card
-                //title="Choice of parameter for the current model"
-                category={"choose a metrics for: " + { al } }
                 content={
                   <div className="table-full-width">
+                      <p> Choose a metrics for : {props.algorithm}</p>
                     <table className="table">
-                      <TasksParameter />
+                      <Tasksmodel metrics={props}/>
                     </table>
                   </div>
-                }
-              />
+                }/>
             </Col>
-
     </div>
   );
 }
@@ -232,21 +244,27 @@ function Step3(props) {
   if (props.currentStep !== 3) {
     return null
   }
+
+  //alert("modello selto typo: " + value.name_model);
+    //inserisco il modello scelto
+    recap.metrics = value.name_model;
+    //value.name_model;
+
   return(
-    <React.Fragment>
     <div className="content">
-      <label htmlFor="password">Dataset</label>
-      <input
-        className="form-control"
-        id="dataset"
-        name="dataset"
-        type="text"
-        placeholder="Dataset"
-        value={props.dataset}
-        onChange={props.handleChange}
-        />
+      <label htmlFor="username">Algorithm: {recap.algorithm} -> Metrics: {recap.metrics}</label>
+        <Col>
+               <Card
+                content={
+                  <div className="table-full-width">
+                      <p> Choose a dataset for : {recap.metrics}</p>
+                    <table className="table">
+                      <Taskdataset dataset={props}/>
+                    </table>
+                  </div>
+                }/>
+            </Col>
     </div>
-    </React.Fragment>
   );
 }
 
@@ -254,21 +272,24 @@ function Step4 (props){
   if (props.currentStep !== 4) {
     return null
   }
+
+  recap.dataset = value.name_dataset;
+
    return(
-    <React.Fragment>
     <div className="content">
-      <label htmlFor="password">parameter</label>
-      <input
-        className="form-control"
-        id="parameter"
-        name="parameter"
-        type="text"
-        placeholder="Parameter"
-        value={props.parameter}
-        onChange={props.handleChange}
-        />
+      <label htmlFor="username">Algorithm: {recap.algorithm} -> Metrics: {recap.metrics} -> Dataset: {recap.dataset}</label>
+        <Col>
+               <Card
+                content={
+                  <div className="table-full-width">
+                      <p> Choose a parameter for : {recap.dataset}</p>
+                    <table className="table">
+                      <TasksParameter parameter={props}/>
+                    </table>
+                  </div>
+                }/>
+            </Col>
     </div>
-    </React.Fragment>
   );
 }
 
@@ -277,24 +298,63 @@ function Step5 (props){
   if (props.currentStep !== 5) {
     return null
   }
+
+  recap.parameter = value.name_param;
+
    return(
-    <React.Fragment>
-    <div className="content">
-      <label htmlFor="password">recap</label>
-      <input
-        className="form-control"
-        id="recap"
-        name="recap"
-        type="text"
-        placeholder="Recap"
-        value={props.recap}
-        onChange={props.handleChange}
-        />
-    </div>
+
+       <React.Fragment>
+
+       <Grid fluid>
+          <Row>
+            <Col md={12}>
+              <Card
+                title="Recap of your study to submit"
+                ctTableFullWidth
+                ctTableResponsive
+                content={
+                    <Table striped hover>
+                        <thead>
+                        <tr>
+                            <th>Algorithm : {recap.algorithm}</th>
+                        </tr>
+                        <tr>
+                            <th>Metrics : {recap.metrics}</th>
+                        </tr>
+                        <tr>
+                            <th>Dataset : {recap.dataset}</th>
+                        </tr>
+                        <tr>
+                            <th>Parameter : {recap.parameter}</th>
+                        </tr>
+                        </thead>
+                    </Table>
+                }
+                />
+            </Col>
+          </Row>
+       </Grid>
+
     <button className="btn btn-success btn-block">Submit a study</button>
     </React.Fragment>
   );
 }
 
 export default Typography;
+
+
+    /*<React.Fragment>
+    <FormControlStatic className="content">
+      <label htmlFor="password">Recap for current study</label>
+
+        <FormControlStatic>
+
+            Algorithm : {recap.algorithm} \n
+            Metrics : {recap.metrics} \n
+            Dataset : {recap.dataset} \n
+            Parameter : {recap.parameter}
+
+        </FormControlStatic>
+
+    </FormControlStatic>*/
 

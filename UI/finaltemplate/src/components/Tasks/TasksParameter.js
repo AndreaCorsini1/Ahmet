@@ -3,7 +3,7 @@ import { Tooltip, OverlayTrigger } from "react-bootstrap";
 import Checkbox from "components/CustomCheckbox/CustomCheckbox.jsx";
 import Button from "components/CustomButton/CustomButton.jsx";
 import Checkboxparameter from "../Checkboxmodel/Checkboxmodel";
-import {onSubmit} from "../Checkboxparameter/Checkboxparameter";
+import {onParameterChoose} from "../Checkboxparameter/Checkboxparameter";
 
 
 const listwebsitesData = [
@@ -33,7 +33,7 @@ constructor(props){
         //alert(value);
         passparameter = -1;
     }
-
+    onParameterChoose(passparameter);
   }
 
   render(){
@@ -45,24 +45,7 @@ constructor(props){
           return <Checkboxparameter selectedId={this.state.selectedId} listwebsites={data} handleChangess={this.handleChangess} />
         })
       }
-      {/*<form onSubmit = {this.onSubmit}>*/}
-          <div className="form-group">
-              <Button
-                  bsStyle="info"
-                  pullRight fill type="submit"
-                  onClick = {() =>(onSubmit(passparameter))}>
-
-                    Submit
-
-              </Button>
-
-            {/*<button className="btn btn-primary"
-             onClick = {() =>(onSubmit(passparameter))}>
-              Submit
-            </button>*/}
-          </div>
-         {/*</form>*/}
     </div>
-  )
+  );
   }
 }

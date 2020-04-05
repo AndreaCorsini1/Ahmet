@@ -482,6 +482,10 @@ const iconsArray = [
 // //
 //
 
+/*-------------------------------VAriables for New study---------------------*/
+var value = [ { id_param: '', name_param: '', name_model: '', id_model:'', id_dataset: '', name_dataset:''}];
+var recap = [{alorithm : '', metrics : '', dataset: '', parameter : ''}];
+
 
 
 //------------------------------Data for card at the top--------------------------------
@@ -639,4 +643,6 @@ module.exports = {
   Nstudy, //numero studi svolti
   Nrunning, //study running
   legendBar, // For charts (Dashboard view)
+  value,  //current metrics chosed
+  recap,
 };

@@ -1,20 +1,20 @@
 import React, { Component } from "react";
 import CustomCheckbox from "../CustomCheckbox/CustomCheckbox";
+import {value, recap} from "variables/Variables.jsx";
 
 /*https://appdividend.com/2018/09/25/how-to-save-multiple-checkboxes-values-in-react-js/*/
 
 //array per tenere il parametro
-let value = [ { id_param: '', name_param: '', name_model: '', id_model:''}];
+//var value = [ { id_param: '', name_param: '', name_model: '', id_model:''}];
 
-export const onSubmit = (param) =>{
+export const onParameterChoose = (param) =>{
 
   value.id_param = param;
-
+/*
   if(param == -1 || value.id_model == -1 || value.id_model == undefined){
     value.id_model = -1;
-    alert("inserire un parametro o un modello");
+    alert("inserire un parametro o un modello"); }*/
 
-  }
   if (value.id_param == 1){
     value.name_param = 'lambda = 1'
   }
@@ -28,7 +28,8 @@ export const onSubmit = (param) =>{
     value.name_param = 'lambda = 4'
   }
   //alert("dentro array = " + value.id + " nome : " + value.name);
-  alert("id_param = " + value.id_param + " nome_param : " + value.name_param + " name_model : " + value.name_model + " id_model: " + value.id_model);
+  recap.parameter = value.name_param;
+  //alert("id_param = " + value.id_param + " nome_param : " + value.name_param + " name_model : " + value.name_model + " id_model: " + value.id_model);
 }
 
 export const onModelChoose = (model) => {
@@ -47,6 +48,9 @@ export const onModelChoose = (model) => {
   if (model == 4){
     value.name_model = 'Bernulli';
   }
+
+  recap.metrics = value.name_model;
+
 }
 
 class Checkboxparameter extends Component {
