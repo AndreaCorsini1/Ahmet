@@ -15,16 +15,16 @@ export const onParameterChoose = (param) =>{
     value.id_model = -1;
     alert("inserire un parametro o un modello"); }*/
 
-  if (value.id_param == 1){
+  if (value.id_param === 1){
     value.name_param = 'lambda = 1'
   }
-  if (value.id_param == 2){
+  if (value.id_param === 2){
     value.name_param = 'lambda = 2'
   }
-  if (value.id_param == 3){
+  if (value.id_param === 3){
     value.name_param = 'lambda = 3'
   }
-  if (value.id_param == 4){
+  if (value.id_param === 4){
     value.name_param = 'lambda = 4'
   }
   //alert("dentro array = " + value.id + " nome : " + value.name);
@@ -36,16 +36,16 @@ export const onModelChoose = (model) => {
 
   value.id_model = model;
 
-  if (model == 1){
+  if (model === 1){
     value.name_model = 'KNN';
   }
-  if (model == 2){
+  if (model === 2){
     value.name_model = 'Random Forest';
   }
-  if (model == 3){
+  if (model === 3){
     value.name_model = 'Bayes';
   }
-  if (model == 4){
+  if (model === 4){
     value.name_model = 'Bernulli';
   }
 
@@ -62,7 +62,7 @@ class Checkboxparameter extends Component {
       fields: {
         id: listwebsites.id
       }
-    }
+    };
 
     this.click = this.click.bind(this);
     this.selectOnlyThis = this.selectOnlyThis.bind(this);

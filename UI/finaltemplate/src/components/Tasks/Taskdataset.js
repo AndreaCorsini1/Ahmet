@@ -7,7 +7,7 @@ const listwebsitesData = [
   { id: 2, name: 'Dataset 2', active: true },
   { id: 3, name: 'Dataset 3', active : true },
   { id: 4, name: 'Dataset 4', active : true }
-]
+];
 
 let passdataset = -1;
 
@@ -18,14 +18,14 @@ constructor(props){
 
     this.state = {
       selectedId: null,
-    }
+    };
     this.handleChangess = this.handleChangess.bind(this);
   }
 
   handleChangess(id, value) {
     this.setState({selectedId: value===true?id:null});
     passdataset = id;
-    if (value == false){
+    if (value === false){
         //alert(value);
         passdataset = -1;
     }

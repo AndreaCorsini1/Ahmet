@@ -11,7 +11,7 @@ const listwebsitesData = [
   { id: 2, name: 'lambda = 2', active: true },
   { id: 3, name: 'lambda = 3', active : true },
   { id: 4, name: 'lambda = 4', active : true }
-]
+];
 
 //questo per mandare roba, subito -1
 let passparameter = -1;
@@ -22,14 +22,14 @@ constructor(props){
     super(props);
     this.state = {
       selectedId: null,
-    }
+    };
     this.handleChangess = this.handleChangess.bind(this);
   }
 
   handleChangess(id, value) {
     this.setState({selectedId: value===true?id:null});
     passparameter = id;
-    if (value == false){
+    if (value === false){
         //alert(value);
         passparameter = -1;
     }

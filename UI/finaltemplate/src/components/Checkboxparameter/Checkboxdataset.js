@@ -5,16 +5,16 @@ export const onDatasetChoose = (dataset) => {
 
   value.id_dataset = dataset;
 
-  if (dataset == 1){
+  if (dataset === 1){
     value.name_dataset = 'Dataset 1';
   }
-  if (dataset == 2){
+  if (dataset === 2){
     value.name_dataset = 'Dataset 2';
   }
-  if (dataset == 3){
+  if (dataset === 3){
     value.name_dataset = 'Dataset 3';
   }
-  if (dataset == 4){
+  if (dataset === 4){
     value.name_dataset = 'Dataset 4';
   }
 
@@ -31,11 +31,10 @@ class Checkboxdataset extends Component {
       fields: {
         id: listwebsites.id
       }
-    }
+    };
 
     this.click = this.click.bind(this);
     this.selectOnlyThis = this.selectOnlyThis.bind(this);
-
   }
   click(value) {
     this.props.handleChangess(this.state.fields.id, value);
@@ -49,10 +48,14 @@ class Checkboxdataset extends Component {
 
     return (
      <tr>
-              <input
-                type="checkbox"
-                disabled={selectedId && selectedId!==listwebsites.id} id={`checkbox_${listwebsites.id}`} value={listwebsites.checked} onChange={e => this.click(e.target.checked)} type="checkbox" name="record"/>
-              <td>{listwebsites.name}</td>
+       <input
+         type="checkbox"
+         disabled={selectedId && selectedId!==listwebsites.id}
+         id={`checkbox_${listwebsites.id}`} value={listwebsites.checked}
+         onChange={e => this.click(e.target.checked)}
+         type="checkbox"
+         name="record"/>
+       <td>{listwebsites.name}</td>
     </tr>
     )
   }

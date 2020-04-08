@@ -31,7 +31,7 @@ const listwebsitesData = [
   { id: 2, name: 'Random Forest', active: true },
   { id: 3, name: 'Bayes', active : true },
   { id: 4, name: 'Bernulli', active : true }
-]
+];
 
 let passmodel = -1;
 
@@ -42,14 +42,14 @@ constructor(props){
 
     this.state = {
       selectedId: null,
-    }
+    };
     this.handleChangess = this.handleChangess.bind(this);
   }
 
   handleChangess(id, value) {
     this.setState({selectedId: value===true?id:null});
     passmodel = id;
-    if (value == false){
+    if (value === false){
         //alert(value);
         passmodel = -1;
     }
