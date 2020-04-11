@@ -3,7 +3,7 @@
  */
 import React, { Component } from "react";
 
-export class Card extends Component {
+class Card extends Component {
   render() {
     return (
       <div className={"card" + (this.props.plain ? " card-plain" : "")}>

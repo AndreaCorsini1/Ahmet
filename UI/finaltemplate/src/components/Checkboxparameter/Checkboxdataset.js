@@ -20,9 +20,9 @@ export const onDatasetChoose = (dataset) => {
 
   recap.dataset = value.name_dataset;
 
-}
+};
 
-class Checkboxdataset extends Component {
+class CheckBoxDataset extends Component {
   constructor(props) {
     super(props);
     let { listwebsites } = this.props;
@@ -53,11 +53,10 @@ class Checkboxdataset extends Component {
          disabled={selectedId && selectedId!==listwebsites.id}
          id={`checkbox_${listwebsites.id}`} value={listwebsites.checked}
          onChange={e => this.click(e.target.checked)}
-         type="checkbox"
          name="record"/>
        <td>{listwebsites.name}</td>
-    </tr>
-    )
+     </tr>
+    );
   }
 }
 

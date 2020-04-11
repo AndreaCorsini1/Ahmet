@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import Checkboxdataset from "../Checkboxparameter/Checkboxdataset";
-import {onDatasetChoose} from "../Checkboxparameter/Checkboxdataset";
+import Checkboxdataset, { onDatasetChoose } from "../Checkboxparameter/Checkboxdataset";
 
 const listwebsitesData = [
   { id: 1, name: 'Dataset 1', active: true },
@@ -11,18 +10,18 @@ const listwebsitesData = [
 
 let passdataset = -1;
 
-export class Taskdataset extends Component {
+class TaskDataset extends Component {
 
-constructor(props){
+  constructor(props){
     super(props);
 
     this.state = {
       selectedId: null,
     };
-    this.handleChangess = this.handleChangess.bind(this);
+    this.handleChanges = this.handleChangess.bind(this);
   }
 
-  handleChangess(id, value) {
+  handleChanges(id, value) {
     this.setState({selectedId: value===true?id:null});
     passdataset = id;
     if (value === false){
@@ -38,10 +37,16 @@ constructor(props){
     <div className="Tasks">
       {
         listwebsitesData.map((data)=>{
-          return <Checkboxdataset selectedId={this.state.selectedId} listwebsites={data} handleChangess={this.handleChangess} />
+          return <Checkboxdataset
+              selectedId={this.state.selectedId}
+              listwebsites={data}
+              handleChangess={this.handleChangess}
+          />
         })
       }
     </div>
   )
   }
 }
+
+export default TaskDataset;

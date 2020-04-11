@@ -3,15 +3,13 @@
  */
 import React, { Component } from "react";
 import {
-  Grid,
   Row,
   Col,
-  FormGroup,
-  ControlLabel,
-  FormControl
+  Form,
+  Container
 } from "react-bootstrap";
 
-import { Card } from "components/Card/Card.jsx";
+import Card from "../components/Card/Card";
 import { FormInputs } from "components/FormInputs/FormInputs.jsx";
 import { UserCard } from "components/UserCard/UserCard.jsx";
 import Button from "components/CustomButton/CustomButton.jsx";
@@ -24,7 +22,7 @@ class UserProfile extends Component {
       <div className="content">
         <h3>Up to you if you want a user view</h3>
         <h4>In the API I have a user table</h4>
-        <Grid fluid>
+        <Container fluid>
           <Row>
             <Col md={8}>
               <Card
@@ -117,16 +115,16 @@ class UserProfile extends Component {
 
                     <Row>
                       <Col md={12}>
-                        <FormGroup controlId="formControlsTextarea">
-                          <ControlLabel>About Me</ControlLabel>
-                          <FormControl
+                        <Form.Group controlId="formControlsTextarea">
+                          <Form.Label>About Me</Form.Label>
+                          <Form.Control
                             rows="5"
                             componentClass="textarea"
                             bsClass="form-control"
                             placeholder="Here can be your description"
                             defaultValue="Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo."
                           />
-                        </FormGroup>
+                        </Form.Group>
                       </Col>
                     </Row>
                     <Button bsStyle="info" pullRight fill type="submit">
@@ -168,7 +166,7 @@ class UserProfile extends Component {
               />
             </Col>
           </Row>
-        </Grid>
+        </Container>
       </div>
     );
   }

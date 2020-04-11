@@ -16,14 +16,14 @@
 
 */
 import React, { Component } from "react";
-import { FormGroup, ControlLabel, FormControl, Row } from "react-bootstrap";
+import { Form, Row } from "react-bootstrap";
 
 function FieldGroup({ label, ...props }) {
   return (
-    <FormGroup>
-      <ControlLabel>{label}</ControlLabel>
-      <FormControl {...props} />
-    </FormGroup>
+    <Form.Group>
+      <Form.Label>{label}</Form.Label>
+      <Form.Control {...props} />
+    </Form.Group>
   );
 }
 

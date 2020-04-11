@@ -3,12 +3,10 @@
 // // // For notifications
 // //
 //
-var defaultWidth =
-  window.screen.width > 768
-    ? (window.screen.width * 1) / 3
-    : window.screen.width;
+var defaultWidth = window.screen.width > 768
+    ? window.screen.width / 3 : window.screen.width;
 
-var style = {
+export var style = {
   Wrapper: {},
   Containers: {
     DefaultStyle: {
@@ -254,7 +252,7 @@ var style = {
 // // // For icons
 // //
 //
-const iconsArray = [
+export const iconsArray = [
   "pe-7s-album",
   "pe-7s-arc",
   "pe-7s-back-2",
@@ -466,36 +464,32 @@ const iconsArray = [
 //
 
 /*-------------------------------Variables for New study---------------------*/
-var value = [ { id_param: '', name_param: '', name_model: '', id_model:'', id_dataset: '', name_dataset:''}];
-var recap = [{alorithm : '', metrics : '', dataset: '', parameter : ''}];
+export var value = [ { id_param: '', name_param: '', name_model: '', id_model:'', id_dataset: '', name_dataset:''}];
 
 
 
 //------------------------------Data for card at the top--------------------------------
 //NB-> ogni volta che crei una variabile la devi esportare in fondo e importare nel file che importa varible.jsx
-var Nstudy = "10";
-var Nrunning = "4";
+export var Nstudy = "10";
+export var Nrunning = "4";
 
 //array che contiene tutti i valori dei lambda calcolati per quel modello
 //array dimanico contenete i risultati dei moelli
 
-var Bayes_result = [2000, 2500, 3000, 200, 400, 500, 600, 800, 900, 1000, 300];
-var KNN_result = [800, 1500];
-var SVM_result = [287, 385, 490, 492, 554, 586, 698, 695];
-var RandomForest_result =  [67, 152, 143, 240, 287, 335, 435, 437];
+export var Bayes_result = [2000, 2500, 3000, 200, 400, 500, 600, 800, 900, 1000, 300];
+export var KNN_result = [800, 1500];
+export var SVM_result = [287, 385, 490, 492, 554, 586, 698, 695];
+export var RandomForest_result =  [67, 152, 143, 240, 287, 335, 435, 437];
 
 
 // Data for Pie Chart
+export var Total_study = KNN_result.length + SVM_result.length + RandomForest_result.length + Bayes_result.length;
 
-var Total_study = KNN_result.length + SVM_result.length + RandomForest_result.length + Bayes_result.length;
-
-
-
-var dataPie = {
+export var dataPie = {
   labels: [KNN_result.length, SVM_result.length, RandomForest_result.length, Bayes_result.length],
   series: [KNN_result.length, SVM_result.length, RandomForest_result.length, Bayes_result.length],
 };
-var legendPie = {
+export var legendPie = {
   names: ["KNN", "SVM", "Random Forest", "Bayes"],
   types: ["info", "danger", "warning", "error"]
 };
@@ -505,11 +499,11 @@ var legendPie = {
 //------------------------------varibles for studies----------------------------------
 // //
 //
-var test = ["ID", "Name", "Salary", "Country", "City", "Analize"];
-var prova = ["a","s","c","d"];
+export var test = ["ID", "Name", "Salary", "Country", "City", "Analize"];
+export var prova = ["a","s","c","d"];
 
-var thArray = ["ID", "Name", "Salary", "Country", "City"];
-var tdArray = [
+export var thArray = ["ID", "Name", "Salary", "Country", "City"];
+export var tdArray = [
   ["1", "Dakota Rice", "$36,738", "Niger", "Oud-Turnhout"],
   ["2", "Minerva Hooper", "$23,789", "Curaçao", "Sinaai-Waas"],
   ["3", "Sage Rodriguez", "$56,142", "Netherlands", "Baileux"],
@@ -523,7 +517,7 @@ var tdArray = [
 //---------------------------------Line Chart-------------------------
 
 //series = valore dei parametri in ref al modello
-var dataSales = {
+export var dataSales = {
   series: [
     SVM_result,
     RandomForest_result,
@@ -531,7 +525,8 @@ var dataSales = {
     Bayes_result
   ]
 };
-var optionsSales = {
+
+export var optionsSales = {
   low: 0,
   high: 800,
   showArea: false,
@@ -547,7 +542,8 @@ var optionsSales = {
     right: 50
   }
 };
-var responsiveSales = [
+
+export var responsiveSales = [
   [
     "screen and (max-width: 640px)",
     {
@@ -559,13 +555,14 @@ var responsiveSales = [
     }
   ]
 ];
-var legendSales = {
+
+export var legendSales = {
   names: ["KNN", "SVM", "Random Forest", "Bayes"],
   types: ["info", "danger", "warning", "error"]
 };
 
 // Data for Bar Chart
-var dataBar = {
+export var dataBar = {
   labels: [
     "Study 1",
     "Study 2",
@@ -584,14 +581,16 @@ var dataBar = {
     KNN_result, SVM_result, RandomForest_result, Bayes_result
   ]
 };
-var optionsBar = {
+
+export var optionsBar = {
   seriesBarDistance: 10,
   axisX: {
     showGrid: false
   },
   height: "245px"
 };
-var responsiveBar = [
+
+export var responsiveBar = [
   [
     "screen and (max-width: 640px)",
     {
@@ -604,28 +603,8 @@ var responsiveBar = [
     }
   ]
 ];
-var legendBar = {
+
+export var legendBar = {
   names: ["KNN", "SVM", "Random Forest", "Bayes"],
   types: ["info", "danger", "warning", "error"]
-};
-
-module.exports = {
-  style, // For notifications (App container and Notifications view)
-  thArray,
-  tdArray, // For tables (TableList view)
-  iconsArray, // For icons (Icons view)
-  dataPie,
-  legendPie,
-  dataSales,
-  optionsSales,
-  responsiveSales,
-  legendSales,
-  dataBar,
-  optionsBar,
-  responsiveBar,
-  Nstudy, //numero studi svolti
-  Nrunning, //study running
-  legendBar, // For charts (Dashboard view)
-  value,  //current metrics chosed
-  recap,
 };

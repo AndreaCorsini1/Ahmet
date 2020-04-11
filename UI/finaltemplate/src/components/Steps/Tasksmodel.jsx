@@ -35,7 +35,7 @@ const listwebsitesData = [
 
 let passmodel = -1;
 
-export class Tasksmodel extends Component {
+class Tasksmodel extends Component {
 
 constructor(props){
     super(props);
@@ -69,3 +69,5 @@ constructor(props){
   )
   }
 }
+
+export default Tasksmodel

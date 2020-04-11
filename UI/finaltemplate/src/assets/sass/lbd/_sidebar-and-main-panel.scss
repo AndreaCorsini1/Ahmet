@@ -93,14 +93,18 @@
     }
 
     .nav{
-        margin-top: 20px;
+        margin-top: 10px;
+        width: 100%;
+        display: table;            /* consider your list as a table */
+        table-layout: fixed;       /* fix equal width on every column */
 
         li{
             > a{
                 color: #FFFFFF;
-                margin: 5px 15px;
+                margin: 0 10px;
                 opacity: .86;
                 border-radius: 4px;
+                height: 50px;
             }
 
             &:hover > a,
@@ -115,7 +119,6 @@
                 color: #FFFFFF;
                 opacity: 1;
                 background: rgba(255,255,255,0.23);
-
             }
         }
 

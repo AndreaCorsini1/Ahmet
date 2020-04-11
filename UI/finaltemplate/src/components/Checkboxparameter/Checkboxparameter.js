@@ -1,11 +1,8 @@
 import React, { Component } from "react";
 import CustomCheckbox from "../CustomCheckbox/CustomCheckbox";
-import {value, recap} from "variables/Variables.jsx";
+import {value} from "variables/Variables.jsx";
 
 /*https://appdividend.com/2018/09/25/how-to-save-multiple-checkboxes-values-in-react-js/*/
-
-//array per tenere il parametro
-//var value = [ { id_param: '', name_param: '', name_model: '', id_model:''}];
 
 export const onParameterChoose = (param) =>{
 
@@ -28,9 +25,8 @@ export const onParameterChoose = (param) =>{
     value.name_param = 'lambda = 4'
   }
   //alert("dentro array = " + value.id + " nome : " + value.name);
-  recap.parameter = value.name_param;
   //alert("id_param = " + value.id_param + " nome_param : " + value.name_param + " name_model : " + value.name_model + " id_model: " + value.id_model);
-}
+};
 
 export const onModelChoose = (model) => {
 
@@ -48,10 +44,7 @@ export const onModelChoose = (model) => {
   if (model === 4){
     value.name_model = 'Bernulli';
   }
-
-  recap.metrics = value.name_model;
-
-}
+};
 
 class Checkboxparameter extends Component {
   constructor(props) {
@@ -83,7 +76,11 @@ class Checkboxparameter extends Component {
 
       <input
         type="checkbox"
-        disabled={selectedId && selectedId!==listwebsites.id} id={`checkbox_${listwebsites.id}`} value={listwebsites.checked} onChange={e => this.click(e.target.checked)} type="checkbox" name="record"/>
+        disabled={selectedId && selectedId!==listwebsites.id}
+        id={`checkbox_${listwebsites.id}`}
+        value={listwebsites.checked}
+        onChange={e => this.click(e.target.checked)}
+        name="record"/>
       <td>{listwebsites.name}</td>
 
     </tr>

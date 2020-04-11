@@ -50,9 +50,6 @@ class Sidebar extends Component {
     const sidebarBackground = {
       backgroundImage: "url(" + this.props.image + ")"
     };
-    let background = this.props.hasImage ? (
-      <div className="sidebar-background" style={sidebarBackground} />
-      ) : null;
 
     return (
       <div
@@ -61,7 +58,7 @@ class Sidebar extends Component {
         data-color={this.props.color}
         data-image={this.props.image}
       >
-        {background}
+        <div className="sidebar-background" style={sidebarBackground} />
         <Logo />
         <div className="sidebar-wrapper">
           <ul className="nav">
@@ -70,11 +67,7 @@ class Sidebar extends Component {
               if (!prop.redirect)
                 return (
                   <li
-                    className={
-                      prop.upgrade
-                        ? "active active-pro"
-                        : this.activeRoute(prop.layout + prop.path)
-                    }
+                    className={this.activeRoute(prop.layout + prop.path)}
                     key={key}
                   >
                     <NavLink

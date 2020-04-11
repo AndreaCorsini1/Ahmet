@@ -1,20 +1,32 @@
 /**
- *
+ * Icons: https://themes-pixeden.com/font-demos/7-stroke/
  */
-import NewStudy from "./views/NewStudy";
-import Statistics from "views/Statistics.jsx";
-import UserProfile from "views/UserProfile.jsx";
-import Studies from "views/Studies.jsx";
-import Typography from "views/Typography.jsx";
-//import Icons from "views/Icons.jsx";
-//import Notifications from "views/Notifications.jsx";
+import Home from "./views/Home";
+import Statistics from "views/Statistics";
+import UserProfile from "views/UserProfile";
+import Studies from "views/Studies";
+import NewStudy from "views/NewStudy";
 
 const dashboardRoutes = [
   {
-    path: "/study",
-    name: "New Study",
-    icon: "pe-7s-plugin",
+    path: "/home",
+    name: "Home",
+    icon: "pe-7s-home",
+    component: Home,
+    layout: "/ahmet"
+  },
+  {
+    path: "/newstudy",
+    name: "New study",
+    icon: "pe-7s-news-paper",
     component: NewStudy,
+    layout: "/ahmet",
+  },
+  {
+    path: "/studies",
+    name: "Studies",
+    icon: "pe-7s-note2",
+    component: Studies,
     layout: "/ahmet"
   },
   {
@@ -25,40 +37,12 @@ const dashboardRoutes = [
     layout: "/ahmet"
   },
   {
-    path: "/studies",
-    name: "Studies",
-    icon: "pe-7s-note2",
-    component: Studies,
-    layout: "/ahmet"
-  },
-{
-    path: "/typography",
-    name: "Typography",
-    icon: "pe-7s-news-paper",
-    component: Typography,
-    layout: "/ahmet"
-  },
-  /*{
-    path: "/icons",
-    name: "Icons (temporary)",
-    icon: "pe-7s-science",
-    component: Icons,
-    layout: "/ahmet"
-  },*/
-  {
     path: "/user",
     name: "User Profile",
     icon: "pe-7s-user",
     component: UserProfile,
     layout: "/ahmet"
-  },
-/*  {
-    path: "/notifications",
-    name: "Notifications",
-    icon: "pe-7s-bell",
-    component: Notifications,
-    layout: "/ahmet"
-  }*/
+  }
 ];
 
-export default dashboardRoutes;
+export default dashboardRoutes
