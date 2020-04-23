@@ -46,7 +46,7 @@ class NewStudy extends Component {
         "Content-Type": "application/json",
         'Accept': 'application/json',
       },
-      body: JSON.stringify({username: 'Andrea', password: 'andrea'})
+      body: JSON.stringify({username: 'matte', password: 'Stereomix055'})
     })
       .then(response => response.json())
       .then(

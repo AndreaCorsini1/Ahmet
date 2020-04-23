@@ -57,6 +57,7 @@ class Studies extends Component {
                             <Button
                                 bsStyle="warning"
                                 pullRight fill type="submit"
+                                // TODO: change notify
                                 //onClick={()=> onDelete(key, prop)}
                                 onClick={() => this.props.handleClick("tr")}>
                                 Delete
