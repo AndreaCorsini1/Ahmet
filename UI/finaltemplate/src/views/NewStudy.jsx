@@ -5,7 +5,7 @@
  * TODO: add validation
  */
 import React, { Component } from "react";
-import { Col, Table, Form } from "react-bootstrap";
+import { Row, Col, Table, Form, Container} from "react-bootstrap";
 import Card from "../components/Card/Card";
 import Step0 from "../components/Steps/Step0";
 import Step1 from "../components/Steps/Step1";
@@ -13,7 +13,7 @@ import Step2 from "../components/Steps/Step2";
 import Step3 from "../components/Steps/Step3";
 import Step4 from "../components/Steps/Step4";
 import Loading from "../components/Loading/Loading";
-import { store } from "react-notifications-component";
+import getToken from "../components/Token/Token";
 
 const steps = ['studyName', 'algorithmName', 'metricName', 'datasetName', 'parameters'];
 class NewStudy extends Component {
@@ -28,46 +28,19 @@ class NewStudy extends Component {
       parameters: null,
       token: null
     };
-    this.getToken();
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this._next = this._next.bind(this);
     this._prev = this._prev.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
-  /**
-   * TODO: do it once in login
-   */
-  getToken() {
-    let url = "http://localhost:8080/api/v0.1/token-auth/";
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify({username: 'matte', password: 'Stereomix055'})
-    })
-      .then(response => response.json())
-      .then(
-        (data) => {
-          this.setState({
-            token: data.token
-          });
-        },
-        (error) => {
-          console.error(error.message);
-          store.addNotification({
-            title: "Error",
-            message: error.message,
-            type: "danger",
-            insert: "top",
-            container: "top-right",
-            animationIn: ["animated", "fadeIn"],
-            animationOut: ["animated", "fadeOut"],
-          })
-        }
-      );
+  componentDidMount() {
+    getToken({
+      setToken: (token) => {
+        this.setState({token: token})
+      }
+    });
   }
 
   handleChange(event) {
@@ -75,6 +48,13 @@ class NewStudy extends Component {
     this.setState({
       [name]: value
     });
+  }
+
+  handleKeyPress(event) {
+    console.log(event.key);
+    if (event.key === 'Enter') {
+      this._next();
+    }
   }
 
   handleSubmit(event) {
@@ -131,10 +111,12 @@ class NewStudy extends Component {
 
   nextButton(){
     if (this.state.currentStep < 5) {
+      let key = steps[this.state.currentStep];
       return (
         <button
           className="btn btn-primary float-right"
           type="button"
+          disabled={this.state[key] == null}
           onClick={this._next}
         >
           Next
@@ -254,17 +236,22 @@ class NewStudy extends Component {
     let name = this.state.studyName || 'a new study';
     return (
       <div className="content">
-        <h2> Insert data for creating {name} ️</h2>
-        {this.showRecap()}
-        <Form>
-          <Form.Row>
-            <Col> {this.renderStep()} </Col>
-          </Form.Row>
-          <Form.Row>
-            <Col> {this.previousButton()} </Col>
-            <Col> {this.nextButton()} </Col>
-          </Form.Row>
-        </Form>
+        <Container fluid>
+          <Form>
+            <Form.Group as={Col} className="text-center">
+              <h2> Insert data for creating {name} ️</h2>
+              <hr/>
+              {this.showRecap()}
+            </Form.Group>
+            <Form.Row className="text-center">
+              <Col> {this.renderStep()} </Col>
+            </Form.Row>
+            <Row>
+              <Col> {this.previousButton()} </Col>
+              <Col> {this.nextButton()} </Col>
+            </Row>
+          </Form>
+        </Container>
       </div>
     );
   }

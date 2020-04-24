@@ -13,6 +13,8 @@ urlpatterns = [
     #
     path('token-auth/', obtain_auth_token, name='token-auth'),
 
+    path('openapi', views.openapi, name='openapi'),
+
     # EX: localhost:8080/api/v1/algorithms
     path('algorithms/', views.AlgorithmList.as_view(), name="algorithms"),
     # EX: localhost:8080/api/v1/algorithm/RandomSearch

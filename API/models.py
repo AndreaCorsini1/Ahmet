@@ -18,7 +18,7 @@ class Algorithm(models.Model):
     # Contain only letters, numbers, underscores or hyphens
     name = models.SlugField(max_length=128, blank=False, unique=True)
 
-    status = models.CharField(max_length=128, blank=True, default="AVAILABLE")
+    status = models.CharField(max_length=128, default="AVAILABLE")
     created_time = models.DateTimeField(auto_now_add=True)
     updated_time = models.DateTimeField(auto_now=True)
 
@@ -36,7 +36,7 @@ class Dataset(models.Model):
     name = models.SlugField(max_length=128, blank=False, unique=True)
     type = models.SlugField(max_length=128, blank=False)
 
-    status = models.CharField(max_length=128, blank=True, default="AVAILABLE")
+    status = models.CharField(max_length=128, default="AVAILABLE")
 
     def __str__(self):
         return "{}".format(self.name)

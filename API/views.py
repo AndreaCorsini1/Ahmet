@@ -8,7 +8,9 @@ from API.permissions import *
 from API.serializers import *
 
 from API.tasks import Suggestion
-
+import os
+from Ahmet.settings import BASE_DIR
+import yaml
 
 class UserList(generics.ListAPIView):
     """
@@ -140,7 +142,7 @@ def study_trials(request, study_name):
         :param request: http request.
         :param study_name: name of the study for getting the trials.
     """
-    trials = Trial.objects.filter(study_name=study_name)
+    trials = Trial.objects.filter(study=study_name)
     serializer = TrialSerializer(trials, many=True)
     return Response(serializer.data)
 
@@ -162,7 +164,7 @@ def study_parameters(request, study_name):
         :param request: http request.
         :param study_name: name of the study for getting the trials.
     """
-    params = Parameter.objects.filter(study_name=study_name)
+    params = Parameter.objects.filter(study=study_name)
     serializer = ParameterSerializer(params, many=True)
     return Response(serializer.data)
 
@@ -515,3 +517,19 @@ class StartStudy(views.APIView):
         print("Do not block API")
 
         return Response(request.data, status=status.HTTP_200_OK)
+
+@decorators.api_view(['GET'])
+@decorators.permission_classes([IsAuthenticated])
+def openapi(request):
+    """
+    Get the api description file.
+
+    Args:
+        :param request:
+    :return:
+    """
+    path = os.path.join(BASE_DIR, "API/static/openapi.yaml")
+    with open(path, 'r') as stream:
+        data_loaded = yaml.safe_load(stream)
+
+    return Response(data_loaded)

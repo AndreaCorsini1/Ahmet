@@ -3,8 +3,9 @@
  */
 import React from "react";
 import { Form } from "react-bootstrap";
-import {store} from "react-notifications-component";
 import Loading from "../Loading/Loading";
+import Card from "../Card/Card";
+import ErrorView from "../Errors/Error";
 
 /**
  * Select the algorithm.
@@ -73,22 +74,14 @@ class Step1 extends React.Component {
     // TODO: add run, num_suggestions and budget
     if (this.state.error) {
       console.error(this.state.error.message);
-      store.addNotification({
-        title: "Error",
-        message: this.state.error.message,
-        type: "danger",
-        insert: "top",
-        container: "top-right",
-        animationIn: ["animated", "fadeIn"],
-        animationOut: ["animated", "fadeOut"],
-      })
+      return (<ErrorView message={this.state.error.message} />);
     } else if (!this.state.isLoaded) {
       return <Loading />;
     } else {
       return (
-        <Form.Group controlId="algName">
-          <h3> Choose an algorithm: </h3>
-          {this.state.results.map((alg) => (
+        <Card
+          title="Choose an algorithm:"
+          content={this.state.results.map((alg) => (
             <div key={`alg-${alg.id}`} className="mb-3">
               <Form.Check
                 type='checkbox'
@@ -100,7 +93,7 @@ class Step1 extends React.Component {
               />
             </div>
           ))}
-        </Form.Group>
+        />
       );
     }
   }

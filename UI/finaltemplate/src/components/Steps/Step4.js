@@ -5,8 +5,8 @@ import React from "react";
 import { Form } from "react-bootstrap";
 import Continuous from "../Parameters/Continuous";
 import Discrete from "../Parameters/Discrete";
-import {store} from "react-notifications-component";
 import Loading from "../Loading/Loading";
+import ErrorView from "../Errors/Error";
 
 /**
  * Select the parameters.
@@ -127,15 +127,7 @@ class Step4 extends React.Component {
   render() {
     if (this.state.error) {
       console.error(this.state.error.message);
-      store.addNotification({
-        title: "Error",
-        message: this.state.error.message,
-        type: "danger",
-        insert: "top",
-        container: "top-right",
-        animationIn: ["animated", "fadeIn"],
-        animationOut: ["animated", "fadeOut"],
-      })
+      return (<ErrorView message={this.state.error.message} />);
     } else if (!this.state.isLoaded) {
       return <Loading />;
     } else {

@@ -3,8 +3,9 @@
  */
 import React from "react";
 import { Form } from "react-bootstrap";
-import {store} from "react-notifications-component";
 import Loading from "../Loading/Loading";
+import Card from "../Card/Card";
+import ErrorView from "../Errors/Error";
 
 /**
  * Select the algorithm.
@@ -71,34 +72,26 @@ class Step2 extends React.Component {
     // TODO: add problem type, classification or regression
     if (this.state.error) {
       console.error(this.state.error.message);
-      store.addNotification({
-        title: "Error",
-        message: this.state.error.message,
-        type: "danger",
-        insert: "top",
-        container: "top-right",
-        animationIn: ["animated", "fadeIn"],
-        animationOut: ["animated", "fadeOut"],
-      })
+      return (<ErrorView message={this.state.error.message} />);
     } else if (!this.state.isLoaded) {
       return <Loading />;
     } else {
       return (
-      <Form.Group controlId="metricName">
-      <h3> Choose a metric: </h3>
-        {this.state.results.map((metric) => (
-          <div key={`metric-${metric.id}`} className="mb-3">
-            <Form.Check
-              type='checkbox'
-              name="metricName"
-              label={metric.name}
-              value={metric.name}
-              onChange={this.handleChange}
-              checked={metric.name === this.props.metricName}
-            />
-          </div>
-        ))}
-      </Form.Group>
+        <Card
+          title="Choose a metric:"
+          content={this.state.results.map((metric) => (
+            <div key={`metric-${metric.id}`} className="mb-3">
+              <Form.Check
+                type='checkbox'
+                name="metricName"
+                label={metric.name}
+                value={metric.name}
+                onChange={this.handleChange}
+                checked={metric.name === this.props.metricName}
+              />
+            </div>
+          ))}
+        />
       );
     }
   }

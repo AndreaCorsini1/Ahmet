@@ -3,7 +3,8 @@
  *
  */
 import React from "react";
-import { Form, Col } from "react-bootstrap";
+import {Form, Col} from "react-bootstrap";
+import Card from "../Card/Card"
 
 class Continuous extends React.Component {
   constructor(props) {
@@ -40,35 +41,39 @@ class Continuous extends React.Component {
 
   render() {
     return (
-      <Form.Group>
-        <h4> {this.props.name} </h4>
-        <Form.Row>
-          <Form.Label column sm={2}>
-            Minimum value:
-          </Form.Label>
+      <Card
+        title={this.props.name}
+        content={
           <Col>
-            <Form.Control
-              type="numeric"
-              name="min"
-              value={this.state.minValue}
-              onChange={this.handleChange}
-            />
+            <Form.Row>
+              <Form.Label column sm={2}>
+                Minimum value:
+              </Form.Label>
+              <Col>
+                <Form.Control
+                  type="numeric"
+                  name="min"
+                  value={this.state.minValue}
+                  onChange={this.handleChange}
+                />
+              </Col>
+            </Form.Row>
+            <Form.Row>
+              <Form.Label column sm={2}>
+                Maximum value:
+              </Form.Label>
+              <Col>
+              <Form.Control
+                type="numeric"
+                name="max"
+                value={this.state.maxValue}
+                onChange={this.handleChange}
+              />
+              </Col>
+            </Form.Row>
           </Col>
-        </Form.Row>
-        <Form.Row>
-          <Form.Label column sm={2}>
-            Maximum value:
-          </Form.Label>
-          <Col>
-            <Form.Control
-              type="numeric"
-              name="max"
-              value={this.state.maxValue}
-              onChange={this.handleChange}
-            />
-          </Col>
-        </Form.Row>
-      </Form.Group>
+        }
+      />
     );
   }
 }

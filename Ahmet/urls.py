@@ -16,12 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.views import LoginView, LogoutView
-from Dashboard.views import home
 
 urlpatterns = [
-    # Ex: localhost:8080/dashboard/...
-    path('dashboard/', include('Dashboard.urls', namespace='dashboard')),
-    path('', include('Dashboard.urls')),
 
     # Ex: localhost:8080/api/v0.1/...
     path('api/v0.1/', include('API.urls', namespace='api')),
@@ -30,6 +26,5 @@ urlpatterns = [
     # General page of django
     path('admin/', admin.site.urls),
     path('login/', LoginView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
-    path('home/', home, name='home')
+    path('logout/', LogoutView.as_view(), name='logout')
 ]

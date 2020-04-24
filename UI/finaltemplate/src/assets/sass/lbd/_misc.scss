@@ -1,7 +1,6 @@
 /*     General overwrite     */
 body,
 .wrapper{
-    min-height: 100vh;
     position: relative;
     background-color: white;
 }
@@ -54,9 +53,8 @@ input:focus {
 .margin-top{
     margin-top: 50px;
 }
-
 .wrapper{
     position: relative;
     top: 0;
-    height: 100vh;
+    height: 100%;
 }

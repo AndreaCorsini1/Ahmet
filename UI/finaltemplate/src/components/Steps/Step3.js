@@ -3,8 +3,9 @@
  */
 import React from "react";
 import { Form } from "react-bootstrap";
-import {store} from "react-notifications-component";
 import Loading from "../Loading/Loading";
+import Card from "../Card/Card"
+import ErrorView from "../Errors/Error";
 
 /**
  * Select the dataset.
@@ -67,34 +68,26 @@ class Step3 extends React.Component {
     // TODO: change dataset id into name
     if (this.state.error) {
       console.error(this.state.error.message);
-      store.addNotification({
-        title: "Error",
-        message: this.state.error.message,
-        type: "danger",
-        insert: "top",
-        container: "top-right",
-        animationIn: ["animated", "fadeIn"],
-        animationOut: ["animated", "fadeOut"],
-      })
+      return (<ErrorView message={this.state.error.message} />);
     } else if (!this.state.isLoaded) {
-      return <Loading />;
+      return (<Loading />);
     } else {
       return (
-      <Form.Group controlId="datasetName">
-        <h3> Choose a dataset: </h3>
-        {this.state.results.map((dataset) => (
-          <div key={`dataset-${dataset}`} className="mb-3">
-            <Form.Check
-              type='checkbox'
-              name="datasetName"
-              label={dataset}
-              value={dataset}
-              onChange={this.handleChange}
-              checked={dataset == this.props.datasetName}
-            />
-          </div>
-        ))}
-      </Form.Group>
+        <Card
+          title="Choose a dataset:"
+          content={this.state.results.map((dataset) => (
+            <div key={`dataset-${dataset}`} className="mb-3">
+              <Form.Check
+                type='checkbox'
+                name="datasetName"
+                label={dataset}
+                value={dataset}
+                onChange={this.handleChange}
+                checked={dataset == this.props.datasetName}
+              />
+            </div>
+          ))}
+        />
       );
     }
   }

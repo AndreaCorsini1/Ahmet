@@ -19,7 +19,6 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import routes from "./routes";
 import image from "assets/img/sidebar.jpg";
 
-
 class App extends React.Component {
 
   constructor(props) {
@@ -27,25 +26,8 @@ class App extends React.Component {
     this.state = {
       image: image,
       color: "black",
-      fixedClasses: "dropdown show-dropdown open"
     };
   }
-
-  handleNotificationClick = position => {
-    let color = Math.floor(Math.random() * 4 + 1);
-    let level = "warning";
-    this.state._notificationSystem.addNotification({
-      title: <span/>,
-      message: (
-        <div>
-          Your Model has been deleted
-        </div>
-      ),
-      level: level,
-      position: position,
-      autoDismiss: 3
-    });
-  };
 
   getRoutes = routes => {
     return routes.map((prop, key) => {
@@ -56,7 +38,6 @@ class App extends React.Component {
             render={props => (
               <prop.component
                 {...props}
-                handleClick={this.handleNotificationClick}
               />
             )}
             key={key}
@@ -79,14 +60,6 @@ class App extends React.Component {
       }
     }
     return "Brand";
-  };
-
-  handleFixedClick = () => {
-    if (this.state.fixedClasses === "dropdown") {
-      this.setState({ fixedClasses: "dropdown show-dropdown open" });
-    } else {
-      this.setState({ fixedClasses: "dropdown" });
-    }
   };
 
   componentDidMount() {

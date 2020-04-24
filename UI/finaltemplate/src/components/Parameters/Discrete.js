@@ -4,60 +4,60 @@
  */
 import React from "react";
 import { Form, Col } from "react-bootstrap";
+import Card from "../Card/Card"
+import Select from 'react-select';
 
 class Discrete extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: props.value
+      value: []
     };
-
     this.handleChange = this.handleChange.bind(this);
   }
 
   /**
    * Hack for transform event into object.
    *
-   * @param event
    */
   handleChange(event) {
-    let {name, value} = event.target;
-    this.setState({value: value});
+    this.setState({value: event});
 
+    let values = event.map((val) => {return val.value;});
     this.props.handleChange({
-      name: name,
-      value: value
+      name: this.props.name,
+      value: values
     });
   }
 
   render() {
-    let options = this.props.values.map((value, idx) =>
-      <option
-        key={idx}
-        value={value}
-      >
-        {value}
-      </option>
+    let options = this.props.values.map((val) => {
+      return {
+        value: val,
+        label: val}
+      }
     );
     return (
-     <Form.Group>
-       <h4> {this.props.name} </h4>
-       <Form.Row>
-         <Form.Label column sm={2}>
-           Pick a value:
-         </Form.Label>
-         <Col>
-           <Form.Control
-               as="select"
-               name={this.props.name}
-               value={this.props.value}
-               onChange={this.handleChange}
-           >
-             {options}
-           </Form.Control>
-         </Col>
-       </Form.Row>
-     </Form.Group>
+     <Card
+       title={this.props.name}
+       content={
+         <Form.Row>
+           <Form.Label column sm={2}>
+             Pick a value:
+           </Form.Label>
+           <Col>
+            <Select
+              isMulti
+              name={this.props.name}
+              options={options}
+              className="basic-multi-select"
+              classNamePrefix="select"
+              onChange={this.handleChange}
+            />
+           </Col>
+         </Form.Row>
+       }
+     />
     );
    }
 }

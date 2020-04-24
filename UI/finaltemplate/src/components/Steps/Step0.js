@@ -3,8 +3,9 @@
  */
 import React from "react";
 import {Form} from "react-bootstrap";
-import {store} from "react-notifications-component";
 import Loading from "../Loading/Loading";
+import Card from "../Card/Card";
+import ErrorView from "../Errors/Error";
 
 /**
  * First subview for filling the study name.
@@ -65,32 +66,24 @@ class Step0 extends React.Component {
   render() {
     if (this.state.error) {
       console.error(this.state.error.message);
-      store.addNotification({
-        title: "Error",
-        message: this.state.error.message,
-        type: "danger",
-        insert: "top",
-        container: "top-right",
-        animationIn: ["animated", "fadeIn"],
-        animationOut: ["animated", "fadeOut"],
-      })
+      return (<ErrorView message={this.state.error.message} />);
     } else if (!this.state.isLoaded) {
       return <Loading />;
     } else {
       return (
-        <Form.Group controlId="studyName">
-          <h3>
-            Fill in the study name and press next to compose the study.
-          </h3>
-          <Form.Control
-            className="form-control"
-            id="studyName"
-            name="studyName"
-            placeholder="Study"
-            value={this.props.studyName}
-            onChange={this.handleChange}
-          />
-        </Form.Group>
+        <Card
+          title="Fill in the study name and press next to compose the study."
+          content={
+            <Form.Control
+              className="form-control"
+              id="studyName"
+              name="studyName"
+              placeholder="Type study name..."
+              value={this.props.studyName}
+              onChange={this.handleChange}
+            />
+          }
+        />
       );
     }
   }

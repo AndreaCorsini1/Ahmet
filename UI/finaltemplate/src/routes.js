@@ -6,6 +6,7 @@ import Statistics from "views/Statistics";
 import UserProfile from "views/UserProfile";
 import Studies from "views/Studies";
 import NewStudy from "views/NewStudy";
+import APIDoc from "./views/Swagger";
 
 const dashboardRoutes = [
   {
@@ -18,7 +19,7 @@ const dashboardRoutes = [
   {
     path: "/newstudy",
     name: "New study",
-    icon: "pe-7s-news-paper",
+    icon: "pe-7s-plugin",
     component: NewStudy,
     layout: "/ahmet",
   },
@@ -35,6 +36,13 @@ const dashboardRoutes = [
     icon: "pe-7s-graph",
     component: Statistics,
     layout: "/ahmet"
+  },
+  {
+    path: "/api",
+    name: "Api docs",
+    icon: "pe-7s-news-paper",
+    component: APIDoc,
+    layout: "/ahmet",
   },
   {
     path: "/user",
