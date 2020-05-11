@@ -2,4 +2,4 @@ from django.contrib import admin
 from .models import *
 
 # Register your models here.
-admin.register(Study, Trial, Algorithm, Metric, Parameter)
+admin.register(Study, Trial, Parameter)

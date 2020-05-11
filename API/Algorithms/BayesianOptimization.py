@@ -1,4 +1,4 @@
-from API.Algorithms.AbstractAlgorithm import AbstractAlgorithm
+from API.Algorithms.AbstractAlgorithm import Algorithm
 from API.Algorithms.RandomSearch import RandomSearch
 from API.choices import TYPE
 
@@ -82,10 +82,17 @@ class Converter(object):
         return trial
 
 
-class BayesianOptimization(AbstractAlgorithm):
+class BayesianOptimization(Algorithm):
     """
 
     """
+    __info__ = {
+        "name": 'Bayesian optimization',
+        "enabled": True,
+        "description": 'Bayesian optimization description',
+        "supported_params": []
+    }
+
     def __init__(self, alpha=1e-4, beta=2.6, seed=None):
         """
 
@@ -96,6 +103,7 @@ class BayesianOptimization(AbstractAlgorithm):
         :return
 
         """
+
         self.beta = beta
         self.gpr = GaussianProcessRegressor(
             kernel=Matern(nu=2.5),

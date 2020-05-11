@@ -1,71 +1,9 @@
+"""
 
+"""
 from __future__ import unicode_literals
 from django.db import models
 from API.choices import *
-
-
-class Algorithm(models.Model):
-    """
-    Model used to keep the supported algorithms. I could allow in future to
-    upload a new file containing an algorithm. Such upload should add an entry
-    to this table for extending the support to entire framework.
-    This class defines:
-        - Name: unique name of the algorithm
-        - Status: always available (for the moment)
-        - Creation time
-        - Update time
-    """
-    # Contain only letters, numbers, underscores or hyphens
-    name = models.SlugField(max_length=128, blank=False, unique=True)
-
-    status = models.CharField(max_length=128, default="AVAILABLE")
-    created_time = models.DateTimeField(auto_now_add=True)
-    updated_time = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return "{}".format(self.name)
-
-
-class Dataset(models.Model):
-    """
-    Dataset supported by the framework. Each dataset should be used for a
-    regression 'r' or classification 'c' problem. Such distinction impacts also
-    the metric.
-    """
-    # Contain only letters, numbers, underscores or hyphens
-    name = models.SlugField(max_length=128, blank=False, unique=True)
-    type = models.SlugField(max_length=128, blank=False)
-
-    status = models.CharField(max_length=128, default="AVAILABLE")
-
-    def __str__(self):
-        return "{}".format(self.name)
-
-
-class Metric(models.Model):
-    """
-    Model used to keep the models supported. As for the algorithm class,
-    I could allow in future to upload a new file containing an algorithm.
-    Such upload should add an entry to this table for extending the support
-    to entire framework.
-    This class defines:
-        - Name: unique name of the algorithm
-        - Status: always available (for the moment)
-        - Creation time
-        - Update time
-    """
-    # Contain only letters, numbers, underscores or hyphens
-    name = models.SlugField(max_length=128, blank=False, unique=True)
-    # Supported dataset
-    datasets = models.ManyToManyField(Dataset, blank=True,
-                                      related_name='datasets')
-
-    status = models.CharField(max_length=128, blank=False, default="AVAILABLE")
-    created_time = models.DateTimeField(auto_now_add=True)
-    updated_time = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return "{}".format(self.name)
 
 
 class Study(models.Model):
@@ -92,16 +30,13 @@ class Study(models.Model):
 
     # Algorithm and relative settings (runs of the algorithm and number of
     # suggestions generated for each run)
-    algorithm = models.ForeignKey(Algorithm, on_delete=models.CASCADE,
-                                  to_field='name', default='RandomSearch')
+    algorithm_id = models.IntegerField(blank=False, default=0)
     runs = models.IntegerField(blank=False, default=10)
     num_suggestions = models.IntegerField(blank=False, default=10)
 
     # Metric and relative settings (dataset)
-    metric = models.ForeignKey(Metric, on_delete=models.CASCADE,
-                               to_field='name', default='SimpleFunction')
-    dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE,
-                                to_field='name', default='iris')
+    metric_id = models.IntegerField(blank=False, default=0)
+    dataset_id = models.IntegerField(blank=False, default=0)
 
     # Other info
     owner = models.ForeignKey('auth.User', related_name='studies',
@@ -125,7 +60,7 @@ class Parameter(models.Model):
         - Categorical: sequence of values
     """
     # Contain only letters, numbers, underscores or hyphens
-    name = models.SlugField(max_length=128, blank=False, null=False)
+    name = models.CharField(max_length=128, blank=False, null=False)
     type = models.CharField(max_length=128, choices=TYPE.choices())
     study = models.ForeignKey(Study, on_delete=models.CASCADE, to_field='name')
 

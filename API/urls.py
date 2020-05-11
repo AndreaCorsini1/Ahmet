@@ -18,19 +18,19 @@ urlpatterns = [
     # EX: localhost:8080/api/v1/algorithms
     path('algorithms/', views.AlgorithmList.as_view(), name="algorithms"),
     # EX: localhost:8080/api/v1/algorithm/RandomSearch
-    path('algorithms/<slug:alg_name>/', views.AlgorithmDetail.as_view(),
+    path('algorithms/<int:id>/', views.AlgorithmDetail.as_view(),
          name="algorithm_info"),
 
     # Ex: localhost:8080/api/v1/metrics
     path('datasets/', views.DatasetList.as_view(), name="datasets"),
     # Ex: localhost:8080/api/v1/metric/svm
-    path('datasets/<slug:dataset_name>/', views.DatasetDetail.as_view(),
+    path('datasets/<int:id>/', views.DatasetDetail.as_view(),
          name="dataset_info"),
 
     # Ex: localhost:8080/api/v1/metrics
     path('metrics/', views.MetricList.as_view(), name="metrics"),
     # Ex: localhost:8080/api/v1/metric/svm
-    path('metrics/<slug:metric_name>/', views.MetricDetail.as_view(),
+    path('metrics/<int:id>/', views.MetricDetail.as_view(),
          name="metric_info"),
 
     # Ex: localhost:8080/api/v1/parameters

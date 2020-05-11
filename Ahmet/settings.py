@@ -130,8 +130,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
-
-STATIC_URL = '/static/'
+STATIC_URL = '/API/static/'
 
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
@@ -150,7 +149,4 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated'
     ],
-
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
 }

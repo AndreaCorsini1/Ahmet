@@ -190,19 +190,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/Algorithm'
           description: ''
-  /api/v0.1/algorithms/{alg_name}/:
+  /api/v0.1/algorithms/{id}/:
     get:
       tags:
         - "Algorithms"
       operationId: RetrieveAlgorithm
       description: 'Get the details of a specific algorithm. The URI must include the algorithm name that should be queried. The response contains the algorithm information (name, status, create and update time).'
       parameters:
-      - name: alg_name
+      - name: id
         in: path
         required: true
-        description: 'The algorithm name to select from the DB.'
+        description: 'The algorithm identifier to select from the DB.'
         schema:
-          type: string
+          type: integer
       responses:
         '200':
           content:
@@ -216,12 +216,12 @@ paths:
       operationId: DestroyStudy
       description: 'Permanently delete an algorithm by its name . The method does not cancel the algorithm code but it remove the support from the application, hence, it will not be possible to use it in future studies. Note that the studies associated to this algorithm will be deleted too.'
       parameters:
-      - name: alg_name
+      - name: id
         in: path
         required: true
-        description: 'The algorithm name to delete from the DB.'
+        description: 'The algorithm identifier to select from the DB.'
         schema:
-          type: string
+          type: integer
       responses:
         '204':
           description: ''
@@ -289,55 +289,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/Metric'
           description: ''
-  /api/v0.1/metrics/{metric_name}/:
+  /api/v0.1/metrics/{id}/:
     get:
       tags:
         - "Metrics"
       operationId: retrieveMetric
       description: 'Retrieve the metric details by name. The response is populated by all the store information about the selected metric.'
       parameters:
-      - name: metric_name
+      - name: id
         in: path
         required: true
-        description: 'The metric name to select from the DB.'
+        description: 'The metric identifier to select from the DB.'
         schema:
-          type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Metric'
-          description: ''
-    put:
-      tags:
-        - "Metrics"
-      operationId: updateMetric
-      description: "Update the information about an existing metric."
-      parameters:
-      - name: metric_name
-        in: path
-        required: true
-        description: 'The name of the metric to update.'
-        schema:
-          type: string
-      requestBody:
-        content:
-          application/json:
-            schema: &id005
-              properties:
-                name:
-                  type: string
-                  maxLength: 128
-                status:
-                  type: string
-                  maxLength: 128
-              required:
-              - name
-          application/x-www-form-urlencoded:
-            schema: *id005
-          multipart/form-data:
-            schema: *id005
+          type: integer
       responses:
         '200':
           content:
@@ -351,12 +315,12 @@ paths:
       operationId: destroyMetric
       description: 'Delete the metric support from the application. Again, as for the algorithm the actual code corresponding to the metric will not be cancelled but it will not be possible to use such metric in further study.'
       parameters:
-      - name: metric_name
+      - name: id
         in: path
         required: true
-        description: 'The metric name to delete from the DB.'
+        description: 'The metric identifier to select from the DB.'
         schema:
-          type: string
+          type: integer
       responses:
         '204':
           description: ''
@@ -407,8 +371,6 @@ paths:
               properties:
                 name:
                   type: string
-                  maxLength: 128
-                  pattern: ^[-a-zA-Z0-9_]+$
                   description: 'Name of the dataset.'
                 type:
                   type: string
@@ -425,61 +387,19 @@ paths:
               schema:
                 $ref: "#/components/schemas/Dataset"
           description: ''
-  /api/v0.1/datasets/{dataset_name}/:
+  /api/v0.1/datasets/{id}/:
     get:
       tags:
       - 'Datasets'
       operationId: RetrieveDataset
       description: 'Return the specific information about a dataset. The selection of the dataset is based on the input name in the URI requested.'
       parameters:
-        - name: dataset_name
+        - name: id
           in: path
           required: true
-          description: ''
+          description: 'Dataset identifier.'
           schema:
-            type: string
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Dataset'
-          description: ''
-    put:
-      tags: 
-      - 'Datasets'
-      operationId: UpdateDataset
-      description: 'Update information about the dataset. For the moment the dataset table is minimal but in future other information could be added.'
-      parameters:
-        - name: dataset_name
-          in: path
-          required: true
-          description: ''
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema: &id006
-              properties:
-                name:
-                  type: string
-                  maxLength: 128
-                  pattern: ^[-a-zA-Z0-9_]+$
-                type:
-                  type: string
-                  maxLength: 128
-                  pattern: ^[-a-zA-Z0-9_]+$
-                status:
-                  type: string
-                  maxLength: 128
-              required:
-                - name
-                - type
-          application/x-www-form-urlencoded:
-            schema: *id005
-          multipart/form-data:
-            schema: *id005
+            type: integer
       responses:
         '200':
           content:
@@ -493,12 +413,12 @@ paths:
       operationId: DestroyDataset
       description: 'Remove the support of the dataset but not its setup code.'
       parameters:
-        - name: dataset_name
+        - name: id
           in: path
           required: true
-          description: ''
+          description: 'Dataset identifier.'
           schema:
-            type: string
+            type: integer
       responses:
         '204':
           description: ''
@@ -920,21 +840,18 @@ components:
           description: 'Unique identifier of the algorithm.'
         name:
           type: string
-          maxLength: 128
-          pattern: ^[-a-zA-Z0-9_]+$
           description: 'Name of the algorithm.'
-        status:
+        description:
           type: string
-          maxLength: 128
-          description: 'Status of the algorithm: AVAILABLE, UNAVAILABLE, ...'
-        created_time:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_time:
-          type: string
-          format: date-time
-          readOnly: true
+          description: 'General description about the algorithm.'
+        enabled:
+          type: boolean
+          description: 'Whether or not the dataset is available'
+        supported_params:
+          type: array
+          items:
+            type: string
+          description: 'List of supported '
     Metric:
       type: object
       description: 'Object used to keep the supported metrics. As for the algorithm class, I could allow in future to upload a new file containing an algorithm. Such upload should add an entry to this table for extending the support to entire framework.'
@@ -948,27 +865,20 @@ components:
           maxLength: 128
           pattern: ^[-a-zA-Z0-9_]+$
           description: 'Name of the metric.'
-        datasets:
-          $ref: '#/components/schemas/Dataset'
+        description:
+          type: string
+          description: 'General description about the algorithm.'
+        space:
+          type: object
+          description: 'Parameters required by the metric.'
+        supported_dataset:
           type: array
           items:
-            type: integer
-          description: 'List of supported dataset.'
-        status:
-          type: string
-          maxLength: 128
-          description: 'Status of the metric: AVAILABLE, UNAVAILABLE, ...'
-        created_time:
-          type: string
-          format: date-time
-          readOnly: true
-        updated_time:
-          type: string
-          format: date-time
-          readOnly: true
+            type: string
+          description: 'Supported dataset types: regression and classification.'
     Dataset:
       type: object
-      description: 'Dataset supported by the framework. Each dataset should be used for a regression (r) or classification (c) problem. Such distinction impacts also the metric.'
+      description: 'Dataset supported by the framework. Each dataset should be used for a regression or classification problem. Such distinction depends also on the selected metric.'
       properties:
         id:
           type: integer
@@ -976,16 +886,15 @@ components:
           description: 'Unique identifier of the dataset.'
         name:
           type: string
-          maxLength: 128
-          pattern: ^[-a-zA-Z0-9_]+$
           description: 'Name of the dataset.'
+        description:
+          type: string
+          description: 'General description about the dataset.'
         type:
-          type: string
-          maxLength: 128
-          pattern: ^[-a-zA-Z0-9_]+$
-        status:
-          type: string
-          maxLength: 128
+          description: 'One or both between classification and regression.'
+          type: array
+          items:
+            type: string
     Study:
       type: object
       description: 'The study is the core of the application. A study defines which algorithm should be tested on which metric and how it should be done.'
@@ -1006,17 +915,20 @@ components:
           description: 'Number of call to the algorithm.'
         num_suggestions:
           type: integer
-          description: 'Number of suggestions (trials) generated by each algorithm call.'
+          description: 'Number of suggestions (trials) generated by each algorithm run.'
         status:
           type: string
           maxLength: 128
           description: 'Status of the metric: PENDING, STARTED, ...'
-        dataset:
-          $ref: '#/components/schemas/Dataset'
-        algorithm:
-          $ref: '#/components/schemas/Algorithm'
-        metric:
-          $ref: '#/components/schemas/Metric'
+        dataset_id:
+          type: integer
+          description: 'Identifier of an exisiting dataset.'
+        algorithm_id:
+          type: integer
+          description: 'Identifier of an exisiting and enabled algorithm.'
+        metric_id:
+          type: integer
+          description: 'Identifier of an exisiting and enabled metric.'
         created_time:
           type: string
           format: date-time
@@ -1037,6 +949,10 @@ components:
           maxLength: 128
           pattern: ^[-a-zA-Z0-9_]+$
           description: 'Name of the parameter.'
+        study:
+          type: string
+          readOnly: true
+          description: 'Name of the owning study. Foreign Key.'
         type:
           description: 'Parameter type..'
           enum:
@@ -1056,10 +972,6 @@ components:
           type: number
           nullable: true
           description: 'Maximum value of the range.'
-        study_name:
-          type: string
-          readOnly: true
-          description: 'Name of the owning study. Foreign Key.'
       required:
       - name
       - type
@@ -1071,6 +983,10 @@ components:
         id:
           type: integer
           readOnly: true
+        study:
+          type: string
+          readOnly: true
+          description: 'Name of the owning study. Foreign Key.'
         parameters:
           type: string
           nullable: true
@@ -1101,10 +1017,6 @@ components:
           type: string
           format: date-time
           readOnly: true
-        study_name:
-          type: string
-          readOnly: true
-          description: 'Name of the owning study. Foreign Key.'
       required:
       - study
       - status

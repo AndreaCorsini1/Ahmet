@@ -4,13 +4,17 @@ from rest_framework.response import Response
 from rest_framework import status, views
 from rest_framework import mixins, generics, decorators
 
+from API.Dataset import *
+from API.Algorithms import *
+from API.Metrics import *
 from API.permissions import *
 from API.serializers import *
-
 from API.tasks import Suggestion
-import os
+
 from Ahmet.settings import BASE_DIR
+import os.path
 import yaml
+
 
 class UserList(generics.ListAPIView):
     """
@@ -34,12 +38,11 @@ class StudyList(mixins.CreateModelMixin,
                 mixins.ListModelMixin,
                 generics.GenericAPIView):
 
-    queryset = Study.objects.order_by('name', 'algorithm', 'owner')
+    queryset = Study.objects.order_by('name', 'algorithm_id', 'owner')
     serializer_class = StudySerializer
 
     # Set the permissions for this view
-    permission_classes = [IsOwnerOrReadOnly,
-                          IsAdminUser]
+    permission_classes = [IsOwnerOrReadOnly, IsAdminUser]
 
     def perform_create(self, serializer):
         """
@@ -77,6 +80,7 @@ class StudyList(mixins.CreateModelMixin,
           Compliant with the RESTful API, the response contains a copy of the
           received data.
         """
+        print(request.data)
         return self.create(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -101,8 +105,7 @@ class StudyDetail(mixins.RetrieveModelMixin,
     lookup_url_kwarg = 'study_name'
 
     # Set the permissions for this view
-    permission_classes = [IsOwnerOrReadOnly,
-                          IsAdminUser]
+    permission_classes = [IsOwnerOrReadOnly, IsAdminUser]
 
     def get(self, request, *args, **kwargs):
         """
@@ -169,152 +172,111 @@ def study_parameters(request, study_name):
     return Response(serializer.data)
 
 
-class AlgorithmList(mixins.CreateModelMixin,
-                    mixins.ListModelMixin,
-                    generics.GenericAPIView):
-
-    queryset = Algorithm.objects.all().order_by('status', 'name')
-    serializer_class = AlgorithmSerializer
-
+class AlgorithmList(views.APIView):
     # Set the permissions for this view
-    permission_classes = [IsAuthenticatedOrReadOnly,
-                          IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAdminUser]
+    # Information about algorithms
+    algorithms_info = Algorithm.algorithms()
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         """
         Return the list of available algorithms. Each entry of the list
         contains the information associated to the algorithm.
         """
-        return self.list(request, *args, **kwargs)
+        return Response(self.algorithms_info)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         """
         Create a brand new study. This HTTP method should be invoked only
         after the algorithm code has already been submitted and checked by
         human supervisor. The method has been inserted for future development
         on Algorithm submission topic.
         """
-        return self.create(request, *args, **kwargs)
+        # TODO: in future I will allow to upload a file for new algorithm
+        raise NotImplementedError("Functionality not yet implemented")
 
 
-class AlgorithmDetail(mixins.RetrieveModelMixin,
-                      mixins.DestroyModelMixin,
-                      generics.GenericAPIView):
-
-    queryset = Study.objects.all()
-    serializer_class = StudySerializer
-    # Field used for performing object lookup of individual model instances
-    lookup_field = 'name'
-    # URL argument used for object lookup
-    lookup_url_kwarg = 'alg_name'
-
+class AlgorithmDetail(views.APIView):
     # Set the permissions for this view
-    permission_classes = [IsAuthenticatedOrReadOnly,
-                          IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAdminUser]
+    # Information about algorithms
+    algorithms_info = Algorithm.algorithms()
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, id):
         """
         Get the details of a specific algorithm. The URI must include the
         algorithm name that should be queried. The response contains the
         algorithm information (name, status, create and update time).
         """
-        return self.retrieve(request, *args, **kwargs)
+        if 0 <= id < len(self.algorithms_info):
+            return Response(self.algorithms_info[id])
 
-    def delete(self, request, *args, **kwargs):
-        """
-        Permanently delete an algorithm by its name . The method does not
-        cancel the algorithm code but it remove the support from the
-        application, hence, it will not be possible to use it in future
-        studies. Note that the studies associated to this algorithm will be
-        deleted too.
-        """
-        return self.destroy(request, *args, **kwargs)
+        return Response(request.data, status=status.HTTP_404_NOT_FOUND)
 
 
-class DatasetList(mixins.CreateModelMixin,
-                  mixins.ListModelMixin,
-                  generics.GenericAPIView):
-
-    queryset = Dataset.objects.order_by('type', 'status', 'name')
-    serializer_class = DatasetSerializer
-
+class DatasetList(views.APIView):
     # Set the permissions for this view
-    permission_classes = [IsAuthenticatedOrReadOnly,
-                          IsAdminUser]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsAdminUser]
+    # Dataset information
+    dataset_info = Dataset.dataset()
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         """
         Retrieve the list of all supported datasets. The datasets are
         agnostic from the metric but the opposite is not true. This
         dependency is modelled in the metric table.
         """
-        return self.list(request, *args, **kwargs)
+        return Response(self.dataset_info)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         """
         Enable the support for a new dataset. The setup code of the dataset
         must be previously committed for verification, then the post can be
         called. Note the name of the dataset must be unique.
         """
-        return self.create(request, *args, **kwargs)
+        # TODO: in future I will allow to upload a file for new dataset
+        raise NotImplementedError("Functionality not yet implemented")
 
 
-class DatasetDetail(mixins.RetrieveModelMixin,
-                    mixins.DestroyModelMixin,
-                    mixins.UpdateModelMixin,
-                    generics.GenericAPIView):
-
-    queryset = Dataset.objects.all()
-    serializer_class = DatasetSerializer
-    # Field used for performing object lookup of individual model instances
-    lookup_field = 'name'
-    # URL argument used for object lookup
-    lookup_url_kwarg = 'dataset_name'
-
+class DatasetDetail(views.APIView):
     # Set the permissions for this view
     permission_classes = [IsAuthenticatedOrReadOnly,
                           IsAdminUser]
+    # Dataset information
+    dataset_info = Dataset.dataset()
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, id):
         """
         Return the specific information about a dataset. The selection of the
         dataset is based on the input name in the URI requested.
         """
-        return self.retrieve(request, *args, **kwargs)
+        if 0 <= id < len(self.dataset_info):
+            return Response(self.dataset_info[id])
+
+        return Response(request.data, status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, *args, **kwargs):
         """
         Remove the support of the dataset but not its setup code.
         """
-        return self.destroy(request, *args, **kwargs)
-
-    def put(self, request, *args, **kwargs):
-        """
-        Update information about the dataset. For the moment the dataset
-        table is minimal but in future other information could be added.
-        """
-        return self.update(request, *args, **kwargs)
+        raise NotImplementedError("Functionality not yet implemented")
 
 
-class MetricList(mixins.CreateModelMixin,
-                 mixins.ListModelMixin,
-                 generics.GenericAPIView):
-
-    queryset = Metric.objects.order_by('name', 'status')
-    serializer_class = MetricSerializer
-
+class MetricList(views.APIView):
     # Set the permissions for this view
     permission_classes = [IsAuthenticatedOrReadOnly,
                           IsAdminUser]
+    # Metric information (name, description, space, ...)
+    metrics_info = Metric.metrics()
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
         """
         The list of all available metrics. The metric is an AI model used to
         evaluate the algorithm behaviour.
         """
-        return self.list(request, *args, **kwargs)
+        return Response(self.metrics_info)
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         """
         Create a new metric. As for the algorithm post method, the metric
         should be properly checked by a human supervisor before using it.
@@ -324,46 +286,41 @@ class MetricList(mixins.CreateModelMixin,
         The dataset must already be present in the database at the metric
         submission.
         """
-        return self.create(request, *args, **kwargs)
+        raise NotImplementedError("Functionality not yet implemented")
 
 
-class MetricDetail(mixins.RetrieveModelMixin,
-                   mixins.DestroyModelMixin,
-                   mixins.UpdateModelMixin,
-                   generics.GenericAPIView):
-
-    queryset = Metric.objects.all()
-    serializer_class = MetricSerializer
-    # Field used for performing object lookup of individual model instances
-    lookup_field = 'name'
-    # URL argument used for object lookup
-    lookup_url_kwarg = 'metric_name'
+class MetricDetail(views.APIView):
 
     # Set the permissions for this view
     permission_classes = [IsAuthenticatedOrReadOnly,
                           IsAdminUser]
+    # Metric information (name, description, space, ...)
+    metrics_info = Metric.metrics()
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, id):
         """
         Retrieve the metric details by name. The response is populated by all
         the store information about the metric.
         """
-        return self.retrieve(request, *args, **kwargs)
+        if 0 <= id < len(self.metrics_info):
+            return Response(self.metrics_info[id])
 
-    def delete(self, request, *args, **kwargs):
+        return Response(request.data, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request):
         """
         Delete the metric support from the application. Again, as for the
         algorithm the actual code corresponding to the metric will not be
         cancelled but it will not be possible to use such metric in further
         study.
         """
-        return self.destroy(request, *args, **kwargs)
+        raise NotImplementedError("Functionality not yet implemented")
 
-    def put(self, request, *args, **kwargs):
+    def put(self, request):
         """
         Update information about the metric.
         """
-        return self.update(request, *args, **kwargs)
+        raise NotImplementedError("Functionality not yet implemented")
 
 
 class TrialList(mixins.ListModelMixin, generics.GenericAPIView):
@@ -439,6 +396,7 @@ class ParameterList(mixins.CreateModelMixin,
         the study name must be valid, i.e. an already created study must be
         present with such name.
         """
+        print(request.data)
         return self.create(request, *args, **kwargs)
 
 
@@ -481,7 +439,7 @@ class StartStudy(views.APIView):
     # Set the permissions for this view
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, study_name, format=None):
+    def get(self, request, study_name):
         """
         Start a saved study.
 
@@ -495,26 +453,20 @@ class StartStudy(views.APIView):
         if not study:
             return Response(request.data, status=status.HTTP_404_NOT_FOUND)
 
-        if not Parameter.objects.filter(study_name=study_name).exists():
-            return Response(request.data,
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        if not Algorithm.objects.filter(name=study.algorithm.name).exists():
+        if not Parameter.objects.filter(study=study_name).exists():
             return Response(request.data,
                             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         data = {
             'study_name': study_name,
-            'alg_name': study.algorithm.name,
+            'alg_name': study.algorithm_id,
+            'metric': study.metric_id,
+            'dataset': study.dataset_id,
             'runs': study.runs,
             'num_suggestions': study.num_suggestions,
-            'model_name': study.metric.name,
-            'dataset': study.dataset.name,
-            'model_type': study.dataset.type
         }
         worker = Suggestion(**data)
         worker.start()
-        print("Do not block API")
 
         return Response(request.data, status=status.HTTP_200_OK)
 

@@ -1,10 +1,10 @@
-from API.Algorithms.AbstractAlgorithm import AbstractAlgorithm
+from API.Algorithms.AbstractAlgorithm import Algorithm
 from API.choices import TYPE
 
 import random
 
 
-class GridSearch(AbstractAlgorithm):
+class GridSearch(Algorithm):
     """
     Grid Search is the most basic algorithmic method for hyper-parameter
     optimisation. It’s like running nested loops on all possible values of
@@ -16,9 +16,17 @@ class GridSearch(AbstractAlgorithm):
     configurations from a different initial point each time the algorithm is
     called.
     """
-    # TODO: extend to integer and double
-    supported_params = [(TYPE.CATEGORICAL.name, TYPE.CATEGORICAL.value),
-                        (TYPE.DISCRETE.name, TYPE.DISCRETE.value)]
+    __info__ = {
+        "name": 'Grid search',
+        "enabled": True,
+        "description": 'The grid search exhaustively generates candidate trials'
+                       ' from a grid of parameter values. After generation, it'
+                       ' randomly picks trials until its budget is exhausted',
+        "supported_params": [
+            (TYPE.CATEGORICAL.name, TYPE.CATEGORICAL.value),
+            (TYPE.DISCRETE.name, TYPE.DISCRETE.value)
+        ]
+    }
 
     def setUp(self, space, shuffle=True):
         """

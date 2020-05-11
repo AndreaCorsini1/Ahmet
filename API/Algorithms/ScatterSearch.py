@@ -42,12 +42,24 @@ Taxonomy:
 import random
 from time import time
 from API.choices import TYPE
-from API.Algorithms.AbstractAlgorithm import AbstractAlgorithm
+from API.Algorithms.AbstractAlgorithm import Algorithm
 
-class ScatterSearch(AbstractAlgorithm):
+class ScatterSearch(Algorithm):
+    """
+
+    """
+    __info__ = {
+        "name": "Scatter search",
+        "enabled": False,
+        "description": 'SS description',
+        "supported_params": [
+            (TYPE.CATEGORICAL.name, TYPE.CATEGORICAL.value),
+            (TYPE.DISCRETE.name, TYPE.DISCRETE.value)
+            ]
+    }
 
     def setUp(self, function, configspace, init_population=80,
-                 elite_population=5, diverse_population=5):
+              elite_population=5, diverse_population=5):
         """
         Class constructor.
 

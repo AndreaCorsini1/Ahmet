@@ -17,36 +17,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'studies']
 
 
-class AlgorithmSerializer(serializers.ModelSerializer):
-    """
-    Default algorithm serializer.
-    """
-    class Meta:
-        model = Algorithm
-        fields = '__all__'
-        read_only_fields = ['id', 'created_time']
-
-
-class DatasetSerializer(serializers.ModelSerializer):
-    """
-    Default dataset serializer.
-    """
-    class Meta:
-        model = Dataset
-        fields = '__all__'
-        read_only_fields = ['id']
-
-
-class MetricSerializer(serializers.ModelSerializer):
-    """
-    Default metric serializer.
-    """
-    class Meta:
-        model = Metric
-        fields = '__all__'
-        read_only_fields = ['id', 'created_time']
-
-
 class StudySerializer(serializers.ModelSerializer):
     """
     Default study serializer.
@@ -68,6 +38,36 @@ class ParameterSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['id', 'created_time']
 
+    def to_representation(self, instance):
+        """
+        Convert the serialized parameters into a real dictionary.
+
+        Args:
+            :param instance: instance to be deserialized
+        :return:
+            Deserialized instance
+        """
+        ret = super().to_representation(instance)
+
+        if ret.get('values', False):
+            ret['values'] = json.loads(ret['values'])
+
+        return ret
+
+    def to_internal_value(self, data):
+        """
+        Convert the parameter dictionary into a serialized string.
+
+        Args:
+            :param data: unvalidated data that may contain the parameters field
+        :return:
+            The serialized data
+        """
+        if data.get('values', False):
+            data['values'] = json.dumps(data['values'])
+
+        return super().to_internal_value(data)
+
     def validate(self, attrs):
         """
         Additional validation for checking that the right fields are pass
@@ -80,7 +80,6 @@ class ParameterSerializer(serializers.ModelSerializer):
         :return:
         """
         if attrs['type'] == TYPE.FLOAT or attrs['type'] == TYPE.INTEGER:
-
             # Force the presence of min and max with float and integer params
             if 'min' not in attrs or 'max' not in attrs:
                 msg = 'Fields \'min\' and \'max\' must be given for INTEGER ' \
@@ -91,7 +90,6 @@ class ParameterSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(msg)
 
         elif attrs['type'] == TYPE.DISCRETE or attrs['type'] == TYPE.CATEGORICAL:
-
             # Force the presence of values in discrete and categorical params
             if 'values' not in attrs:
                 msg = 'Field \'values\' must be given for DISCRETE or ' \
@@ -145,6 +143,8 @@ class TrialSerializer(serializers.ModelSerializer):
 
         if data.get('score_info', False):
             data['score_info'] = json.dumps(data['score_info'])
+        else:
+            data['score_info'] = ''
 
         return super().to_internal_value(data)
 

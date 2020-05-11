@@ -8,16 +8,24 @@
         - Categorical values
 """
 from API.choices import TYPE
-from API.Algorithms.AbstractAlgorithm import AbstractAlgorithm
+from API.Algorithms.AbstractAlgorithm import Algorithm
 import random
 
 
-class RandomSearch(AbstractAlgorithm):
+class RandomSearch(Algorithm):
     """
 
 
     """
-    supported_params = TYPE.choices()
+    __info__ = {
+        "name": 'Random search',
+        "enabled": True,
+        "description": 'Randomized search over parameters. Each trial is '
+                       'sampled from a distribution over possible parameter '
+                       'values. Continuous parameters are uniformly sampled, '
+                       'while discrete ones are shuffled and picked up.',
+        "supported_params": TYPE.choices()
+    }
 
     def get_suggestion(self, space):
         """
@@ -39,7 +47,6 @@ class RandomSearch(AbstractAlgorithm):
                 value = random.randint(param['min'], param['max'])
 
             elif TYPE[param["type"]] is TYPE.DISCRETE:
-
                 value = random.choice(param["values"])
 
             elif TYPE[param["type"]] is TYPE.CATEGORICAL:
