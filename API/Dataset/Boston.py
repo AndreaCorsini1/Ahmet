@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from API.Dataset.AbstractDataset import Dataset
-
+from API.choices import PROBLEM
 
 class Boston(Dataset):
     __info__ = {
@@ -9,7 +10,7 @@ class Boston(Dataset):
         "description": 'The Boston house-price data is a simple regression '
                        'dataset composed of 506 instances each having 13 '
                        'attributes.',
-        "type": 'regression'
+        "type": PROBLEM.REGRESSION.name
     }
 
     def preProcessing(self, data):

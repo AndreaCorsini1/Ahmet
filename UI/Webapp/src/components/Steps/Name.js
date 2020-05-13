@@ -71,7 +71,8 @@ class Name extends React.Component {
     } else {
       return (
         <CustomCard
-          title="Fill in the study name and press next to compose the study."
+          title="Study name:"
+          subtitle="Fill in the study name and click next to compose the study"
           content={
             <Form.Control
               id="studyName"

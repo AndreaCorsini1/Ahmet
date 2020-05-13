@@ -12,13 +12,13 @@ import {APIGet, APIDelete} from "../components/Fetcher/Fetcher";
 
 // Base url for the view
 const baseUrl = "http://localhost:8080/api/v0.1/studies/";
-const details = ['id', 'parameters', ]
+// Timer for fetching timeout
+const timeout = 3000;
 
 /**
  * Make a table containing the provide data.
  *
  * @param props
- * @returns {*}
  */
 function Tabular(props) {
   let content;
@@ -30,7 +30,8 @@ function Tabular(props) {
   } else {
     let headers = Object.keys(props.data[0]);
     content = (
-      <Table
+      <div style={{'max-height': 600, overflow: 'auto'}}>
+        <Table
         striped bordered hover responsive
         onClick={props.onRowClick ? props.onRowClick : null}
       >
@@ -53,6 +54,7 @@ function Tabular(props) {
           ))
         }</tbody>
       </Table>
+      </div>
     );
   }
   return <CustomCard title={props.title} content={content}/>;
@@ -73,7 +75,10 @@ class Studies extends Component {
       studies: [],
       study_idx: null,
       trials: null,
-      params: null
+      params: null,
+      algorithms: null,
+      metrics: null,
+      dataset: null
     };
 
     this.handleDelete = this.handleDelete.bind(this);
@@ -93,8 +98,56 @@ class Studies extends Component {
         this.setState({
           token: token
         }, this.handleStudies);
+        APIGet({
+          onSuccess: (algorithms) => {
+            this.setState({
+              algorithms: algorithms.reduce((acc, alg) => ({
+                ...acc, [alg.id]: alg.name
+              }), {}),
+              isLoaded: this.state.metrics !== null &&
+                        this.state.studies !== null &&
+                        this.state.dataset !== null
+            });
+          },
+          onError: this.handleError,
+          uri: "http://localhost:8080/api/v0.1/algorithms/", token: token
+        });
+        APIGet({
+          onSuccess: (metrics) => {
+            this.setState({
+              metrics: metrics.reduce((acc, metric) => ({
+                ...acc, [metric.id]: metric.name
+              }), {}),
+              isLoaded: this.state.algorithms !== null &&
+                        this.state.studies !== null &&
+                        this.state.dataset !== null
+            });
+          },
+          onError: this.handleError,
+          uri: "http://localhost:8080/api/v0.1/metrics/", token: token
+        });
+        APIGet({
+          onSuccess: (dataset) => {
+            this.setState({
+              dataset: dataset.reduce((acc, data) => ({
+                ...acc, [data.id]: data.name
+              }), {}),
+              isLoaded: this.state.algorithms !== null &&
+                        this.state.studies !== null &&
+                        this.state.metrics !== null
+            });
+          },
+          onError: this.handleError,
+          uri: "http://localhost:8080/api/v0.1/dataset/", token: token
+        });
       }
     });
+  }
+
+  componentWillUnmount() {
+    if (this.timerID) {
+      clearInterval(this.timerID);
+    }
   }
 
   /**
@@ -114,10 +167,15 @@ class Studies extends Component {
    * Fetch the studies and enable the studies view.
    */
   handleStudies() {
+    if (this.timerID) {
+      clearInterval(this.timerID);
+    }
     APIGet({
       onSuccess: (studies) => {
         this.setState({
-          isLoaded: true,
+          isLoaded: this.state.algorithms !== null &&
+                    this.state.metrics !== null &&
+                    this.state.dataset !== null,
           studies: studies,
           renderDetails: false,
           trials: null,
@@ -127,7 +185,7 @@ class Studies extends Component {
       onError: this.handleError,
       uri: baseUrl,
       token: this.state.token
-    })
+    });
   }
 
   /**
@@ -153,6 +211,39 @@ class Studies extends Component {
     });
   }
 
+  fetchStudy(url) {
+    APIGet({
+      onSuccess: (trials) => this.setState({
+        trials: trials,
+        isLoaded: this.state.params ? true : false
+      }),
+      onError: this.handleError,
+      uri: url + /trials/,
+      token: this.state.token
+    });
+    APIGet({
+      onSuccess: (params) => this.setState({
+        params: params,
+        isLoaded: this.state.trials ? true : false
+      }),
+      onError: this.handleError,
+      uri: url + /parameters/,
+      token: this.state.token
+    });
+
+    // Periodically fetch the trials
+    this.timerID = setInterval(
+      () => APIGet({
+      onSuccess: (trials) => {
+        this.setState({ trials: trials });
+      },
+      onError: this.handleError,
+      uri: url + /trials/,
+      token: this.state.token
+      }), timeout
+    );
+  }
+
   /**
    * Handle the click of a cell within a row.
    * The click will open the details of the study (i.e. the row).
@@ -162,32 +253,13 @@ class Studies extends Component {
   handleRowClick(event) {
     let idx = event.target.getAttribute('data-father');
     let studyName = this.state.studies[idx].name;
-    let uri = baseUrl + studyName;
+    let url = baseUrl + studyName;
 
     this.setState({
       renderDetails: true,
       isLoaded: false,
       study_idx: idx
-    }, function() {
-      APIGet({
-        onSuccess: (trials) => this.setState({
-          trials: trials,
-          isLoaded: this.state.params ? true : false
-        }),
-        onError: this.handleError,
-        uri: uri + /trials/,
-        token: this.state.token
-      });
-      APIGet({
-        onSuccess: (params) => this.setState({
-          params: params,
-          isLoaded: this.state.trials ? true : false
-        }),
-        onError: this.handleError,
-        uri: uri + /parameters/,
-        token: this.state.token
-      });
-    });
+    }, () => this.fetchStudy(url));
   }
 
   handleStart() {
@@ -203,49 +275,48 @@ class Studies extends Component {
           animationOut: ["animated", "fadeOut"],
           dismiss: { duration: 2000 }
         });
-        this.handleStudies();
       },
       onError: this.handleError,
-      uri: uri,
-      token: this.state.token
-    })
+      uri: uri, token: this.state.token
+    });
   }
 
   renderDetails() {
     let name = this.state.studies[this.state.study_idx].name;
     return (
-      <Container>
+      <Container fluid>
         <Col>
           {<Tabular
             data={this.state.params}
             title={`Parameters of study: ${name}`}
           />}
           {<Tabular
-            data={this.state.trials.map((trial) => ({
-              id: trial.id,
-              score: trial.score,
-              score_info: trial.score_info,
-              status: trial.status,
-              ...trial.parameters
-            }))}
+            data={
+              this.state.trials.map((trial) => ({
+                id: trial.id,
+                score: trial.score,
+                status: trial.status,
+                ...trial.parameters
+              }))
+            }
             title={`Trials of study: ${name}`}
           />}
         </Col>
         <Row className="text-center">
           <Col>
-            <Button variant="primary"
-              onClick={this.handleStudies}
-            > Back </Button>
+            <Button variant="primary" onClick={this.handleStudies}>
+              Back
+            </Button>
           </Col>
           <Col>
-            <Button variant="success"
-              onClick={this.handleStart}
-            > Start </Button>
+            <Button variant="success" onClick={this.handleStart}>
+              Start
+            </Button>
           </Col>
           <Col>
-            <Button variant="danger"
-              onClick={this.handleDelete}
-            > Delete </Button>
+            <Button variant="danger" onClick={this.handleDelete}>
+              Delete
+            </Button>
           </Col>
         </Row>
       </Container>);
@@ -263,19 +334,27 @@ class Studies extends Component {
         <div className="content">
           <Container fluid>
             <Col className="text-center">
-              <h2>Tabular data</h2>
+              <h2 className="font-weight-light">Tabular information</h2>
               <hr/>
             </Col>
             <Row>
-              <Col md={12}>{
-                this.state.renderDetails ?
-                  this.renderDetails() :
+              <Col md={12}>
+                {this.state.renderDetails ? this.renderDetails() :
                   <Tabular
-                    title="List of studies"
-                    onRowClick={this.handleRowClick}
-                    data={this.state.studies}
+                    title="List of studies" onRowClick={this.handleRowClick}
+                    data={
+                      this.state.studies.map((study) => ({
+                        id: study.id, owner: study.owner, name: study.name,
+                        algorithm: this.state.algorithms[study.algorithm_id],
+                        metric: this.state.metrics[study.metric_id],
+                        dataset: this.state.dataset[study.dataset_id],
+                        runs: study.runs, num_suggestions: study.num_suggestions,
+                        status: study.status
+                      }))
+                    }
                   />
-              }</Col>
+                }
+              </Col>
             </Row>
           </Container>
         </div>

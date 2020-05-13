@@ -1,3 +1,6 @@
+"""
+I did not spend much time on it.
+"""
 from API.Algorithms.AbstractAlgorithm import Algorithm
 from API.Algorithms.RandomSearch import RandomSearch
 from API.choices import TYPE
@@ -32,9 +35,7 @@ class Converter(object):
             self.names.append(param['name'])
 
             # Construct a mapper for conversion of discrete and categorical
-            if TYPE[param["type"]] is TYPE.CATEGORICAL or \
-                    TYPE[param["type"]] is TYPE.DISCRETE:
-
+            if param["type"] == TYPE.CATEGORICAL or param["type"] is TYPE.DISCRETE:
                 self.mapper[param['name']] = sorted(set(param['values']))
 
     def encode(self, trial):
@@ -89,8 +90,15 @@ class BayesianOptimization(Algorithm):
     __info__ = {
         "name": 'Bayesian optimization',
         "enabled": True,
-        "description": 'Bayesian optimization description',
-        "supported_params": []
+        "description": 'Bayesian optimization is a sequential design strategy '
+                       'for global optimization of black-box functions. Since '
+                       'the objective function is unknown, the Bayesian '
+                       'strategy is to treat it as a random function and place '
+                       'a prior over it. The prior captures beliefs about the '
+                       'behavior of the function. After gathering the function '
+                       'evaluations, which are treated as data, the prior is '
+                       'updated to form the posterior distribution',
+        "supported_params": TYPE.names()
     }
 
     def __init__(self, alpha=1e-4, beta=2.6, seed=None):

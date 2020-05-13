@@ -57,7 +57,10 @@ class Dataset extends React.Component {
     } else {
       return (
         <CustomCard
-          title="Choose a dataset:"
+          title="Pick a dataset:"
+          subtitle="The dataset is used in combination with the metric for
+                    building the block-box space. If nothing can be selected
+                    skip the step by clicking next."
           content={
             <Container>
               {this.state.dataset.map((dataset) => (

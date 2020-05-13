@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import mean_absolute_error, mean_squared_error, max_error
 
 from API.Metrics.AbstractMetric import Metric
-from API.choices import TYPE
+from API.choices import TYPE, PROBLEM
 
 
 class RandomForest(Metric):
@@ -14,23 +15,21 @@ class RandomForest(Metric):
         - max_depth: maximum depth of the trees
         - max_features: number of features to consider when looking for a split
         - min_split: the minimum number of samples to split an internal node
-
-    Example:
-
     """
     __info__ = {
         "name": 'Random forest',
         "enabled": True,
-        "description": 'In random forest, each tree in the ensemble is built '
-                       'from a sample drawn with replacement (i.e. a bootstrap'
-                       ' sample) from the training set.',
+        "description": 'Random forest is an ensemble algorithm, where each '
+                       'tree in the ensemble is built from a sample drawn with'
+                       ' replacement (i.e. a bootstrap sample) from the '
+                       'training set.',
         "space": {
             "Num estimators": TYPE.INTEGER.name,
             "Max depth": TYPE.INTEGER.name,
             "Max features": TYPE.INTEGER.name,
             "Min samples split": TYPE.INTEGER.name
         },
-        "supported_dataset": ['classification', 'regression']
+        "supported_dataset": PROBLEM.names()
     }
 
     def train(self, params):
@@ -46,7 +45,7 @@ class RandomForest(Metric):
             if param not in self.__info__['space']:
                 print("Error: not supported parameters {}".format(param))
 
-        if self.dataset_type == 'classification':
+        if self.dataset_type == PROBLEM.CLASSIFICATION:
             model = RandomForestClassifier(
                 n_estimators=int(params["Num estimators"]),
                 max_depth=int(params['Max depth']),
@@ -77,7 +76,7 @@ class RandomForest(Metric):
         model = self.train(params)
         Y_pred = model.predict(self.X_test)
 
-        if self.dataset_type == 'classification':
+        if self.dataset_type == PROBLEM.CLASSIFICATION:
             return {
                 'score': accuracy_score(self.Y_test, Y_pred),
                 'matrix': confusion_matrix(self.Y_test, Y_pred).tolist(),

@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from API.Dataset.AbstractDataset import Dataset
-
+from API.choices import PROBLEM
 
 class Iris(Dataset):
     __info__ = {
@@ -10,7 +11,7 @@ class Iris(Dataset):
                        'of 50 instances each, where each class refers to a type'
                        ' of iris plant. Each of the 150 instances has 4 '
                        'attributes.',
-        "type": 'classification'
+        "type": PROBLEM.CLASSIFICATION.name
     }
 
     def preProcessing(self, data):

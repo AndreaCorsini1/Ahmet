@@ -12,8 +12,8 @@ from API.Algorithms import *
 from API.Metrics import *
 
 from API.choices import TYPE, STATUS
-from API.models import Parameter, Trial
-from API.serializers import TrialSerializer, ParameterSerializer
+from API.models import Parameter, Trial, Study
+from API.serializers import TrialSerializer, ParameterSerializer, StudySerializer
 
 
 def early_stopping(trials, old_trials):
@@ -172,3 +172,7 @@ class Suggestion(Thread):
                         traceback.print_exc()
                     else:
                         self.__save(threads[thread], result, STATUS.COMPLETED)
+
+        study = Study.objects.get(name=self.study_name)
+        serializer = StudySerializer()
+        serializer.update(study, {'status': STATUS.COMPLETED.name})

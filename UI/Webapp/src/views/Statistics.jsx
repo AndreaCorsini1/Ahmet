@@ -1,5 +1,5 @@
 /**
- * Needs you Matte.
+ *
  */
 import React, { Component } from "react";
 import {Container, Row, Col} from "react-bootstrap";
@@ -13,20 +13,24 @@ import ColorfulPolar from "../components/Charts/ColorfulPolar.js";
 import BinnedHistogram from "../components/Charts/BinnedHistogram.js";
 import ErrorView from "../components/Errors/Error";
 
+// Refresh time in ms
+const refreshTime = 3000;
+// Charts seed
+const seed = 1234;
 
 class Statistics extends Component {
   constructor(props) {
     super(props)
     this.state = {
       isLoaded: false,
-      selectedStudy: 'General statistics',
+      selectedStudy: 'General analytics',
       studies: null,
       trials: null,
-      runningStudies: 1,
       token: null,
       algorithms: null,
       metrics: null,
       studyParameters: null,
+      studyTrials: null,
       error: null
     }
     this.handleChange = this.handleChange.bind(this);
@@ -82,6 +86,12 @@ class Statistics extends Component {
     });
   }
 
+  componentWillUnmount() {
+    if (this.timerID) {
+      clearInterval(this.timerID);
+    }
+  }
+
   /**
    * Handle error in fetching operations.
    *
@@ -103,19 +113,45 @@ class Statistics extends Component {
     let {value} = event;
 
     // General view
-    if (value === 'General statistics') {
+    if (value === 'General analytics') {
       this.setState({
-        selectedStudy: 'General statistics',
-        studies: null,
-        trials: null,
+        selectedStudy: 'General analytics',
+        studies: null, trials: null,
+        studyParameters: null, studyTrials: null,
         isLoaded: false
-      }, this.generalStats);
+      }, () => {
+        clearInterval(this.timerID);
+        this.generalStats();
+      });
     // Study view
     } else {
       this.setState({
         selectedStudy: value,
         isLoaded: false
-      }, this.studyStats);
+      }, () => {
+
+        if (this.timerID)
+          clearInterval(this.timerID);
+
+        APIGet({
+          onSuccess: (parameters) => {
+            this.setState({
+              studyParameters: parameters,
+              isLoaded: this.state.studyTrials ? true : false
+            });
+          },
+          onError: this.handleError,
+          uri: 'http://localhost:8080/api/v0.1/studies/' +
+                        this.state.selectedStudy + '/parameters/',
+          token: this.state.token
+        });
+
+        this.studyStats();
+        this.timerID = setInterval(
+          () => this.studyStats(),
+          refreshTime
+        );
+      });
     }
   };
 
@@ -149,16 +185,16 @@ class Statistics extends Component {
   }
 
   studyStats() {
-    let uri = "http://localhost:8080/api/v0.1/studies/" + this.state.selectedStudy;
+    let url = 'http://localhost:8080/api/v0.1/studies/' + this.state.selectedStudy;
     APIGet({
-      onSuccess: (parameters) => {
+      onSuccess: (trials) => {
         this.setState({
-          studyParameters: parameters,
-          isLoaded: true
-        })
+          studyTrials: trials,
+          isLoaded: this.state.studyParameters ? true : false
+        });
       },
       onError: this.handleError,
-      uri: uri + '/parameters/',
+      uri: url + '/trials/',
       token: this.state.token
     });
   }
@@ -181,49 +217,45 @@ class Statistics extends Component {
     return ([
       <ColorfulPolar
         title="Algorithms usage"
-        occurrences={algOccurrences}
+        occurrences={algOccurrences} seed={28765}
         labels={this.state.algorithms.map((alg) => (alg.name))}
       />,
       <ColorfulPolar
         title="Metrics usage"
-        occurrences={metricOccurrences}
+        occurrences={metricOccurrences} seed={36547}
         labels={this.state.metrics.map((metric) => (metric.name))}
       />
     ]);
   }
 
   studyCharts() {
-    let trials = this.state.trials;
+    let trials = this.state.studyTrials;
 
     return (
-      this.state.studyParameters.map((param) => {
+      this.state.studyParameters.map((param, idx) => {
         if (param.type === 'INTEGER' || param.type === 'FLOAT') {
           let values = Array();
           for (let i = 0; i < trials.length; i += 1) {
-            if (trials[i].study === this.state.selectedStudy)
-              values.push(trials[i].parameters[param.name]);
+            values.push(trials[i].parameters[param.name]);
           }
           return (
             <BinnedHistogram
-              title={`${param.name}`}
-              min={param.min} max={param.max}
-              values={values}
+              title={`${param.name}`} min={param.min} max={param.max}
+              values={values} seed={seed * (idx + 1)}
             />
           );
         } else {
           let occurrences = Array(param.values.length).fill(0);
           for (let i = 0; i < trials.length; i += 1) {
-            if (trials[i].study === this.state.selectedStudy) {
-              for (let j = 0; j < occurrences.length; j += 1)
-                if (trials[i].parameters[param.name] === param.values[j])
-                  occurrences[j] += 1;
+            for (let j = 0; j < occurrences.length; j += 1) {
+              if (trials[i].parameters[param.name] === param.values[j])
+                occurrences[j] += 1;
             }
           }
           return (
             <ColorfulPolar
-              title={`${param.name}`}
-              occurrences={occurrences}
-              labels={param.values}
+              title={`${param.name}`} occurrences={occurrences}
+              labels={param.values} seed={seed * (idx + 1)}
             />
           );
         }
@@ -231,7 +263,13 @@ class Statistics extends Component {
     );
   }
 
-  renderCards() {
+  renderGeneralCards() {
+    let numPending = 0;
+    this.state.studies.map((study) => {
+      if (study.status === 'PENDING') {
+        numPending += 1;
+      }
+    });
     return (
       <Container>
       <Row className="justify-content-center">
@@ -255,8 +293,37 @@ class Statistics extends Component {
           <StatsCard
             border="danger"
             bigIcon={<i className="pe-7s-graph1 text-danger" />}
-            statsText="Number of running studies"
-            statsValue={this.state.runningStudies}
+            statsText="Number of pending studies"
+            statsValue={numPending}
+          />
+        </Col>
+      </Row>
+      </Container>
+    );
+  }
+
+  renderStudyCards() {
+    let numStopped = 0;
+    this.state.studyTrials.map((trial) => {
+      numStopped += trial.status === 'STOPPED' ? 1 : 0;
+    });
+    return (
+      <Container>
+      <Row className="justify-content-center">
+        <Col lg="w-20">
+          <StatsCard
+            border="success"
+            bigIcon={<i className="pe-7s-server text-success" />}
+            statsText="Number of trials in the study"
+            statsValue = {this.state.studyTrials.length}
+          />
+        </Col>
+        <Col lg="w-20 px-3">
+          <StatsCard
+            border="danger"
+            bigIcon={<i className="pe-7s-gleam text-danger" />}
+            statsText="Number of stopped trials"
+            statsValue={numStopped}
           />
         </Col>
       </Row>
@@ -275,8 +342,8 @@ class Statistics extends Component {
         }
       });
     } else {
-      let options = (this.state.selectedStudy !== 'General statistics' ?
-          [{value: 'General statistics', label: 'General statistics'}] : []);
+      let options = (this.state.selectedStudy !== 'General analytics' ?
+          [{value: 'General analytics', label: 'General analytics'}] : []);
       for (let idx = 0; idx < studies.length; idx++) {
         if (studies[idx].name !== this.state.selectedStudy)
           options.push({value: studies[idx].name, label: studies[idx].name})
@@ -284,7 +351,7 @@ class Statistics extends Component {
       return (
         <Container>
           <CustomCard
-            title="Select a study for getting its charts"
+            title="Select a study for its analytics"
             content={
               <Select
                 onChange={this.handleChange}
@@ -312,13 +379,14 @@ class Statistics extends Component {
       <div className="content">
         <Container fluid>
           <Col className="text-center">
-            <h2>Analytics about studies</h2>
+            <h2 className="font-weight-light">Analytics</h2>
             <hr/>
           </Col>
           <Col className="justify-content-center">
             { this.renderSelect() }
-            { this.renderCards()}
-            { this.state.selectedStudy !== 'General statistics' ?
+            { this.state.selectedStudy !== 'General analytics' ?
+                this.renderStudyCards() : this.renderGeneralCards() }
+            { this.state.selectedStudy !== 'General analytics' ?
                 this.studyCharts() : this.generalCharts() }
           </Col>
         </Container>

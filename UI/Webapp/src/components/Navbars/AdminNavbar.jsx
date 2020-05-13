@@ -2,17 +2,18 @@
  *
  */
 import React, { Component } from "react";
-import {Navbar, Nav, Form, FormControl, Button, NavDropdown} from "react-bootstrap";
+import {Navbar, Nav} from "react-bootstrap";
 
 
 class Header extends Component {
-
   constructor(props) {
     super(props);
-    this.mobileSidebarToggle = this.mobileSidebarToggle.bind(this);
     this.state = {
-      sidebarExists: false
+      sidebarExists: false,
+      signin: props.signin ? props.signin : false
     };
+
+    this.mobileSidebarToggle = this.mobileSidebarToggle.bind(this);
   }
 
   mobileSidebarToggle(e) {
@@ -38,12 +39,8 @@ class Header extends Component {
         <Navbar.Brand>{this.props.brandText}</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={this.mobileSidebarToggle}/>
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-          <Form inline>
-            <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-            <Button variant="outline-success">Search</Button>
-          </Form>
-          <Nav.Link href="#link">Signin</Nav.Link>
-          <Nav.Link href="#link">Logout</Nav.Link>
+          { this.state.signin ? <Nav.Link href="#link">Logout</Nav.Link> :
+              <Nav.Link href="#link">Signin</Nav.Link> }
         </Navbar.Collapse>
       </Navbar>
     );

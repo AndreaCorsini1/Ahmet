@@ -1,5 +1,6 @@
 #
 from API.Metrics.AbstractMetric import Metric
+from API.Metrics.MLPerceptron import MLPerceptron
 from API.Metrics.KNeighbors import KNeighbors
 from API.Metrics.RandomForest import RandomForest
 from API.Metrics.SimpleFunction import SimpleFunction

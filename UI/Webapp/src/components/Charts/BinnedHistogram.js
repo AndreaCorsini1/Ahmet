@@ -4,10 +4,15 @@ import CustomCard from "../Cards/CardBootstrap";
 
 // For the moment we keep a fixed number of bins
 const numberBins = 10;
-
-//random color for chart
-function generateColor () {
-  return '#' +  Math.random().toString(16).substr(-6);
+// Generator with seed
+class ColorGenerator {
+  constructor(seed) {
+    this.seed = seed;
+  }
+  newColor() {
+    let x = Math.sin(this.seed++) * 1000000000;
+    return '#' + Math.floor(x).toString(16).substr(-6);
+  }
 }
 
 /**
@@ -17,6 +22,7 @@ function generateColor () {
  */
 function BinnedHistogram(props) {
   let content;
+  let color = new ColorGenerator(props.seed);
 
   if (!props.values || props.values.length === 0) {
     content = <h5> Parameter: {props.title} has not yet tried </h5>;
@@ -26,8 +32,11 @@ function BinnedHistogram(props) {
     let base = Math.round((props.max - props.min) / numberBins * 1000) / 1000;
 
     let labels = Array(numberBins);
-    for (let i = 0; i < labels.length; i += 1, val += base)
+    let colors = Array(numberBins);
+    for (let i = 0; i < labels.length; i += 1, val += base) {
       labels[i] = `${val.toFixed(2)}-${(val + base).toFixed(2)}`;
+      colors[i] = color.newColor();
+    }
 
     let occurrences = Array(numberBins).fill(0);
     for (let i = 0; i < props.values.length; i += 1)
@@ -35,8 +44,9 @@ function BinnedHistogram(props) {
 
     content = <Bar data={{
       datasets: [{
+        label: props.title,
         data: occurrences,
-        backgroundColor: labels.map(() => (generateColor()))
+        backgroundColor: colors
       }],
       labels: labels
     }}/>

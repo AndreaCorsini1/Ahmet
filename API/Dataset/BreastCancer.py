@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from API.Dataset.AbstractDataset import Dataset
-
+from API.choices import PROBLEM
 
 class BreastCancer(Dataset):
     __info__ = {
@@ -12,7 +13,7 @@ class BreastCancer(Dataset):
                        'needle aspirate (FNA) of a breast mass. They describe '
                        'characteristics of the cell nuclei present in the '
                        'image.',
-        "type": 'classification'
+        "type": PROBLEM.CLASSIFICATION.name
     }
 
     def preProcessing(self, data):

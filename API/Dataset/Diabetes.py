@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from API.Dataset.AbstractDataset import Dataset
-
+from API.choices import PROBLEM
 
 class Diabetes(Dataset):
     __info__ = {
@@ -12,7 +13,7 @@ class Diabetes(Dataset):
                        'from 442 diabetes patients, as well as the response '
                        'of interest, a quantitative measure of disease '
                        'progression.',
-        "type": 'regression'
+        "type": PROBLEM.REGRESSION.name
     }
 
     def preProcessing(self, data):

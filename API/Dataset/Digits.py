@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 from API.Dataset.AbstractDataset import Dataset
-
+from API.choices import PROBLEM
 
 class Digits(Dataset):
     __info__ = {
@@ -10,7 +11,7 @@ class Digits(Dataset):
                        'hand-written digits: 10 classes where each class refers'
                        ' to a digit as a flattened 8x8 image (meaning 64 '
                        'features per instance).',
-        "type": 'classification'
+        "type": PROBLEM.CLASSIFICATION.name
     }
 
     def preProcessing(self, data):

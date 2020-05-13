@@ -8,7 +8,11 @@ import PropTypes from "prop-types";
 function CustomCard(props) {
     let subtitle = null, footer;
     if (props.subtitle)
-        subtitle = <Card.Title>{props.subtitle}</Card.Title>;
+        subtitle = (<h5 className="mt-1 title">
+          <small className="text-muted">
+            {props.subtitle}
+          </small>
+        </h5>);
     if (props.footer)
         footer = (<Card.Footer className="text-muted">
           {props.footer}
@@ -17,10 +21,10 @@ function CustomCard(props) {
     return (
       <Card border="dark" className="text-center">
         <Card.Header>
-          <h4 className="title">{props.title}</h4>
+          <h3 className="title">{props.title}</h3>
+          {subtitle}
         </Card.Header>
         <Card.Body>
-          {subtitle}
           {props.content}
         </Card.Body>
         {footer}

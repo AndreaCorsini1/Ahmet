@@ -25,16 +25,20 @@ class TYPE(Enum):
     def choices(cls):
         return [(field.name, field.value) for field in cls]
 
+    @classmethod
+    def names(cls):
+        return [field.name for field in cls]
+
 
 @unique
 class STATUS(Enum):
     """
-    Trial status.
+    Trial and study status.
     """
-    PENDING = 'Pending'
-    STARTED = 'Started'
-    COMPLETED = 'Completed'
-    STOPPED = 'Stopped'
+    PENDING = 'Pending'         # Study or trial not yet started
+    STARTED = 'Started'         # Study or trial under evaluation
+    COMPLETED = 'Completed'     # Completed study or trial
+    STOPPED = 'Stopped'         # Study or trial stopped before completion
 
     def __str__(self):
         return self.value
@@ -46,3 +50,32 @@ class STATUS(Enum):
     @classmethod
     def choices(cls):
         return [(field.name, field.value) for field in cls]
+
+    @classmethod
+    def names(cls):
+        return [field.name for field in cls]
+
+
+@unique
+class PROBLEM(Enum):
+    """
+    Type of problem. The learning model optimized by the algorithms are
+    of two types: regression and classification.
+    """
+    REGRESSION = 'regression'
+    CLASSIFICATION = 'classification'
+
+    def __str__(self):
+        return self.value
+
+    def __eq__(self, other):
+        """Override for comparing string and enum. Django stores the name."""
+        return self.name == other
+
+    @classmethod
+    def choices(cls):
+        return [(field.name, field.value) for field in cls]
+
+    @classmethod
+    def names(cls):
+        return [field.name for field in cls]

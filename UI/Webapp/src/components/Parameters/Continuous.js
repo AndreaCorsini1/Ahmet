@@ -30,6 +30,7 @@ class Continuous extends React.Component {
     // handle null value
     if (!value) {
       this.setState({[name]: null});
+
     // handle not a number (react numeric input issue)
     } else if (isNaN(parseFloat(value))) {
       this.setState({[name]: null});
@@ -41,18 +42,23 @@ class Continuous extends React.Component {
         animationOut: ["animated", "fadeOut"],
         dismiss: { duration: 2000 }
       });
+
     // handle numeric change
     } else {
-      let val = this.props.type === 'Integer' ? parseInt(value) : parseFloat(value);
+      value = value.replace(',', '.');
       this.setState({
-        [name]: val
+        [name]: value
       }, function () {
-        if (this.state.min && this.state.max && this.state.min < this.state.max) {
+        if (this.state.min && this.state.max &&
+            this.state.min < this.state.max &&
+            value[value.length - 1] !== '.') {
           this.props.handleChange({
             name: this.props.name,
             value: {
-              min: this.state.min,
-              max: this.state.max,
+              min: this.props.type === 'INTEGER' ?
+                    parseInt(this.state.min) : parseFloat(this.state.min),
+              max: this.props.type === 'INTEGER' ?
+                    parseInt(this.state.max) : parseFloat(this.state.max),
               type: this.props.type
             }
           });
@@ -62,6 +68,7 @@ class Continuous extends React.Component {
   }
 
   render() {
+    console.log(this.state);
     return (
       <CustomCard
         title={this.props.name}
@@ -81,7 +88,7 @@ class Continuous extends React.Component {
               <Form.Label column sm={2}> Maximum value: </Form.Label>
               <Col>
                 <Form.Control
-                  type="numeric" name="max"
+                  className="mt-1" type="numeric" name="max"
                   value={this.state.max} placeholder="Type a number..."
                   onChange={this.handleChange}
                 />

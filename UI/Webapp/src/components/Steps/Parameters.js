@@ -29,8 +29,9 @@ class Parameters extends React.Component {
   handleChange(event) {
     let {name, value} = event;
 
-    this.setState({
-      parameters: {...this.state.parameters, [name]: value}
+    // Use function to update for avoiding race condition
+    this.setState((state) => {
+      return {parameters: {...state.parameters, [name]: value}};
     }, function () {
       if (Object.keys(this.state.parameters).length ===
           Object.keys(this.props.space).length) {
@@ -49,10 +50,13 @@ class Parameters extends React.Component {
         />
       );
     } else {
+      let param = "CATEGORICAL";
+      if (type && typeof type[0] === 'number')
+        param = "DISCRETE";
       return (
         <Discrete
           name={name} value={this.state.parameters[name]}
-          options={type} type="CATEGORICAL"
+          options={type} type={param}
           handleChange={this.handleChange}
         />
       );
@@ -65,9 +69,9 @@ class Parameters extends React.Component {
     } else {
       return (
         <Form.Group controlId="parameters">
-          <h3> Choose the parameters: </h3>
+          <h3 className="text-muted font-weight-light"> Choose the parameters: </h3>
           {Object.keys(this.props.space).map((name) => (
-            this.getParam(name))
+              this.getParam(name))
           )}
         </Form.Group>
       );

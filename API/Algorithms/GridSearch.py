@@ -22,10 +22,7 @@ class GridSearch(Algorithm):
         "description": 'The grid search exhaustively generates candidate trials'
                        ' from a grid of parameter values. After generation, it'
                        ' randomly picks trials until its budget is exhausted',
-        "supported_params": [
-            (TYPE.CATEGORICAL.name, TYPE.CATEGORICAL.value),
-            (TYPE.DISCRETE.name, TYPE.DISCRETE.value)
-        ]
+        "supported_params": [TYPE.CATEGORICAL.name, TYPE.DISCRETE.name]
     }
 
     def setUp(self, space, shuffle=True):
@@ -47,8 +44,7 @@ class GridSearch(Algorithm):
         if space:
             for param in space:
                 # Check param type
-                if TYPE[param["type"]] is TYPE.FLOAT or \
-                    TYPE[param["type"]] is TYPE.INTEGER:
+                if param["type"] == TYPE.FLOAT or param["type"] == TYPE.INTEGER:
                     msg = "Unsupported parameter {}".format(param['type'])
                     raise Exception(msg)
 

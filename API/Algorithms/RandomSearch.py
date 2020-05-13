@@ -24,7 +24,7 @@ class RandomSearch(Algorithm):
                        'sampled from a distribution over possible parameter '
                        'values. Continuous parameters are uniformly sampled, '
                        'while discrete ones are shuffled and picked up.',
-        "supported_params": TYPE.choices()
+        "supported_params": TYPE.names()
     }
 
     def get_suggestion(self, space):
@@ -40,18 +40,14 @@ class RandomSearch(Algorithm):
 
         for param in space:
 
-            if TYPE[param["type"]] is TYPE.FLOAT:
+            if param["type"] == TYPE.FLOAT:
                 value = random.uniform(param['min'], param['max'])
-
-            elif TYPE[param["type"]] is TYPE.INTEGER:
+            elif param["type"] == TYPE.INTEGER:
                 value = random.randint(param['min'], param['max'])
-
-            elif TYPE[param["type"]] is TYPE.DISCRETE:
+            elif param["type"] == TYPE.DISCRETE:
                 value = random.choice(param["values"])
-
-            elif TYPE[param["type"]] is TYPE.CATEGORICAL:
+            elif param["type"] == TYPE.CATEGORICAL:
                 value = random.choice(param["values"])
-
             else:
                 msg = "Unsupported parameter {}".format(param['type'])
                 raise Exception(msg)

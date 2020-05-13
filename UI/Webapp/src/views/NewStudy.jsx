@@ -16,7 +16,6 @@ import getToken from "../components/Token/Token";
 import ErrorView from "../components/Errors/Error";
 import {store} from "react-notifications-component";
 import {APIPost} from "../components/Fetcher/Fetcher";
-import {Redirect} from "react-router-dom";
 
 // Form settings
 const steps = ['Name', 'Algorithm', 'Metric', 'Dataset', 'Parameters'];
@@ -33,11 +32,13 @@ class NewStudy extends Component {
       Dataset: null,
       Parameters: null,
       token: null,
-      error: null
+      error: null,
+      submitted: 0
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleError = this.handleError.bind(this);
+    this.reset = this.reset.bind(this);
     this._next = this._next.bind(this);
     this._prev = this._prev.bind(this);
   }
@@ -64,21 +65,20 @@ class NewStudy extends Component {
     let key = steps[this.state.currentStep];
     let update = {[key]: data};
 
-    // Special behaviour for metric
-    if (this.state.currentStep === 2) {
-      // Flush all the study data following metric
+    // Reset most of the data when algorithm or metric are changed
+    if (this.state.currentStep === 2 || this.state.currentStep === 1) {
       for (let i = this.state.currentStep + 1; i < steps.length; i++) {
         update[steps[i]] = null;
       }
-      // When the metric does not support any dataset, it does not need
-      // dataset at all
-      if (!data.dataset || data.dataset.length === 0) {
-        update[steps[3]] = {
-          id: null,
-          name: 'No dataset'
-        };
-      }
     }
+    // When the metric does not support any dataset, skip the dataset step
+    if (this.state.currentStep === 2 && data.dataset.length === 0) {
+      update[steps[3]] = {
+        id: null,
+        name: 'No dataset'
+      };
+    }
+
     this.setState(update);
   }
 
@@ -116,6 +116,9 @@ class NewStudy extends Component {
         let study = this.state.Name;
         let keys = Object.keys(this.state.Parameters);
         keys.map((key) => this.submitParameters(study, key));
+        this.setState((state) => {
+          return {submitted: state.submitted + 1}
+        }, this.reset);
       },
       onError: this.handleError,
       uri: "http://localhost:8080/api/v0.1/studies/",
@@ -139,21 +142,41 @@ class NewStudy extends Component {
 
     APIPost({
       data: data,
-      onSuccess: (data) => {
+      onSuccess: () => (this.setState((state) => {
+        return {submitted: state.submitted + 1};
+      }, this.reset)),
+      onError: this.handleError,
+      uri: "http://localhost:8080/api/v0.1/parameters/",
+      token: this.state.token
+    });
+  }
+
+  /**
+   * Reset the form after a submission.
+   */
+  reset() {
+    if (this.state.submitted === Object.keys(this.state.Parameters).length + 1) {
+      let name = this.state.Name;
+      this.setState({
+        submitted: 0,
+        currentStep: 0,
+        Name: null,
+        Algorithm: null,
+        Metric: null,
+        Dataset: null,
+        Parameters: null,
+      }, () => {
         store.addNotification({
           title: "Submitted successfully",
-          message: `The study: ${this.state.Name} has been correctly received`,
+          message: `The study: ${name} has been correctly received`,
           type: "success",
           insert: "top", container: "top-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: { duration: 2000 }
         });
-      },
-      onError: this.handleError,
-      uri: "http://localhost:8080/api/v0.1/parameters/",
-      token: this.state.token
-    });
+      });
+    }
   }
 
   _next() {
@@ -197,8 +220,7 @@ class NewStudy extends Component {
       let key = steps[this.state.currentStep];
       return (
         <Button
-          className="float-right"
-          disabled={this.state[key] == null}
+          className="float-right" disabled={this.state[key] == null}
           onClick={this._next}
         >
           Next
@@ -216,6 +238,13 @@ class NewStudy extends Component {
   }
 
   summary() {
+    let params = {};
+    for (let [key, value] of Object.entries(this.state.Parameters)) {
+      if (value.type === 'INTEGER' || value.type === 'FLOAT')
+        params = {...params, [key]: {min: value.min, max: value.max}};
+      else
+        params = {...params, [key]: value.values};
+    }
     return (
       <CustomCard
         title={`Recap of ${this.state.Name}`}
@@ -232,7 +261,7 @@ class NewStudy extends Component {
                 <th>Dataset : {this.state.Dataset.name}</th>
               </tr>
               <tr>
-                <th>Parameter : {JSON.stringify(this.state.Parameters)}</th>
+                <th>Parameters : {JSON.stringify(params,null,'\t')}</th>
               </tr>
             </thead>
           </Table>
@@ -261,13 +290,14 @@ class NewStudy extends Component {
         />);
       case 2:
         return (<Metric
+          supportedParams={this.state.Algorithm.supported_params}
           value={this.state.Metric} uri="http://localhost:8080/api/v0.1/metrics/"
           token={this.state.token} handleChange={this.handleChange}
         />);
       case 3:
         return (<Dataset
           value={this.state.Dataset} types={this.state.Metric.dataset}
-          uri="http://localhost:8080/api/v0.1/datasets/"
+          uri="http://localhost:8080/api/v0.1/dataset/"
           token={this.state.token} handleChange={this.handleChange}
         />);
       case 4:
@@ -307,13 +337,13 @@ class NewStudy extends Component {
     else if (this.state.error)
       return (<ErrorView message={this.state.error.message} />);
 
-    let name = this.state.Name || 'a new study';
     return (
       <div className="content">
         <Container fluid>
           <Form>
             <Form.Group as={Col} className="text-center">
-              <h2> Insert data for creating {name} ️</h2>
+              <h2 className="font-weight-light">
+                Submission of study: {this.state.Name || 'new study'} ️</h2>
               <hr/>
               {this.stepper()}
             </Form.Group>

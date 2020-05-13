@@ -38,8 +38,9 @@ class Algorithm extends React.Component {
         isLoaded: false,
         algorithms: [],
 
-        algorithm:    props.value ? props.value.algorithm : null,
+        algorithm:    props.value ? props.value.name : null,
         algorithm_id: props.value ? props.value.id : null,
+        supported_params: props.value ? props.value.supported_params : null,
         runs:         props.value ? props.value.runs : 10,
         suggestions:  props.value ? props.value.suggestions : 15
       };
@@ -81,7 +82,7 @@ class Algorithm extends React.Component {
    * @param event
    */
   handleChange(event) {
-    let update;
+    let update = {};
     let {name, value} = event.target ? event.target : event;
 
     if (name === 'runs') {
@@ -89,7 +90,18 @@ class Algorithm extends React.Component {
     } else if (name === 'suggestions') {
       update = {suggestions: value};
     } else {
-      update = {algorithm: name, algorithm_id: parseInt(value)};
+      let algorithm = this.state.algorithms ? this.state.algorithms[parseInt(value)] : null;
+      if (!algorithm) {
+        this.setState({
+          error: {message: "Internal error in algorithm selection"}
+        });
+      } else {
+        update = {
+          algorithm: algorithm.name,
+          algorithm_id: algorithm.id,
+          supported_params: algorithm.supported_params
+        };
+      }
     }
 
     this.setState(update, function() {
@@ -97,6 +109,7 @@ class Algorithm extends React.Component {
         this.props.handleChange({
           name: this.state.algorithm,
           id: this.state.algorithm_id,
+          supported_params: this.state.supported_params,
           runs: this.state.runs,
           suggestions: this.state.suggestions
         });
@@ -110,10 +123,12 @@ class Algorithm extends React.Component {
   algorithms() {
     return (
       <CustomCard
-        title="Choose an algorithm:"
+        title="Select an algorithm:"
+        subtitle="The Black-Box Optimization algorithm will be used to optimize
+                  the metric chosen at the next step."
         content={
           <Container>
-            {this.state.algorithms.map((alg) => (
+            {this.state.algorithms.map((alg, idx) => (
               <Row className="mt-2 justify-content-md-center">
                 <OverlayTrigger
                   placement="right"
@@ -126,9 +141,9 @@ class Algorithm extends React.Component {
                   }
                 >
                   <Form.Check
-                    type='checkbox' name={alg.name}
-                    value={alg.id}  label={alg.name}
-                    onChange={this.handleChange}
+                    type='checkbox'
+                    name={alg.name} label={alg.name}
+                    value={idx} onChange={this.handleChange}
                     checked={alg.id === this.state.algorithm_id}
                     disabled={!alg.enabled}
                   />
@@ -147,11 +162,11 @@ class Algorithm extends React.Component {
   algorithmSettings() {
     return (
       <CustomCard
-        title="Choose algorithm settings"
+        title="Algorithm settings:"
         content={
           <Container>
             <Row className="mt-2 justify-content-md-center">
-              <Col> Number of algorithm runs: </Col>
+              <Col className="title text-muted"> Number of algorithm runs: </Col>
               <Col>
                 <Select
                   className="basic-select" classNamePrefix="select"
@@ -162,7 +177,9 @@ class Algorithm extends React.Component {
               </Col>
             </Row>
             <Row className="mt-2 justify-content-md-center">
-              <Col> Number of trials generated at each run: </Col>
+              <Col className="title text-muted">
+                Number of trials generated at each run:
+              </Col>
               <Col>
                 <Select
                   className="basic-select" classNamePrefix="select"

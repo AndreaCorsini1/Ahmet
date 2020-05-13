@@ -1,12 +1,12 @@
+# -*- coding: utf-8 -*-
 from sklearn.svm import SVC
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.metrics import accuracy_score
-
 from sklearn.svm import SVR
 from sklearn.metrics import mean_absolute_error, mean_squared_error, max_error
 
 from API.Metrics.AbstractMetric import Metric
-from API.choices import TYPE
+from API.choices import TYPE, PROBLEM
 
 class SVM(Metric):
     """
@@ -35,7 +35,7 @@ class SVM(Metric):
             "Gamma": ['rbf', 'poly', 'sigmoid'],
             "Coef0": TYPE.FLOAT.name
         },
-        "supported_dataset": ['classification', 'regression']
+        "supported_dataset": [PROBLEM.REGRESSION.name]
     }
 
     def train(self, params):
@@ -51,7 +51,7 @@ class SVM(Metric):
             if param not in self.__info__['space']:
                 print("Error: not supported parameters {}".format(param))
 
-        if self.dataset_type == 'classification':
+        if self.dataset_type == PROBLEM.CLASSIFICATION:
             model = SVC(C=float(params["C"]),
                         kernel=params["Kernel"],
                         gamma=params["Gamma"],
@@ -80,7 +80,7 @@ class SVM(Metric):
         model = self.train(params)
         Y_pred = model.predict(self.X_test)
 
-        if self.dataset_type == 'classification':
+        if self.dataset_type == PROBLEM.CLASSIFICATION:
             return {
                 'score': accuracy_score(self.Y_test, Y_pred),
                 'matrix': confusion_matrix(self.Y_test, Y_pred).tolist(),

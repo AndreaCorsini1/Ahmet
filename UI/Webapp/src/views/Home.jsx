@@ -13,10 +13,8 @@ class Home extends Component {
   algorithmSection() {
     return (
       <Container>
-        Each BBO algorithm supported by Ahmet must inherit from a common
-        abstract class. This class is:
         <Col className="mt-2">
-          <Highlight language="python">
+          <Highlight className="rounded" language="python">
 {"class Algorithm(object):\n" +
 "    \"\"\"\n" +
 "    Abstract class used to define the algorithm template.\n" +
@@ -72,9 +70,8 @@ class Home extends Component {
   metricSection() {
     return (
       <Container>
-        Every metric in Ahmet derives from a a common abstract class. This class is:
         <Col className="mt-2">
-          <Highlight language="python">
+          <Highlight className="rounded" language="python">
 {"class Metric(object):\n" +
 "    \"\"\"\n" +
 "    Abstract class used to define the metric template.\n" +
@@ -151,9 +148,8 @@ class Home extends Component {
   datasetSection() {
     return (
       <Container>
-        A dataset in Ahmet derives from a common abstract class. This class is:
         <Col className="mt-2">
-          <Highlight language="python">
+          <Highlight className="rounded" language="python">
 {"class Dataset(object):\n" +
 "    \"\"\"\n" +
 "    Abstract class used to define the dataset template.\n" +
@@ -216,25 +212,50 @@ class Home extends Component {
       <div className="content">
         <Container fluid>
           <h3>What is Ahmet?</h3>
-          Framework for black-box optimization.
+            <p className="text-justify">
+              Framework for black-box optimization.
+            </p>
           <hr/>
-          <h3>Useful definitions</h3>
-          <ul>
-            <li>Trial: a list of parameters value that will be evaluated against the metric.</li>
-            <li>Metric: a machine learning model representing the black box function.</li>
-            <li>Study: entity composed of a BBO algorithm, a metric and the trials.</li>
-            <li>Worker: a process or a thread responsible of evaluating a trial x.</li>
-            <li>Run: a complete optimization execution of the problem.</li>
-          </ul>
+          <h3>Definitions</h3>
+          <p className="text-justify">
+            Useful definitions used across the entire framework:
+            <ul>
+              <li>
+                <strong>Trial</strong>: a list of parameters value that will be evaluated against the metric.
+              </li>
+              <li>
+                <strong>Metric</strong>: a machine learning model representing the black box function.
+              </li>
+              <li>
+                <strong>Study</strong>: entity composed of a BBO algorithm, a metric and the trials.
+              </li>
+              <li>
+                <strong>Worker</strong>: a process or a thread responsible of evaluating a trial x.
+              </li>
+              <li>
+                <strong>Run</strong>: a complete optimization execution of the problem.
+              </li>
+            </ul>
+          </p>
           <hr/>
           <h3>Algorithms prototype</h3>
-          {this.algorithmSection()}
+          <p className="text-justify">
+            Each BBO algorithm supported by Ahmet must inherit from a common
+            abstract class. This class is:
+            {this.algorithmSection()}
+          </p>
           <hr/>
           <h3>Metrics prototype</h3>
-          {this.metricSection()}
+          <p className="text-justify">
+            Every metric in Ahmet derives from a a common abstract class. This class is:
+            {this.metricSection()}
+          </p>
           <hr/>
           <h3>Dataset prototype</h3>
-          {this.datasetSection()}
+          <p className="text-justify">
+            A dataset in Ahmet derives from a common abstract class. This class is:
+            {this.datasetSection()}
+          </p>
         </Container>
       </div>
     );

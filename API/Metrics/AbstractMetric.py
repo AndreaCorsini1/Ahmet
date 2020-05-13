@@ -5,6 +5,7 @@
 """
 import abc
 from API.Dataset import *
+from API.choices import PROBLEM
 
 class Metric(object):
     """
@@ -45,8 +46,8 @@ class Metric(object):
                 print(e)
                 raise RuntimeError("Something wrong with dataset")
 
-            self.dataset_type = dataset.__info__['type'].lower()
-            if self.dataset_type in self.__info__['supported_dataset']:
+            self.dataset_type = PROBLEM[dataset.__info__['type']]
+            if dataset.__info__['type'] in self.__info__['supported_dataset']:
                 self.X_train, self.Y_train = data['train']
                 self.X_test, self.Y_test = data['test']
                 self.labels = [str(label) for label in  data['labels']]

@@ -9,7 +9,7 @@ class Footer extends Component {
     return (
       <Container className="footer">
           <p className="copyright pull-right">
-              Project created by Corsini Andrea & Canalini Matteo, made with React
+              Project by Andrea Corsini & Matteo Canalini. Made with React.
           </p>
       </Container>
     );

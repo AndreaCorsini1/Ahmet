@@ -42,6 +42,29 @@ class Metric extends React.Component {
     });
   }
 
+  checkAlgorithmSupport(metric) {
+    let keys = Object.keys(metric.space);
+    let isSupported = keys ? metric.enabled : false;
+    let supportedParams = this.props.supportedParams;
+
+    for (let i = 0; i < keys.length && isSupported; i++) {
+      switch (metric.space[keys[i]]) {
+        case 'INTEGER':
+          isSupported = supportedParams.includes('INTEGER');
+          break;
+        case 'FLOAT':
+          isSupported = supportedParams.includes('FLOAT');
+          break;
+        default:
+          isSupported = (supportedParams.includes('DISCRETE') ||
+              supportedParams.includes('CATEGORICAL'));
+          break;
+      }
+    }
+
+    return !isSupported;
+  }
+
   /**
    * Merge data on metric before call father handler.
    *
@@ -72,7 +95,9 @@ class Metric extends React.Component {
     } else {
       return (
         <CustomCard
-          title="Choose a metric:"
+          title="Select a metric:"
+          subtitle="The metric shapes the black box function optimized by an
+                    algorithm."
           content={
             <Container>
               {this.state.metrics.map((metric, idx) => (
@@ -90,7 +115,7 @@ class Metric extends React.Component {
                       type='checkbox'
                       name={metric.name} label={metric.name}
                       value={idx} onChange={this.handleChange}
-                      disabled={!metric.enabled}
+                      disabled={this.checkAlgorithmSupport(metric)}
                       checked={this.props.value ? metric.id === this.props.value.id : false}
                     />
                   </OverlayTrigger>

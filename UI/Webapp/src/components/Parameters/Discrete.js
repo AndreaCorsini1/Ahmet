@@ -12,17 +12,26 @@ class Discrete extends React.Component {
   constructor(props) {
     super(props);
     let options = props.options.map((val) => ({value: val, label: val}));
-    let values = props.value ?
-            props.value.values.map((val) => ({value: val, label: val})) : options;
+
+    let values;
+    if (props.value) {
+      values = props.value.values.map((val) => ({value: val, label: val}));
+    } else {
+      values = options;
+      // Force default parameter value in father when props value is null
+      props.handleChange({
+        name: props.name,
+        value: {
+          values: values.map((val) => (val.value)),
+          type: props.type
+        }
+      })
+    }
 
     this.state = {
       value: values,
       options: options
     };
-    // Force default parameter value in father when props value is null
-    if (!props.value) {
-        this.handleChange(this.state.value);
-    }
 
     this.handleChange = this.handleChange.bind(this);
   }

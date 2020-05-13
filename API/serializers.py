@@ -7,7 +7,7 @@ import json
 
 class UserSerializer(serializers.ModelSerializer):
     """
-
+    Default user serializer.
     """
     studies = serializers.PrimaryKeyRelatedField(many=True,
                                                  queryset=Study.objects.all())
