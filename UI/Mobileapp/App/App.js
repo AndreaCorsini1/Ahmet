@@ -101,7 +101,6 @@ const Screen3_StackNavigator = createStackNavigator({
 });
 
 const Screen4_StackNavigator = createStackNavigator({
-  //All the screen from the Third Option will be indexed here
   Four: {
     screen: Screen4,
     navigationOptions: ({navigation}) => ({

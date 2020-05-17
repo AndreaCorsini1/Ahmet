@@ -3,7 +3,13 @@
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import {NavigationActions} from 'react-navigation';
-import {ScrollView, Text, View, StyleSheet} from 'react-native';
+import {
+  ScrollView,
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 //import Drawer from 'react-native-circle-drawer';
 
 class SideMenu extends Component {
@@ -65,16 +71,25 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   secondaryHeading: {
-    padding: 10,
+    padding: 30,
+    fontSize: 40,
   },
   mainHeading: {
-    paddingVertical: 10,
+    paddingVertical: 20,
     paddingHorizontal: 5,
     backgroundColor: '#B4DCF3',
+    fontSize: 20,
+    color: 'grey',
+    fontWeight: 'bold',
   },
   footerContainer: {
     padding: 20,
     backgroundColor: '#B4DCF3',
+  },
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 10,
   },
 });
 
