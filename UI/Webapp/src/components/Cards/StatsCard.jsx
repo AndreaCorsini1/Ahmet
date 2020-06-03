@@ -3,8 +3,7 @@
  */
 import React from "react";
 import { Row, Col, Card } from "react-bootstrap";
-import PropTypes from "prop-types";
-import CustomCard from "./CardBootstrap";
+
 
 function StatsCard(props) {
   let footer;

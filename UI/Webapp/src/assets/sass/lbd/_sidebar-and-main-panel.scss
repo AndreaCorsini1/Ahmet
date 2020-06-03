@@ -57,12 +57,14 @@
                 width: 40px;
                 margin-left: -3px;
                 display: block;
-                margin-top: 2px;
+                margin-top: 0;
             }
         }
 
         a.logo-normal{
             display: block;
+            margin-top: 2px;
+            text-decoration: none !important;
         }
 
         .logo-img{

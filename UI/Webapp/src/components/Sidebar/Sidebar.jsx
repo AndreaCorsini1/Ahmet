@@ -3,9 +3,8 @@
  */
 import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
-
 import AdminNavbarLinks from "../Navbars/AdminNavbarLinks.jsx";
-import logo from "assets/img/reactlogo.png";
+
 
 function Logo(props) {
   let url = props.logoUrl ? props.logoUrl : "#";
@@ -14,7 +13,7 @@ function Logo(props) {
     <div className="logo">
       <a href={url} className="simple-text logo-mini">
         <div className="logo-img">
-          <img src={logo} alt="logo_image" />
+          <img src={"/logo192.png"} alt="logo_image"/>
         </div>
       </a>
       <a href={url} className="simple-text logo-normal">
@@ -31,6 +30,8 @@ class Sidebar extends Component {
     this.state = {
       width: window.innerWidth
     };
+
+    this.updateDimensions = this.updateDimensions.bind(this)
   }
 
   activeRoute(routeName) {
@@ -43,7 +44,7 @@ class Sidebar extends Component {
 
   componentDidMount() {
     this.updateDimensions();
-    window.addEventListener("resize", this.updateDimensions.bind(this));
+    window.addEventListener("resize", this.updateDimensions);
   }
 
   render() {

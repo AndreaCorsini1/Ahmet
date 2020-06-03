@@ -39,4 +39,6 @@ How we start the application, specifically for the API and Webapp.
 ### General description
 What the application does.
 
+![Home](https://octodex.github.com/images/yaktocat.png)
+
 Inspired by: https://research.google/pubs/pub46180/

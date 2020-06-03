@@ -27,7 +27,7 @@ SECRET_KEY = 'n=p-42tp#x$er62!w@p%xch6_t93fn9(9uj8%e&#ez)5hc8kgd'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['10.0.2.2', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -44,8 +44,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-
-    #graph_models -a -X Session,AbstractBaseSession,LogEntry,AbstractUser,ContentType
     'django_extensions'
 ]
 
@@ -68,7 +66,6 @@ CORS_ORIGIN_ALLOW_ALL = True
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

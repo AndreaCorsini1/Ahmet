@@ -22,7 +22,7 @@ class Header extends Component {
         sidebarExists: true
       });
     }
-    e.preventDefault();
+
     document.documentElement.classList.toggle("nav-open");
     var node = document.createElement("div");
     node.id = "bodyClick";
@@ -37,9 +37,12 @@ class Header extends Component {
     return (
       <Navbar variant="dark" expand="lg">
         <Navbar.Brand>{this.props.brandText}</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" onClick={this.mobileSidebarToggle}/>
+        <Navbar.Toggle
+            aria-controls="basic-navbar-nav"
+            onClick={this.mobileSidebarToggle}/>
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-          { this.state.signin ? <Nav.Link href="#link">Logout</Nav.Link> :
+          { this.state.signin ?
+              <Nav.Link href="#link">Logout</Nav.Link> :
               <Nav.Link href="#link">Signin</Nav.Link> }
         </Navbar.Collapse>
       </Navbar>
