@@ -6,11 +6,11 @@ high dimensional space where each dimension varies in N,R or a limited subset
 of them.
 
 ### Definitions:
-	- Trial: a list of parameter values that will be evaluated against f.
-	- Metric: a machine learning model representing the function f.
-	- Study: entity composed of a BBO algorithm, a metric and the trials.
-	- Worker: a process or a thread responsible of evaluating a trial x.
-	- Run: a complete optimization execution of the problem.
+- Trial: a list of parameter values that will be evaluated against f.
+- Metric: a machine learning model representing the function f.
+- Study: entity composed of a BBO algorithm, a metric and the trials.
+- Worker: a process or a thread responsible of evaluating a trial x.
+- Run: a complete optimization execution of the problem.
 
 ### Structure
     /
@@ -23,6 +23,7 @@ of them.
     |     |--> Dataset: folder containing the dataset used by the metric.
     |     |--> EarlyStoppings: folder containing the early stopping algorithms.
     |     |--> Metrics: folder containing the metrics.
+    |     |--> Static: folder containing the pototypes and openapi specs.
     |  
     |--> UI
     |     |--> Webapp: folder containing the web application (front-end).
@@ -30,15 +31,60 @@ of them.
     |
     |--> requirements.txt
 
-### Installation
-How to install the overall application and its single modules.
+### Installation and startup
 
-### Startup
-How we start the application, specifically for the API and Webapp.
+#### API installation:
+The api needs only a valid Python 3 interpreter and can be easily installed
+within a dedicated virtual environment:
+For creating a new venv in Python 3:
+    
+    python3 -m venv /path/to/venv
+    
+Once the venv is installed, it must be activated before installing third-party libraries:
+    
+    source /path/to/venv/bin/activate
+    
+And then all the required libraries can be easily installed with:
+
+    pip install -r /path/to/requirements.txt
+    
+Make sure to use the right path to the requirements.txt file.
+The last step required before having correctly set up the API, is the
+database migration step. Still in the venv, type the following two lines:
+
+    python manage.py makemigrations
+    python manage.py migrate
+    
+This should be enough for creating a local database that will be used by the
+api. Finally, you can start the api with:
+
+    python manage.py runserver localhost:8080
+    
+#### Web app installation:
+
+TODO
+
+#### Mobile app installation:
+
+TODO
 
 ### General description
+
 What the application does.
 
-![Home](https://octodex.github.com/images/yaktocat.png)
+#### Creation of studies
+
+![NewStudy](Gifs/NewStudy.gif "New study demo")
+
+#### Studies table
+
+![Studies](Gifs/Studies.gif "Studies demo")
+
+#### Statistics
+
+![Statistics](Gifs/Statistics.gif "Statistics demo")
+
+
+### References
 
 Inspired by: https://research.google/pubs/pub46180/
