@@ -5,7 +5,6 @@ import React, { Component } from "react";
 import { Container, Row, Col, Table, Button } from "react-bootstrap";
 import CustomCard from "../components/Cards/CardBootstrap";
 import Loading from "../components/Loading/Loading";
-import getToken from "../components/Token/Token";
 import {store} from "react-notifications-component";
 import ErrorView from "../components/Errors/Error";
 import {APIGet, APIDelete} from "../components/Fetcher/Fetcher";
@@ -71,7 +70,6 @@ class Studies extends Component {
       error: null,
       isLoaded: false,
       renderDetails: false,
-      token: null,
       studies: [],
       study_idx: null,
       trials: null,
@@ -90,57 +88,50 @@ class Studies extends Component {
 
   /**
    * Fetch the token and then the studies.
-   * TODO: the token action will be removed with login
    */
   componentDidMount() {
-    getToken({
-      setToken: (token) => {
+    this.handleStudies();
+    APIGet({
+      onSuccess: (algorithms) => {
         this.setState({
-          token: token
-        }, this.handleStudies);
-        APIGet({
-          onSuccess: (algorithms) => {
-            this.setState({
-              algorithms: algorithms.reduce((acc, alg) => ({
-                ...acc, [alg.id]: alg.name
-              }), {}),
-              isLoaded: this.state.metrics !== null &&
-                        this.state.studies !== null &&
-                        this.state.dataset !== null
-            });
-          },
-          onError: this.handleError,
-          uri: "http://localhost:8080/api/v0.1/algorithms/", token: token
+          algorithms: algorithms.reduce((acc, alg) => ({
+            ...acc, [alg.id]: alg.name
+          }), {}),
+          isLoaded: this.state.metrics !== null &&
+                    this.state.studies !== null &&
+                    this.state.dataset !== null
         });
-        APIGet({
-          onSuccess: (metrics) => {
-            this.setState({
-              metrics: metrics.reduce((acc, metric) => ({
-                ...acc, [metric.id]: metric.name
-              }), {}),
-              isLoaded: this.state.algorithms !== null &&
-                        this.state.studies !== null &&
-                        this.state.dataset !== null
-            });
-          },
-          onError: this.handleError,
-          uri: "http://localhost:8080/api/v0.1/metrics/", token: token
+      },
+      onError: this.handleError,
+      uri: "http://localhost:8080/api/v0.1/algorithms/"
+    });
+    APIGet({
+      onSuccess: (metrics) => {
+        this.setState({
+          metrics: metrics.reduce((acc, metric) => ({
+            ...acc, [metric.id]: metric.name
+          }), {}),
+          isLoaded: this.state.algorithms !== null &&
+                    this.state.studies !== null &&
+                    this.state.dataset !== null
         });
-        APIGet({
-          onSuccess: (dataset) => {
-            this.setState({
-              dataset: dataset.reduce((acc, data) => ({
-                ...acc, [data.id]: data.name
-              }), {}),
-              isLoaded: this.state.algorithms !== null &&
-                        this.state.studies !== null &&
-                        this.state.metrics !== null
-            });
-          },
-          onError: this.handleError,
-          uri: "http://localhost:8080/api/v0.1/dataset/", token: token
+      },
+      onError: this.handleError,
+      uri: "http://localhost:8080/api/v0.1/metrics/"
+    });
+    APIGet({
+      onSuccess: (dataset) => {
+        this.setState({
+          dataset: dataset.reduce((acc, data) => ({
+            ...acc, [data.id]: data.name
+          }), {}),
+          isLoaded: this.state.algorithms !== null &&
+                    this.state.studies !== null &&
+                    this.state.metrics !== null
         });
-      }
+      },
+      onError: this.handleError,
+      uri: "http://localhost:8080/api/v0.1/dataset/"
     });
   }
 
@@ -184,7 +175,6 @@ class Studies extends Component {
       },
       onError: this.handleError,
       uri: baseUrl,
-      token: this.state.token
     });
   }
 
@@ -207,7 +197,6 @@ class Studies extends Component {
       },
       onError: this.handleError,
       uri: baseUrl + studyName + '/',
-      token: this.state.token
     });
   }
 
@@ -215,20 +204,18 @@ class Studies extends Component {
     APIGet({
       onSuccess: (trials) => this.setState({
         trials: trials,
-        isLoaded: this.state.params ? true : false
+        isLoaded: !!this.state.params
       }),
       onError: this.handleError,
       uri: url + /trials/,
-      token: this.state.token
     });
     APIGet({
       onSuccess: (params) => this.setState({
         params: params,
-        isLoaded: this.state.trials ? true : false
+        isLoaded: !!this.state.trials
       }),
       onError: this.handleError,
       uri: url + /parameters/,
-      token: this.state.token
     });
 
     // Periodically fetch the trials
@@ -239,7 +226,6 @@ class Studies extends Component {
       },
       onError: this.handleError,
       uri: url + /trials/,
-      token: this.state.token
       }), timeout
     );
   }
@@ -277,7 +263,7 @@ class Studies extends Component {
         });
       },
       onError: this.handleError,
-      uri: uri, token: this.state.token
+      uri: uri
     });
   }
 

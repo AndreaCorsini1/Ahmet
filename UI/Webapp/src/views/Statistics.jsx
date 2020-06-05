@@ -8,7 +8,6 @@ import StatsCard from "../components/Cards/StatsCard.jsx";
 import Loading from "../components/Loading/Loading";
 import CustomCard from "../components/Cards/CardBootstrap";
 import {APIGet} from "../components/Fetcher/Fetcher";
-import getToken from "../components/Token/Token";
 import ColorfulPolar from "../components/Charts/ColorfulPolar.js";
 import BinnedHistogram from "../components/Charts/BinnedHistogram.js";
 import ErrorView from "../components/Errors/Error";
@@ -26,7 +25,6 @@ class Statistics extends Component {
       selectedStudy: 'General analytics',
       studies: null,
       trials: null,
-      token: null,
       algorithms: null,
       metrics: null,
       studyParameters: null,
@@ -40,49 +38,39 @@ class Statistics extends Component {
   }
 
   /**
-   * Fetch the token and then the algorithms and metric (static information
-   * so far).
-   * TODO: the token action will be removed with login
+   * Fetch the algorithms and metric (static information so far).
    */
   componentDidMount() {
-    getToken({
-      setToken: (token) => {
+    this.generalStats();
+    APIGet({
+      onSuccess: (algorithms) => {
         this.setState({
-          token: token
-        }, this.generalStats);
-        APIGet({
-          onSuccess: (algorithms) => {
-            this.setState({
-              algorithms: algorithms.map((algorithm) => ({
-                id: algorithm.id,
-                name: algorithm.name
-              })),
-              isLoaded: this.state.metrics !== null &&
-                        this.state.studies !== null &&
-                        this.state.trials !== null
-            });
-          },
-          onError: this.handleError,
-          uri: "http://localhost:8080/api/v0.1/algorithms/",
-          token: token
+          algorithms: algorithms.map((algorithm) => ({
+            id: algorithm.id,
+            name: algorithm.name
+          })),
+          isLoaded: this.state.metrics !== null &&
+                    this.state.studies !== null &&
+                    this.state.trials !== null
         });
-        APIGet({
-          onSuccess: (metrics) => {
-            this.setState({
-              metrics: metrics.map((metric) => ({
-                id: metric.id,
-                name: metric.name
-              })),
-              isLoaded: this.state.algorithms !== null &&
-                        this.state.studies !== null &&
-                        this.state.trials !== null
-            });
-          },
-          onError: this.handleError,
-          uri: "http://localhost:8080/api/v0.1/metrics/",
-          token: token
+      },
+      onError: this.handleError,
+      uri: "http://localhost:8080/api/v0.1/algorithms/",
+    });
+    APIGet({
+      onSuccess: (metrics) => {
+        this.setState({
+          metrics: metrics.map((metric) => ({
+            id: metric.id,
+            name: metric.name
+          })),
+          isLoaded: this.state.algorithms !== null &&
+                    this.state.studies !== null &&
+                    this.state.trials !== null
         });
-      }
+      },
+      onError: this.handleError,
+      uri: "http://localhost:8080/api/v0.1/metrics/",
     });
   }
 
@@ -137,13 +125,12 @@ class Statistics extends Component {
           onSuccess: (parameters) => {
             this.setState({
               studyParameters: parameters,
-              isLoaded: this.state.studyTrials ? true : false
+              isLoaded: !!this.state.studyTrials
             });
           },
           onError: this.handleError,
           uri: 'http://localhost:8080/api/v0.1/studies/' +
                         this.state.selectedStudy + '/parameters/',
-          token: this.state.token
         });
 
         this.studyStats();
@@ -167,7 +154,6 @@ class Statistics extends Component {
       },
       onError: this.handleError,
       uri: "http://localhost:8080/api/v0.1/studies/",
-      token: this.state.token
     });
     APIGet({
       onSuccess: (trials) => {
@@ -180,7 +166,6 @@ class Statistics extends Component {
       },
       onError: this.handleError,
       uri: "http://localhost:8080/api/v0.1/trials/",
-      token: this.state.token
     });
   }
 
@@ -190,12 +175,11 @@ class Statistics extends Component {
       onSuccess: (trials) => {
         this.setState({
           studyTrials: trials,
-          isLoaded: this.state.studyParameters ? true : false
+          isLoaded: !!this.state.studyParameters
         });
       },
       onError: this.handleError,
       uri: url + '/trials/',
-      token: this.state.token
     });
   }
 

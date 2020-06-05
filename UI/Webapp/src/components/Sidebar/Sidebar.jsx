@@ -3,7 +3,6 @@
  */
 import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
-import AdminNavbarLinks from "../Navbars/AdminNavbarLinks.jsx";
 
 
 function Logo(props) {
@@ -63,16 +62,12 @@ class Sidebar extends Component {
         <Logo />
         <div className="sidebar-wrapper">
           <ul className="nav">
-            {this.state.width <= 991 ? <AdminNavbarLinks /> : null}
             {this.props.routes.map((prop, key) => {
               if (!prop.redirect)
                 return (
-                  <li
-                    className={this.activeRoute(prop.layout + prop.path)}
-                    key={key}
-                  >
+                  <li className={this.activeRoute(prop.path)} key={key}>
                     <NavLink
-                      to={prop.layout + prop.path}
+                      to={prop.path}
                       className="nav-link"
                       activeClassName="active"
                     >

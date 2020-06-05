@@ -37,7 +37,6 @@ class Dataset extends React.Component {
         });
       },
       uri: this.props.uri,
-      token: this.props.token
     });
   }
 

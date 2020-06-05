@@ -211,9 +211,11 @@ class Home extends Component {
     return (
       <div className="content">
         <Container fluid>
-          <h3>What is Ahmet?</h3>
+          <h3>Welcom to Ahmet</h3>
             <p className="text-justify">
-              Framework for black-box optimization.
+              Ahmet is a framework for Black-Box Optimization (BBO). It has been
+              specifically designed for the optimization of Machine Learning and
+              Neural Network algorithms.
             </p>
           <hr/>
           <h3>Definitions</h3>
@@ -221,19 +223,24 @@ class Home extends Component {
             Useful definitions used across the entire framework:
             <ul>
               <li>
-                <strong>Trial</strong>: a list of parameters value that will be evaluated against the metric.
+                <strong>Trial</strong>: a list of parameters value that will be
+                evaluated against the metric.
               </li>
               <li>
-                <strong>Metric</strong>: a machine learning model representing the black box function.
+                <strong>Metric</strong>: a machine learning model representing
+                the black box function.
               </li>
               <li>
-                <strong>Study</strong>: entity composed of a BBO algorithm, a metric and the trials.
+                <strong>Study</strong>: entity composed of a BBO algorithm, a
+                metric and the trials.
               </li>
               <li>
-                <strong>Worker</strong>: a process or a thread responsible of evaluating a trial x.
+                <strong>Worker</strong>: a process or a thread responsible of
+                evaluating a trial x.
               </li>
               <li>
-                <strong>Run</strong>: a complete optimization execution of the problem.
+                <strong>Run</strong>: a complete optimization execution of
+                the problem.
               </li>
             </ul>
           </p>

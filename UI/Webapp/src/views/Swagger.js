@@ -1,56 +1,32 @@
 /**
  * Show api documentation for updating algorithms, metrics and dataset.
- *
  */
 import React from "react";
 import Loading from "../components/Loading/Loading";
 import SwaggerUI from "swagger-ui-react"
 import "swagger-ui-react/swagger-ui.css"
-import getToken from "../components/Token/Token";
 import ErrorView from "../components/Errors/Error";
+import { APIGet } from "../components/Fetcher/Fetcher";
 
 class APIDoc extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       apiSpecs: null,
-      url: "http://localhost:8080/api/v0.1/openapi",
-      token: null,
       error: null,
     }
-
-    this.fetchSpecs = this.fetchSpecs.bind(this);
   }
 
   componentDidMount() {
-    getToken({
-      setToken: (token) => {
-        this.setState({
-          token: token
-        }, this.fetchSpecs);
-      }
-    })
-  }
-
-  fetchSpecs() {
-    fetch(this.state.url, {
-      headers: {
-        Authorization: 'Token ' + this.state.token,
-        Accept: 'application/json',
-      },
-      method: 'GET',
-      cache: 'no-cache',
-    }).then(response => response.json())
-      .then(
-        (data) => {
+    APIGet({
+      onSuccess: (data) => {
           this.setState({
             apiSpecs: data
           });
         },
-        (error) => {
-          this.setState({error: error})
-        }
-      );
+      onError: (error) => ( this.setState({error: error})),
+      uri: "http://localhost:8080/api/v0.1/openapi"
+    });
   }
 
   render() {

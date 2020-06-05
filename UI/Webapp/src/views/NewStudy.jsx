@@ -11,8 +11,6 @@ import Algorithm from "../components/Steps/Algorithm";
 import Metric from "../components/Steps/Metric";
 import Dataset from "../components/Steps/Dataset";
 import Parameters from "../components/Steps/Parameters";
-import Loading from "../components/Loading/Loading";
-import getToken from "../components/Token/Token";
 import ErrorView from "../components/Errors/Error";
 import {store} from "react-notifications-component";
 import {APIPost} from "../components/Fetcher/Fetcher";
@@ -31,7 +29,6 @@ class NewStudy extends Component {
       Metric: null,
       Dataset: null,
       Parameters: null,
-      token: null,
       error: null,
       submitted: 0
     };
@@ -41,21 +38,6 @@ class NewStudy extends Component {
     this.reset = this.reset.bind(this);
     this._next = this._next.bind(this);
     this._prev = this._prev.bind(this);
-  }
-
-  /**
-   * Get the token.
-   *
-   * TODO: remove with login
-   */
-  componentDidMount() {
-    getToken({
-      setToken: (token) => {
-        this.setState({
-          token: token
-        });
-      }
-    });
   }
 
   /**
@@ -331,33 +313,31 @@ class NewStudy extends Component {
   }
 
   render() {
-    if (!this.state.token)
-      return <Loading />;
-
-    else if (this.state.error)
-      return (<ErrorView message={this.state.error.message} />);
-
-    return (
-      <div className="content">
-        <Container fluid>
-          <Form>
-            <Form.Group as={Col} className="text-center">
-              <h2 className="font-weight-light">
-                Submission of study: {this.state.Name || 'new study'} ️</h2>
-              <hr/>
-              {this.stepper()}
-            </Form.Group>
-            <Form.Row className="text-center">
-              <Col> <Container> {this.renderStep()} </Container> </Col>
-            </Form.Row>
-            <Row>
-              <Col> {this.previousButton()} </Col>
-              <Col> {this.nextButton()} </Col>
-            </Row>
-          </Form>
-        </Container>
-      </div>
-    );
+    if (this.state.error) {
+      return <ErrorView message={this.state.error.message}/>;
+    } else {
+      return (
+        <div className="content">
+          <Container fluid>
+            <Form>
+              <Form.Group as={Col} className="text-center">
+                <h2 className="font-weight-light">
+                  Submission of study: {this.state.Name || 'new study'} ️</h2>
+                <hr/>
+                {this.stepper()}
+              </Form.Group>
+              <Form.Row className="text-center">
+                <Col> <Container> {this.renderStep()} </Container> </Col>
+              </Form.Row>
+              <Row>
+                <Col> {this.previousButton()} </Col>
+                <Col> {this.nextButton()} </Col>
+              </Row>
+            </Form>
+          </Container>
+        </div>
+      );
+    }
   }
 }
 

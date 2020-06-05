@@ -8,16 +8,19 @@
 }
 .navbar{
     border: $none;
+    border-bottom: 1px solid lightgrey;
     font-size: $font-size-navbar;
     border-radius: 0;
     height: 63px;
-    background-color: #414144;
-    
+    background-color: white;
+
     .navbar-brand {
-        font-weight: $font-weight-normal;
+        font-weight: $font-weight-light;
         margin: $navbar-margin-brand;
         padding: $navbar-padding-brand;
         font-size: $font-size-large-navbar;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        text-transform: uppercase;
     }
     .navbar-nav{
          > li > a {
@@ -72,7 +75,6 @@
         left: auto;
         border-radius: 0;
     }
-
 }
 
 .navbar-nav > li > .dropdown-menu{

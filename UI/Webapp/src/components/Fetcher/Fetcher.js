@@ -4,13 +4,24 @@
  */
 import React from "react";
 
+/**
+ * Make the headers for all the http verbs.
+ * Note that the token is added automatically if present in session storage.
+ */
+function makeHeaders() {
+  let headers = {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  }
+  if (sessionStorage.getItem('token'))
+    headers['Authorization'] = 'Token ' + sessionStorage.getItem('token');
+
+  return headers;
+}
+
 export function APIGet(props) {
   fetch(props.uri, {
-    headers: {
-      'Content-Type': "application/json",
-      Authorization: 'Token ' + props.token,
-      Accept: "application/json"
-    },
+    headers: makeHeaders(),
     method: 'GET',
     cache: 'no-cache',
   }).then(response => {
@@ -27,10 +38,7 @@ export function APIGet(props) {
 export function APIDelete(props) {
   fetch(props.uri, {
     method: "DELETE",
-    headers: {
-      Authorization: 'Token ' + props.token,
-      'Accept': 'application/json',
-    }
+    headers: makeHeaders()
   }).then(response => {
     if (response.status >= 200 && response.status <= 299)
       return "Successfully deleted";
@@ -44,11 +52,7 @@ export function APIDelete(props) {
 export function APIPost(props) {
   fetch(props.uri, {
     method: "POST",
-    headers: {
-      'Content-Type': "application/json",
-      Authorization: 'Token ' + props.token,
-      'Accept': 'application/json',
-    },
+    headers: makeHeaders(),
     body: JSON.stringify(props.data)
   }).then(response => {
     if (response.status >= 200 && response.status <= 299)

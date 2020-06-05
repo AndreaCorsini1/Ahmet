@@ -1,22 +1,22 @@
 /**
- *
+ * Top navigation bar.
+ * It is usefull for small screen and login/logout a user.
  */
 import React, { Component } from "react";
-import {Navbar, Nav} from "react-bootstrap";
-
+import { Navbar } from "react-bootstrap";
+import { NavLink } from "react-router-dom";
 
 class Header extends Component {
   constructor(props) {
     super(props);
     this.state = {
       sidebarExists: false,
-      signin: props.signin ? props.signin : false
     };
 
     this.mobileSidebarToggle = this.mobileSidebarToggle.bind(this);
   }
 
-  mobileSidebarToggle(e) {
+  mobileSidebarToggle() {
     if (this.state.sidebarExists === false) {
       this.setState({
         sidebarExists: true
@@ -24,7 +24,7 @@ class Header extends Component {
     }
 
     document.documentElement.classList.toggle("nav-open");
-    var node = document.createElement("div");
+    let node = document.createElement("div");
     node.id = "bodyClick";
     node.onclick = function() {
       this.parentElement.removeChild(this);
@@ -34,16 +34,22 @@ class Header extends Component {
   }
 
   render() {
+    let isLogin = sessionStorage.getItem('token') !== null;
+
     return (
-      <Navbar variant="dark" expand="lg">
+      <Navbar variant="light" expand="lg">
         <Navbar.Brand>{this.props.brandText}</Navbar.Brand>
         <Navbar.Toggle
             aria-controls="basic-navbar-nav"
             onClick={this.mobileSidebarToggle}/>
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
-          { this.state.signin ?
-              <Nav.Link href="#link">Logout</Nav.Link> :
-              <Nav.Link href="#link">Signin</Nav.Link> }
+          { isLogin ? (
+            <NavLink to="/logout">
+              Logout {sessionStorage.getItem('username')}
+            </NavLink>) : (
+            <NavLink to="/login">
+              Login
+            </NavLink>) }
         </Navbar.Collapse>
       </Navbar>
     );
