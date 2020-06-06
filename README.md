@@ -14,7 +14,7 @@ of them.
 5. [References](#references)
 
 
-## Project structure (#structure)
+## Project structure
     /
     |--> Ahmet
     |     |--> urls: controllers of the API.
