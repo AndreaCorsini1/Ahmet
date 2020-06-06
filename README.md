@@ -37,13 +37,14 @@ of them.
 ## Installation and startup
 
 ### API installation:
-The api needs only a valid Python 3 interpreter and can be easily installed
-within a dedicated virtual environment:
-For creating a new venv in Python 3:
+The Ahmet's api needs only a valid Python 3 interpreter and can be easily
+installed within a dedicated virtual environment. For creating a new venv in
+Python 3:
     
     python3 -m venv /path/to/venv
     
-Once the venv is installed, it must be activated before installing third-party libraries:
+Once the venv is installed, it must be activated before installing third-party 
+libraries:
     
     source /path/to/venv/bin/activate
     
@@ -82,10 +83,10 @@ If everything goes fine, you can start the Web App up by typing:
 
     npm run start
 
-
 ### Mobile app installation:
 
-TODO
+TODO Matte
+
 
 ## General description
 
@@ -98,28 +99,30 @@ TODO
  Learning or a Neural Network model.
 - **Optimization algorithm**: an algorithm that takes in a metric and a
  parameter space and generates trials. 
-- **Study**: entity composed of an optimization algorithm, a metric and a set of
- trials.
+- **Study**: entity composed of an optimization algorithm, a metric, a set of
+ trials and a dataset, if needed.
 - **Worker**: a process or a thread responsible of evaluating trials
  against a metric.
-- **Run**: an iteration of the optimization algorithm that generated trials.
+- **Run**: an single iteration of an optimization algorithm that generated
+ trials.
 
 ### The Framework
 
 Ahmet has been primary designed to evaluate and point out the quality and
 characteristics of different optimization algorithms. The metric used to test
-the the algorithms are ML and NN models which constitute really tough BBO
+the algorithms are ML and NN models which constitute really tough BBO
 problems.
 
 The entire framework is extensible, meaning that new metrics, algorithms and
-dataset can be added by end users. Currently, the extension process is not
+dataset can be added by end-users. Currently, the extension process is not
 automatic, but it needs a revision by a developer before the proposed metric,
 algorithm or dataset can be used in new studies.
-For instance, If an end user wants to develop its own optimization algorithm,
-he can download the algorithm prototype and start to build it from there. The
-prototype is an abstract class from which the newly created algorithm must
-inherit. In this way Ahmet can rely on a well established interface and knows
-how to call the algorithm. The same apply to the Metric and the Dataset.
+For instance, If an end-user wants to develop its own optimization algorithm,
+he can download the algorithm prototype from the Web App home page and start to
+build it from there. The prototype is an abstract class from which every
+algorithm must inherit. In this way, Ahmet can rely on a well established
+interface for interacting with the algorithms, even if their internal behavior
+is completely unknown. The same apply to the Metric and the Dataset.
 
 The available BBO algorithms available in the framework are:
 
@@ -144,7 +147,40 @@ And the dataset:
 - Iris
 - Diabetes
 
+### Inside Ahmet
 
+What Ahmet does is to take a searching space, the hyperparameter space, and 
+produce configurations of hyperparameter, or trials, from such space. 
+Depending on the algorithm selected in a running study, these trials might be
+generated in a completely different way. Broadly speaking, an algorithm samples
+trials from the study space and it refines its exploration based on the
+outcome of the past trials and its internal nature. Usually, the algorithm
+generation procedure is splitted up in iterations called run. A run generates
+several trials that will be evaluated by Ahmet workers. Both the algorithm
+runs and number of trials generated at each run, namely number of suggestions, 
+are parameters configured during the study creation.
+
+Once a set of trials is ready, the pool of workers start to evaluate each one
+based on the study metric. Remember that the metrics in Ahmet are ML or NN
+models, so evaluating each trial implies to train the model on a dataset
+and afterword test the trained model. This is the computational heavy part of
+the framework.
+
+In order to ease the evaluation process, some basic early stopping procedures
+may decide to stop the trials before their actual evaluation. This part of
+the framework is not deeply developed yet, but it is an important feature
+that could lead to superior performance if well managed. It is important to
+note also that the algorithms should exploit as much as possible the
+knowledge produced by the evaluated trials in order to increase the final
+trials quality and speed up the study execution.   
+
+The studies as well as their results are presented in the Mobile and Web apps
+with two pages. The first page, called studies, presents the studies, the 
+studies hyperparameters and the studies trials in a tabular fashion. 
+This can be useful to check the characteristics of each study.
+While the second page, the statistics page, tries to summarize some general
+aspects of a single study (selected by the end-user) or of the BBO algorithms.
+Take a look at the demos below for getting some more insights.
 
 ## Demos
 
