@@ -116,7 +116,7 @@ class App extends React.Component {
 ReactDOM.render(
   <BrowserRouter>
     <Switch>
-      <Route path="/home" render={props => <App {...props} />} />
+      <Route path="/" render={props => <App {...props} />} />
       <Redirect to="/home" />
     </Switch>
   </BrowserRouter>,
