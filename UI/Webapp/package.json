@@ -6,7 +6,7 @@
     "bootstrap": "^4.4.1",
     "chart.js": "^2.9.3",
     "core-js": "3.6.4",
-    "jquery": "^1.9.1",
+    "jquery": "^3.5.1",
     "js-cookie": "^2.2.1",
     "node-sass": "^4.13.1",
     "popper": "^1.0.1",
