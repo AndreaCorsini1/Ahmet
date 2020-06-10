@@ -1,62 +1,139 @@
 /*Example of Navigation Drawer with Sectioned Menu*/
 import React, {Component} from 'react';
 //import react in our code.
-import {StyleSheet, View, Text, FlatList} from 'react-native';
+import {StyleSheet, View, Text, TextInput} from 'react-native';
 // import all basic components
-import {ListItem} from 'react-native-elements';
-import {Icon} from 'react-native-vector-icons';
+import {Button} from 'react-native-elements';
+import {APIGet, getToken, testToken} from './Fetcher';
+import FlashMessage from 'react-native-flash-message';
+import {showMessage} from 'react-native-flash-message';
+import {token_real} from './Fetcher';
+import {Card} from 'react-native-shadow-cards';
 
-const list = [
-  {
-    name: 'Amy Farha',
-    avatar_url:
-      'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-    subtitle: 'Vice President',
-  },
-  {
-    name: 'Chris Jackson',
-    avatar_url:
-      'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-    subtitle: 'Vice Chairman',
-  },
-  // more items
-];
+export var API_token_username, API_token_password, Error_token;
 
 export default class Screen2 extends Component {
-  keyExtractor = (item, index) => index.toString();
+  constructor(props) {
+    super(props);
+    this.state = {
+      token: null,
+      error: null,
+      username: '',
+      password: '',
+      logged: 'false',
+    };
+    this.onLogin = this.onLogin.bind(this);
+  }
 
-  renderItem = ({item}) => (
-    <ListItem
-      title={item.name}
-      subtitle={item.subtitle}
-      leftAvatar={{source: {uri: item.avatar_url}}}
-      bottomDivider
-      chevron
-      button
-      onPress={() => {
-        alert('test');
-      }}
-    />
-  );
+  onLogin() {
+    const {username, password} = this.state;
+    getToken({
+      setToken: (token) => {
+        this.setState(
+          {
+            token: token,
+            logged: 'true',
+          },
+          () => {
+            showMessage({
+              message: 'You Logged In!!',
+              description: 'Enjoy Ahmet',
+              type: 'success',
+            });
+          },
+        );
+      },
+      onError: () => {
+        showMessage({
+          message: 'Wrong Login!!',
+          description: 'sorry',
+          type: 'danger',
+        });
+      },
+      username: username,
+      password: password,
+    });
+  }
 
-  //Screen2 Component
   render() {
     return (
-      <FlatList
-        keyExtractor={this.keyExtractor}
-        data={list}
-        renderItem={this.renderItem}
-      />
+      <View style={styles.container}>
+        <Text style={styles.inputext}>Insert Credential</Text>
+        <TextInput
+          value={this.state.username}
+          onChangeText={(username) => this.setState({username})}
+          placeholder="Username"
+          style={styles.input}
+        />
+        <TextInput
+          value={this.state.password}
+          onChangeText={(password) => this.setState({password})}
+          placeholder="Password"
+          secureTextEntry={true}
+          style={styles.input}
+        />
+
+        <Button title={'Login'} style={styles.input} onPress={this.onLogin} />
+        <FlashMessage position="top" />
+      </View>
     );
   }
 }
-
 const styles = StyleSheet.create({
-  MainContainer: {
+  container: {
     flex: 1,
-    paddingTop: 20,
     alignItems: 'center',
-    marginTop: 50,
     justifyContent: 'center',
+    backgroundColor: '#ffffff',
+  },
+  input: {
+    width: 200,
+    height: 44,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'black',
+    marginBottom: 10,
+  },
+  inputext: {
+    width: 200,
+    height: 44,
+    padding: 10,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    borderWidth: 1,
+    borderColor: 'black',
+    marginBottom: 10,
   },
 });
+
+/*onLogin() {
+    const {username, password} = this.state;
+    API_token_username = username;
+    API_token_password = password;
+    var pass = [
+  {
+    data: null,
+    token: null,
+    username: this.state.username,
+    password: this.state.password,
+    error: null,
+  },
+];
+    testToken();
+    if (token_real !== null) {
+      this.setState({
+        token: token_real,
+        error: Error_token,
+        logged: 'true',
+      });
+    }
+    getToken({
+      setToken: (token) => {
+        this.setState({token: token});
+      },
+    });
+    /!*this.props.navigation.navigate('Screen4_StackNavigator', {
+      username,
+      password,
+    });*!/
+  }*/

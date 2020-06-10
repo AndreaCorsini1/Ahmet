@@ -25,6 +25,7 @@ import Screen4 from './pages/Screen4';
 
 //Import custom Drawer / sidebar
 import SideMenu from './sidemenu';
+import FlashMessage from 'react-native-flash-message';
 
 //Navigation Drawer Structure for all screen
 class NavigationDrawerStructure extends Component {
