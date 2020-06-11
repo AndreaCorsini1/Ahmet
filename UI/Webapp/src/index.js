@@ -55,9 +55,7 @@ class App extends React.Component {
               sessionStorage.getItem('token') !== null ? (
                 <prop.component {...props} />
               ) : (
-                <Redirect push
-                  to="/login"
-                />
+                <Redirect push to="/login"/>
               )
             )}
             key={key}
@@ -105,7 +103,7 @@ class App extends React.Component {
             {...this.props}
             brandText={this.getBrandText(this.props.location.pathname)}
           />
-          <Switch>{this.getRoutes(routes)}</Switch>
+          <Switch>{this.getRoutes(routes)}, <Redirect to="/home"/></Switch>
           <Footer />
         </div>
       </div>
@@ -117,7 +115,6 @@ ReactDOM.render(
   <BrowserRouter>
     <Switch>
       <Route path="/" render={props => <App {...props} />} />
-      <Redirect to="/home" />
     </Switch>
   </BrowserRouter>,
   document.getElementById("root")
