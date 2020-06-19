@@ -4,7 +4,7 @@
 import React, {Component} from 'react';
 import {NavigationActions} from 'react-navigation';
 import {ScrollView, Text, View, StyleSheet} from 'react-native';
-import {token_real} from '../Fetcher/Fetcher';
+import {checkToken} from '../Fetcher/Fetcher';
 
 /**
  * Array of the sidebar navigation option with Heading, Subheading and
@@ -27,46 +27,92 @@ class SideMenu extends Component {
       },
     ];
 
+    this.options_Logout = [
+      {
+        mainHeading: 'Ahmet Menu',
+        subOptions: [
+          {secondaryHeading: 'Home', navigationPath: 'First'},
+          {secondaryHeading: 'Studies', navigationPath: 'Second'},
+          {secondaryHeading: 'Statistics', navigationPath: 'Third'},
+          {secondaryHeading: 'Logout', navigationPath: 'Fifth'},
+        ],
+      },
+    ];
+
     this.navigateToScreen = this.navigateToScreen.bind(this);
   }
 
   navigateToScreen(route) {
     let navigateAction;
-    if (token_real !== null) {
+    if (checkToken()) {
+      console.log('if');
       navigateAction = NavigationActions.navigate({
         routeName: route,
       });
     } else {
-      navigateAction = NavigationActions.navigate({
-        routeName: 'Fourth',
-      });
+      console.log('else');
+      if (route === 'First') {
+        navigateAction = NavigationActions.navigate({
+          routeName: 'First',
+        });
+      } else {
+        navigateAction = NavigationActions.navigate({
+          routeName: 'Fourth',
+        });
+      }
     }
 
     this.props.navigation.dispatch(navigateAction);
   }
 
+  onLogin() {
+    return (
+      <ScrollView>
+        <View>
+          {this.options.map((option) => (
+            <View>
+              <Text style={styles.mainHeading}>{option.mainHeading}</Text>
+              {option.subOptions.map((item, key) => (
+                <View style={styles.secondaryHeading} key={key}>
+                  <Text
+                    onPress={() => this.navigateToScreen(item.navigationPath)}>
+                    {item.secondaryHeading}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    );
+  }
+
+  onLogout() {
+    return (
+      <ScrollView>
+        <View>
+          {this.options_Logout.map((option) => (
+            <View>
+              <Text style={styles.mainHeading}>{option.mainHeading}</Text>
+              {option.subOptions.map((item, key) => (
+                <View style={styles.secondaryHeading} key={key}>
+                  <Text
+                    onPress={() => this.navigateToScreen(item.navigationPath)}>
+                    {item.secondaryHeading}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+    );
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <ScrollView>
-          <View>
-            {this.options.map((option) => (
-              <View>
-                <Text style={styles.mainHeading}>{option.mainHeading}</Text>
-                {option.subOptions.map((item, key) => (
-                  <View style={styles.secondaryHeading} key={key}>
-                    <Text
-                      onPress={() =>
-                        this.navigateToScreen(item.navigationPath)
-                      }>
-                      {item.secondaryHeading}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            ))}
-          </View>
-        </ScrollView>
+        {checkToken() ? this.onLogout() : this.onLogin()}
         <View style={styles.footerContainer}>
           <Text>Ahmet side menu</Text>
         </View>

@@ -6,19 +6,23 @@
  * "info" (blue) and "default" (gray).
  */
 import React, {Component} from 'react';
-import {StyleSheet, View, ScrollView, Dimensions} from 'react-native';
-import {Card} from 'react-native-elements';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Dimensions,
+  Text,
+  ActivityIndicator,
+  RefreshControl,
+  SafeAreaView,
+} from 'react-native';
 import FlashMessage, {showMessage} from 'react-native-flash-message';
 import {APIGet} from '../Components/Fetcher/Fetcher';
 import RNPickerSelect from 'react-native-picker-select';
-import {Text} from 'react-native-svg';
 import ChartPieMod from '../Components/Charts/ChartPieMod';
 import BinnedHistogram from '../Components/Charts/BinnedHistogram';
+import TextCard from '../Components/Cards/TextCard';
 
-// Timer for fetching timeout
-// TODO: add timer
-const timeout = 3000;
-//
 const {width} = Dimensions.get('window');
 
 export default class Screen3 extends Component {
@@ -36,10 +40,10 @@ export default class Screen3 extends Component {
       studyTrials: null,
       error: null,
       content_dataset: null,
+      refreshing: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleError = this.handleError.bind(this);
-    //this.Populate = this.Populate.bind(this);
     this.generalStats = this.generalStats.bind(this);
     this.studyStats = this.studyStats.bind(this);
   }
@@ -131,6 +135,7 @@ export default class Screen3 extends Component {
   }
 
   Populate() {
+    this.setState({refreshing: true});
     APIGet({
       onSuccess: (studies) => {
         this.setState({
@@ -157,6 +162,7 @@ export default class Screen3 extends Component {
       onError: this.handleError,
       uri: 'http://10.0.2.2:8080/api/v0.1/trials/',
     });
+    this.setState({refreshing: false});
   }
 
   generalStats() {
@@ -269,8 +275,12 @@ export default class Screen3 extends Component {
     let trials = this.state.studyTrials;
     if (trials === null) {
       return (
-        <View>
-          <Text>No trials to show</Text>
+        <View style={styles.containerLoading}>
+          <Text
+            style={{fontWeight: 'bold', textAlign: 'center', marginTop: 20}}>
+            {' '}
+            No trials to show. Create a new study{' '}
+          </Text>
         </View>
       );
     } else {
@@ -317,33 +327,72 @@ export default class Screen3 extends Component {
       }
     });
     return (
-      <View>
-        <Card>
-          <Text>CIAO</Text>
-        </Card>
-      </View>
+      <ScrollView horizontal={true} style={{alignContent: 'center'}}>
+        <TextCard
+          description="Total number of studies"
+          title={this.state.studies.length}
+        />
+        <TextCard
+          description="Total number of trials"
+          title={this.state.trials.length}
+        />
+        <TextCard description="Number of pending studies" title={numPending} />
+      </ScrollView>
+    );
+  }
+
+  refresh() {
+    return (
+      <RefreshControl
+        refreshing={this.state.refreshing}
+        onRefresh={() => this.Populate()}
+      />
+    );
+  }
+
+  studyCards() {
+    let numStopped = 0;
+    this.state.studyTrials.map((trial) => {
+      numStopped += trial.status === 'STOPPED' ? 1 : 0;
+    });
+    console.log(JSON.stringify(this.state.studyTrials.length));
+    return (
+      <ScrollView horizontal={true} style={{alignContent: 'center'}}>
+        <TextCard
+          title="Number of trials in the study"
+          description={this.state.studyTrials.length}
+        />
+        <TextCard title="Number of stopped trials" description={numStopped} />
+      </ScrollView>
     );
   }
 
   render() {
     if (!this.state.isLoaded) {
       return (
-        <ScrollView style={styles.container}>
-          <Text>"Fetching data..."</Text>
-        </ScrollView>
+        <View style={styles.containerLoading}>
+          <ActivityIndicator size="large" color="#0000ff" />
+          <Text
+            style={{fontWeight: 'bold', textAlign: 'center', marginTop: 20}}>
+            {' '}
+            Fetching data...{' '}
+          </Text>
+        </View>
       );
     } else {
       return (
-        <ScrollView style={styles.container}>
-          {this.select_static()}
-          {this.state.selectedStudy !== 'General analytics'
-            ? this.studyCharts()
-            : this.infoGeneral()}
-          {this.state.selectedStudy === 'General analytics'
-            ? this.generalCharts()
-            : this.studyCharts()}
-          <FlashMessage position="top" />
-        </ScrollView>
+        <SafeAreaView style={styles.container}>
+          <ScrollView style={styles.container} refreshControl={this.refresh()}>
+            {this.select_static()}
+            {this.state.selectedStudy !== 'General analytics'
+              ? this.studyCards()
+              : this.infoGeneral()}
+            {this.state.selectedStudy === 'General analytics'
+              ? this.generalCharts()
+              : this.studyCharts()}
+            <FlashMessage position="top" />
+          </ScrollView>
+        </SafeAreaView>
       );
     }
   }
@@ -371,9 +420,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     //paddingHorizontal : 30
   },
+  containerLoading: {
+    flex: 1,
+    padding: 16,
+    paddingTop: 30,
+    backgroundColor: '#fff',
+  },
   container: {
     flex: 1,
-    backgroundColor: '#ffffff', // Set your own custom Color #0010ff, #b5ceee
+    backgroundColor: '#ffffff',
   },
   input: {
     width: 200,

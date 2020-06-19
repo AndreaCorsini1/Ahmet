@@ -14,6 +14,7 @@ import Screen1 from './Views/Screen1';
 import Screen4 from './Views/Screen4';
 import Screen2 from './Views/Screen2';
 import Screen3 from './Views/Screen3';
+import Screen5 from './Views/Screen5';
 
 //Import custom Drawer / sidebar
 import SideMenu from './Components/SideMenu/sidemenu';
@@ -107,6 +108,22 @@ const Screen4_StackNavigator = createStackNavigator({
   },
 });
 
+const Screen5_StackNavigator = createStackNavigator({
+  Fifth: {
+    screen: Screen5,
+    navigationOptions: ({navigation}) => ({
+      title: 'Logout',
+      headerLeft: () => (
+        <NavigationDrawerStructure navigationProps={navigation} />
+      ),
+      headerStyle: {
+        backgroundColor: '#0693E3',
+      },
+      headerTintColor: '#fff',
+    }),
+  },
+});
+
 //Drawer Navigator for the Navigation Drawer / Sidebar
 const Drawer = createDrawerNavigator(
   {
@@ -115,6 +132,7 @@ const Drawer = createDrawerNavigator(
     NavScreen2: {screen: Screen2_StackNavigator},
     NavScreen3: {screen: Screen3_StackNavigator},
     NavScreen4: {screen: Screen4_StackNavigator},
+    NavScreen5: {screen: Screen5_StackNavigator},
   },
   {
     contentComponent: SideMenu,

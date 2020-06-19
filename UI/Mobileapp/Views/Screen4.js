@@ -3,13 +3,13 @@
  */
 import React, {Component} from 'react';
 //import react in our code.
-import {StyleSheet, View, Text, TextInput} from 'react-native';
+import {StyleSheet, View, Text, TextInput, Button} from 'react-native';
 
 // import all basic components
-import {Button} from 'react-native-elements';
-import {getToken} from '../Components/Fetcher/Fetcher';
 import FlashMessage from 'react-native-flash-message';
 import {showMessage} from 'react-native-flash-message';
+import {getToken} from '../Components/Fetcher/Fetcher';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class Screen4 extends Component {
   constructor(props) {
@@ -27,26 +27,34 @@ export default class Screen4 extends Component {
   onLogin() {
     const {username, password} = this.state;
     getToken({
-      setToken: (token) => {
-        this.setState(
-          {
-            token: token,
-            logged: 'true',
-          },
-          () => {
-            showMessage({
-              message: 'You Logged In!!',
-              description: 'Enjoy Ahmet',
-              type: 'success',
-            });
-          },
-        );
+      setToken: async (token) => {
+        try {
+          await AsyncStorage.setItem('@token', token);
+        } catch (e) {
+          showMessage({
+            message: 'Token error',
+            description: '...',
+            type: 'danger',
+            animationDuration: 100,
+          });
+          console.log(e);
+        }
+        showMessage({
+          message: 'You Logged In!!',
+          description: 'Enjoy Ahmet',
+          type: 'success',
+          animationDuration: 100,
+        });
+        setTimeout(() => {
+          this.props.navigation.navigate('First');
+        }, 2000);
       },
       onError: () => {
         showMessage({
           message: 'Wrong Login!!',
           description: 'sorry',
           type: 'danger',
+          animationDuration: 100,
         });
       },
       username: username,
@@ -71,8 +79,12 @@ export default class Screen4 extends Component {
           secureTextEntry={true}
           style={styles.input}
         />
-
-        <Button title={'Login'} style={styles.input} onPress={this.onLogin} />
+        <Button
+          title={'Login'}
+          style={styles.input}
+          onPress={this.onLogin}
+          color={'rgba(8,102,217,0.89)'}
+        />
         <FlashMessage position="top" />
       </View>
     );

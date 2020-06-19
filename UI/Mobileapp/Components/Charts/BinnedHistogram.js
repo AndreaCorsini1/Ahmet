@@ -7,6 +7,7 @@ import {Card} from 'react-native-shadow-cards';
 import {View} from 'react-native';
 import {VictoryBar, VictoryChart} from 'victory-native';
 import {Text} from 'react-native-elements';
+import TextCard from '../Cards/TextCard';
 
 // For the moment we keep a fixed number of bins
 const numberBins = 10;
@@ -19,8 +20,8 @@ const numberBins = 10;
 function BinnedHistogram(props) {
   if (!props.values || props.values.length === 0) {
     return (
-      <View>
-        <Text>Parameter: {props.title} has not yet tried</Text>
+      <View style={{flex: 1}}>
+        <TextCard description="has not yet tried" title={props.title} />
       </View>
     );
   } else {
@@ -44,9 +45,16 @@ function BinnedHistogram(props) {
 
     return (
       <View>
-        <Card style={{alignItems: 'center', flex: 1}}>
-          <Text style={{textAlign: 'center'}}>
-            Parameter Plotted: {props.title}
+        <Card style={{alignItems: 'center', flex: 1, marginLeft: 20}}>
+          <Text
+            style={{
+              fontWeight: 'bold',
+              textAlign: 'center',
+              marginTop: 10,
+              marginBottom: 10,
+            }}>
+            {' '}
+            Parameter Plotted: {props.title}{' '}
           </Text>
         </Card>
         <VictoryChart>

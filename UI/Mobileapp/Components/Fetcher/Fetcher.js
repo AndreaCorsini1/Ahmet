@@ -3,19 +3,24 @@
  * The methods assume the api communicate with json format.
  */
 import React from 'react';
-export var token_real = null;
+import AsyncStorage from '@react-native-community/async-storage';
 
 /**
  * Make the headers for all the http verbs.
  * Note that the token is added automatically if present in session storage.
  */
-function makeHeaders() {
+async function makeHeaders() {
   let headers = {
     'Content-Type': 'application/json',
     Accept: 'application/json',
   };
-  if (token_real) {
-    headers['Authorization'] = 'Token ' + token_real;
+  try {
+    let token = await AsyncStorage.getItem('@token');
+    if (token) {
+      headers.Authorization = 'Token ' + token;
+    }
+  } catch (e) {
+    console.log(e);
   }
   return headers;
 }
@@ -55,6 +60,17 @@ export function APIDelete(props) {
     );
 }
 
+export async function checkToken() {
+  try {
+    let value = await AsyncStorage.getItem('@token');
+    console.log(value);
+    return value === null;
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
+}
+
 export function APIPost(props) {
   fetch(props.uri, {
     method: 'POST',
@@ -75,7 +91,7 @@ export function APIPost(props) {
 
 export function getToken(props) {
   let url = 'http://10.0.2.2:8080/api/v0.1/token-auth/';
-  token_real = null;
+  //token_real = null;
   fetch(url, {
     method: 'POST',
     headers: makeHeaders(),
@@ -93,10 +109,17 @@ export function getToken(props) {
     .then(
       (data) => {
         props.setToken(data.token);
-        token_real = data.token;
       },
       (error) => {
         props.onError(error.message);
       },
     );
+}
+
+export async function deleteToken() {
+  try {
+    await AsyncStorage.removeItem('@token');
+  } catch (e) {
+    console.log(e);
+  }
 }
