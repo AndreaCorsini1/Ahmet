@@ -55,7 +55,7 @@ class Statistics extends Component {
         });
       },
       onError: this.handleError,
-      uri: "http://localhost:8080/api/v0.1/algorithms/",
+      uri: "/algorithms/",
     });
     APIGet({
       onSuccess: (metrics) => {
@@ -70,7 +70,7 @@ class Statistics extends Component {
         });
       },
       onError: this.handleError,
-      uri: "http://localhost:8080/api/v0.1/metrics/",
+      uri: "/metrics/",
     });
   }
 
@@ -129,8 +129,7 @@ class Statistics extends Component {
             });
           },
           onError: this.handleError,
-          uri: 'http://localhost:8080/api/v0.1/studies/' +
-                        this.state.selectedStudy + '/parameters/',
+          uri: '/studies/' + this.state.selectedStudy + '/parameters/',
         });
 
         this.studyStats();
@@ -153,7 +152,7 @@ class Statistics extends Component {
         });
       },
       onError: this.handleError,
-      uri: "http://localhost:8080/api/v0.1/studies/",
+      uri: "/studies/",
     });
     APIGet({
       onSuccess: (trials) => {
@@ -165,12 +164,12 @@ class Statistics extends Component {
         });
       },
       onError: this.handleError,
-      uri: "http://localhost:8080/api/v0.1/trials/",
+      uri: "/trials/",
     });
   }
 
   studyStats() {
-    let url = 'http://localhost:8080/api/v0.1/studies/' + this.state.selectedStudy;
+    let url = '/studies/' + this.state.selectedStudy;
     APIGet({
       onSuccess: (trials) => {
         this.setState({

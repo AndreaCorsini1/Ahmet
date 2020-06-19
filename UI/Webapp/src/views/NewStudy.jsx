@@ -103,7 +103,7 @@ class NewStudy extends Component {
         }, this.reset);
       },
       onError: this.handleError,
-      uri: "http://localhost:8080/api/v0.1/studies/",
+      uri: "/studies/",
       token: this.state.token
     });
   }
@@ -128,7 +128,7 @@ class NewStudy extends Component {
         return {submitted: state.submitted + 1};
       }, this.reset)),
       onError: this.handleError,
-      uri: "http://localhost:8080/api/v0.1/parameters/",
+      uri: "/parameters/",
       token: this.state.token
     });
   }
@@ -261,25 +261,25 @@ class NewStudy extends Component {
     switch (this.state.currentStep) {
       case 0:
         return (<Name
-          value={this.state.Name} uri="http://localhost:8080/api/v0.1/studies/"
+          value={this.state.Name} uri="/studies/"
           token={this.state.token} handleChange={this.handleChange}
         />);
       case 1:
         return (<Algorithm
           value={this.state.Algorithm}
-          uri="http://localhost:8080/api/v0.1/algorithms/"
+          uri="/algorithms/"
           token={this.state.token} handleChange={this.handleChange}
         />);
       case 2:
         return (<Metric
           supportedParams={this.state.Algorithm.supported_params}
-          value={this.state.Metric} uri="http://localhost:8080/api/v0.1/metrics/"
+          value={this.state.Metric} uri="/metrics/"
           token={this.state.token} handleChange={this.handleChange}
         />);
       case 3:
         return (<Dataset
           value={this.state.Dataset} types={this.state.Metric.dataset}
-          uri="http://localhost:8080/api/v0.1/dataset/"
+          uri="/dataset/"
           token={this.state.token} handleChange={this.handleChange}
         />);
       case 4:

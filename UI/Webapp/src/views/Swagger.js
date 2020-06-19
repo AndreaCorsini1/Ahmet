@@ -25,7 +25,7 @@ class APIDoc extends React.Component {
           });
         },
       onError: (error) => ( this.setState({error: error})),
-      uri: "http://localhost:8080/api/v0.1/openapi"
+      uri: "/openapi"
     });
   }
 

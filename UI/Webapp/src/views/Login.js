@@ -62,7 +62,7 @@ class Login extends React.Component {
           dismiss: { duration: 2000 }
         });
       },
-      uri: "http://localhost:8080/api/v0.1/token-auth/",
+      uri: "/token-auth/",
       token: '',
       data: {
         username: this.state.username,

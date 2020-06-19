@@ -19,8 +19,18 @@ function makeHeaders() {
   return headers;
 }
 
+/**
+ * Make dynamic uri for connecting to the api.
+ *
+ * @param uri: resource to fetch
+ */
+function makeUri(uri) {
+  return (window.location.protocol + '//' + window.location.hostname +
+          ':8080/api/v0.1' + uri);
+}
+
 export function APIGet(props) {
-  fetch(props.uri, {
+  fetch(makeUri(props.uri), {
     headers: makeHeaders(),
     method: 'GET',
     cache: 'no-cache',
@@ -36,7 +46,7 @@ export function APIGet(props) {
 }
 
 export function APIDelete(props) {
-  fetch(props.uri, {
+  fetch(makeUri(props.uri), {
     method: "DELETE",
     headers: makeHeaders()
   }).then(response => {
@@ -50,7 +60,7 @@ export function APIDelete(props) {
 }
 
 export function APIPost(props) {
-  fetch(props.uri, {
+  fetch(makeUri(props.uri), {
     method: "POST",
     headers: makeHeaders(),
     body: JSON.stringify(props.data)

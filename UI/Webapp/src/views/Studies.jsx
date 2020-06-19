@@ -10,7 +10,7 @@ import ErrorView from "../components/Errors/Error";
 import {APIGet, APIDelete} from "../components/Fetcher/Fetcher";
 
 // Base url for the view
-const baseUrl = "http://localhost:8080/api/v0.1/studies/";
+const baseUrl = "/studies/";
 // Timer for fetching timeout
 const timeout = 3000;
 
@@ -103,7 +103,7 @@ class Studies extends Component {
         });
       },
       onError: this.handleError,
-      uri: "http://localhost:8080/api/v0.1/algorithms/"
+      uri: "/algorithms/"
     });
     APIGet({
       onSuccess: (metrics) => {
@@ -117,7 +117,7 @@ class Studies extends Component {
         });
       },
       onError: this.handleError,
-      uri: "http://localhost:8080/api/v0.1/metrics/"
+      uri: "/metrics/"
     });
     APIGet({
       onSuccess: (dataset) => {
@@ -131,7 +131,7 @@ class Studies extends Component {
         });
       },
       onError: this.handleError,
-      uri: "http://localhost:8080/api/v0.1/dataset/"
+      uri: "/dataset/"
     });
   }
 

@@ -53,7 +53,7 @@ class Home extends Component {
         </Col>
         <Row className="text-center">
           <Col>
-            <Button href="http://localhost:8080/static/code/AbstractAlgorithm.py">
+            <Button href="/static/code/AbstractAlgorithm.py">
               Download template class
             </Button>
           </Col>
@@ -133,7 +133,7 @@ class Home extends Component {
         </Col>
         <Row className="text-center">
           <Col>
-            <Button href="http://localhost:8080/static/code/AbstractMetric.py">
+            <Button href="/static/code/AbstractMetric.py">
               Download template class
             </Button>
           </Col>
@@ -195,7 +195,7 @@ class Home extends Component {
         </Col>
         <Row className="text-center">
           <Col>
-            <Button href="http://localhost:8080/static/code/AbstractDataset.py">
+            <Button href="/static/code/AbstractDataset.py">
               Download template class
             </Button>
           </Col>
