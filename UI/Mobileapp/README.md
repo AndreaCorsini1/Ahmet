@@ -1,5 +1,14 @@
 # Ahmet mobile app
-Place in this folder the source code of the mobile app.
+
+
+## Table of contents
+
+1. [Project structure](#project-structure)
+2. [Installation and startup](#installation-and-startup)
+3. [General description](#general-description)
+
+
+## Project structure
 
     /
     |--> UI
@@ -15,17 +24,9 @@ Place in this folder the source code of the mobile app.
     |          |
     |          |--> Views: folder containing all js file for render app's screens      
 
+
 ## Installation and startup
 
-
-### General description
-The mobile app communicates with the 
-backend API for expressing the Ahmet's functionalities 
-in a more lean manner. All functionalities are intact,
-except for the creation of a new study that is left
-to the Webapp.
-
-#### Installation and startup
 The Mobile app is created by React Native project without 
 Expo Cli, but only using a React Native Cli, so
 before start make sure you have the enviroment set up in the
@@ -55,5 +56,8 @@ phone or in a Android emulator typing:
  
     react-native run-android
     
+## General description
 
-
+The mobile app communicates with the backend API for expressing the Ahmet's
+functionalities in a more lean manner. All functionalities are intact, except
+for the creation of a new study that is left to the Webapp.

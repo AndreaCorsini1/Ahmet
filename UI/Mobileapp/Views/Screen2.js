@@ -19,7 +19,7 @@ import FlashMessage, {showMessage} from 'react-native-flash-message';
 import TextCard from '../Components/Cards/TextCard';
 
 // Base url for the view
-const baseUrl = 'http://10.0.2.2:8080/api/v0.1/studies/';
+const baseUrl = '/studies/';
 
 // Timer for fetching timeout
 const timeout = 20000;
@@ -155,7 +155,7 @@ export default class Screen2 extends Component {
         });
       },
       onError: this.handleError,
-      uri: 'http://10.0.2.2:8080/api/v0.1/algorithms/',
+      uri: '/algorithms/',
     });
     APIGet({
       onSuccess: (metrics) => {
@@ -174,7 +174,7 @@ export default class Screen2 extends Component {
         });
       },
       onError: this.handleError,
-      uri: 'http://10.0.2.2:8080/api/v0.1/metrics/',
+      uri: '/metrics/',
     });
     APIGet({
       onSuccess: (dataset) => {
@@ -193,7 +193,7 @@ export default class Screen2 extends Component {
         });
       },
       onError: this.handleError,
-      uri: 'http://10.0.2.2:8080/api/v0.1/dataset/',
+      uri: '/dataset/',
     });
   }
 

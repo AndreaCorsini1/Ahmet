@@ -19,6 +19,8 @@ import Screen5 from './Views/Screen5';
 //Import custom Drawer / sidebar
 import SideMenu from './Components/SideMenu/sidemenu';
 
+console.disableYellowBox = true;
+
 //Navigation Drawer Structure for all screen
 class NavigationDrawerStructure extends Component {
   toggleDrawer = () => {
@@ -136,7 +138,7 @@ const Drawer = createDrawerNavigator(
   },
   {
     contentComponent: SideMenu,
-    drawerWidth: Dimensions.get('window').width - 200,
+    drawerWidth: Dimensions.get('window').width / 2,
   },
 );
 

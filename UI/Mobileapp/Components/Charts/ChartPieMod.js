@@ -3,6 +3,7 @@ import {Dimensions, ScrollView, View} from 'react-native';
 import {Card} from 'react-native-shadow-cards';
 import {VictoryLegend, VictoryPie} from 'victory-native';
 import {Text} from 'react-native-elements';
+import TextCard from "../Cards/TextCard";
 
 // Could be useful
 const {Width} = Dimensions.get('window');
@@ -13,14 +14,13 @@ function ChartPieMod(props) {
   var colors = [];
   let data_legend = [];
 
-  for (let idx in props) {
-    tot += props[idx];
-  }
+  for (let i = 0; i < props.occurrences.length; i += 1)
+    tot += props.occurrences[i];
 
   if (tot === 0) {
     return (
-      <View>
-        <Text>Parameter: {props.title} has not yet tried</Text>
+      <View style={{flex: 1}}>
+        <TextCard description="has not yet tried" title={props.title} />
       </View>
     );
   } else {

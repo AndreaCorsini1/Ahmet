@@ -12,7 +12,7 @@ import "./assets/css/pe-icon-7-stroke.css";
 import "bootstrap/dist/css/bootstrap.min.css"
 import "react-notifications-component/dist/theme.css"
 
-import Header from "./components/Navbars/Navbar";
+import NavBar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import Sidebar from "./components/Sidebar/Sidebar";
 
@@ -99,7 +99,7 @@ class App extends React.Component {
           color={this.state.color}
         />
         <div id="main-panel" className="main-panel" ref={this.mainPanel}>
-          <Header
+          <NavBar
             {...this.props}
             brandText={this.getBrandText(this.props.location.pathname)}
           />

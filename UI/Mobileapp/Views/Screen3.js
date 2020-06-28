@@ -94,12 +94,12 @@ export default class Screen3 extends Component {
           onSuccess: (parameters) => {
             this.setState({
               studyParameters: parameters,
-              isLoaded: this.state.studyTrials ? true : false,
+              isLoaded: !!this.state.studyTrials,
             });
           },
           onError: this.handleError,
           uri:
-            'http://10.0.2.2:8080/api/v0.1/studies/' + event + '/parameters/',
+            '/studies/' + event + '/parameters/',
         }),
       );
       this.studyStats(event);
@@ -121,7 +121,7 @@ export default class Screen3 extends Component {
         });
       },
       onError: this.handleError,
-      uri: 'http://10.0.2.2:8080/api/v0.1/algorithms/',
+      uri: '/algorithms/',
     });
     APIGet({
       onSuccess: (metrics) => {
@@ -137,7 +137,7 @@ export default class Screen3 extends Component {
         });
       },
       onError: this.handleError,
-      uri: 'http://10.0.2.2:8080/api/v0.1/metrics/',
+      uri: '/metrics/',
     });
 
     this.Populate();
@@ -156,7 +156,7 @@ export default class Screen3 extends Component {
         });
       },
       onError: this.handleError,
-      uri: 'http://10.0.2.2:8080/api/v0.1/studies/',
+      uri: '/studies/',
     });
     APIGet({
       onSuccess: (trials) => {
@@ -169,7 +169,7 @@ export default class Screen3 extends Component {
         });
       },
       onError: this.handleError,
-      uri: 'http://10.0.2.2:8080/api/v0.1/trials/',
+      uri: '/trials/',
     });
     this.setState({refreshing: false});
   }
@@ -186,7 +186,7 @@ export default class Screen3 extends Component {
         });
       },
       onError: this.handleError,
-      uri: 'http://10.0.2.2:8080/api/v0.1/studies/',
+      uri: '/studies/',
     });
     APIGet({
       onSuccess: (trials) => {
@@ -199,13 +199,13 @@ export default class Screen3 extends Component {
         });
       },
       onError: this.handleError,
-      uri: 'http://10.0.2.2:8080/api/v0.1/trials/',
+      uri: '/trials/',
     });
     this.generalCharts();
   }
 
   studyStats(study) {
-    let url = 'http://10.0.2.2:8080/api/v0.1/studies/' + study;
+    let url = '/studies/' + study;
     APIGet({
       onSuccess: (trials) => {
         this.setState({
@@ -293,7 +293,7 @@ export default class Screen3 extends Component {
         </View>
       );
     } else {
-      return this.state.studyParameters.map((param, idx) => {
+      return this.state.studyParameters.map((param) => {
         if (param.type === 'INTEGER' || param.type === 'FLOAT') {
           let values = Array();
           for (let i = 0; i < trials.length; i += 1) {
@@ -455,14 +455,3 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
 });
-
-const chartConfig = {
-  backgroundGradientFrom: '#58a9d4',
-  backgroundGradientFromOpacity: 0,
-  backgroundGradientTo: 'rgba(45,59,187,0.68)',
-  backgroundGradientToOpacity: 0.5,
-  color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-  strokeWidth: 2, // optional, default 3
-  barPercentage: 0,
-  //useShadowColorFromDataset: false, // optional
-};

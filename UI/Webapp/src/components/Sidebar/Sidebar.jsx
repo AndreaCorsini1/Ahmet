@@ -69,6 +69,12 @@ class Sidebar extends Component {
                       to={prop.path}
                       className="nav-link"
                       activeClassName="active"
+                      onClick={() => {
+                        let node = document.getElementById("bodyClick")
+                        if (node) {
+                          document.body.removeChild(node)
+                        }
+                      }}
                     >
                       <i className={prop.icon} />
                       <p>{prop.name}</p>

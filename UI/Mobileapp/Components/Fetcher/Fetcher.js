@@ -3,9 +3,10 @@
  * The methods assume the api communicate with json format.
  */
 import React from 'react';
-//import AsyncStorage from "@react-native-community/async-storage";
-//import awaitAsyncGenerator from "@babel/runtime/helpers/esm/awaitAsyncGenerator";
 export var token_real = null;
+// Domain of the API
+const base_url = 'http://192.168.1.61:8080/api/v0.1'
+
 
 /**
  * Make the headers for all the http verbs.
@@ -23,7 +24,7 @@ function makeHeaders() {
 }
 
 export function APIGet(props) {
-  fetch(props.uri, {
+  fetch(base_url + props.uri, {
     headers: makeHeaders(),
     method: 'GET',
     cache: 'no-cache',
@@ -41,7 +42,7 @@ export function APIGet(props) {
 }
 
 export function APIDelete(props) {
-  fetch(props.uri, {
+  fetch(base_url + props.uri, {
     method: 'DELETE',
     headers: makeHeaders(),
   })
@@ -58,7 +59,7 @@ export function APIDelete(props) {
 }
 
 export function APIPost(props) {
-  fetch(props.uri, {
+  fetch(base_url + props.uri, {
     method: 'POST',
     headers: makeHeaders(),
     body: JSON.stringify(props.data),
@@ -76,9 +77,8 @@ export function APIPost(props) {
 }
 
 export function getToken(props) {
-  let url = 'http://10.0.2.2:8080/api/v0.1/token-auth/';
   token_real = null;
-  fetch(url, {
+  fetch(base_url + '/token-auth/', {
     method: 'POST',
     headers: makeHeaders(),
     body: JSON.stringify({
