@@ -1,35 +1,38 @@
 # Ahmet
+
 Ahmet the last Vizier is a web framework for Black-Box Optimization (BBO). 
 In general, a BBO problem consists in optimizing an expansive and complex
 function f with a limited budget of resources. The domain of f is usually a 
 high dimensional space where each dimension varies in N,R or a limited subset 
 of them.
 
+
 ## Table of contents
 
 1. [Project structure](#project-structure)
 2. [Installation and startup](#installation-and-startup)
 3. [General description](#general-description)
-4. [Demos](#demos)
-5. [References](#references)
+4. [Main features](#main-features)
+5. [Demos](#demos)
+6. [References](#references)
 
 
 ## Project structure
     /
-    |--> Ahmet
-    |     |--> urls: controllers of the API.
-    |     |--> settings: settings of the API.
+    |--> /Ahmet
+    |     |--> urls.py: controllers of the API.
+    |     |--> settings.py: settings of the API.
     |
-    |--> API
-    |     |--> Algorithms: folder containing the available BBO algorithms.
-    |     |--> Dataset: folder containing the dataset used by the metric.
-    |     |--> EarlyStoppings: folder containing the early stopping algorithms.
-    |     |--> Metrics: folder containing the metrics.
-    |     |--> Static: folder containing the pototypes and openapi specs.
+    |--> /API
+    |     |--> /Algorithms: folder containing the available BBO algorithms.
+    |     |--> /Dataset: folder containing the dataset used by the metric.
+    |     |--> /EarlyStoppings: folder containing the early stopping algorithms.
+    |     |--> /Metrics: folder containing the metrics.
+    |     |--> /Static: folder containing the pototypes and openapi specs.
     |  
-    |--> UI
-    |     |--> Webapp: folder containing the web application (front-end).
-    |     |--> Mobileapp: folder containing the mobile application (.apk).
+    |--> /UI
+    |     |--> /Webapp: folder containing the web application (front-end).
+    |     |--> /Mobileapp: folder containing the mobile application (.apk).
     |
     |--> requirements.txt
 
@@ -85,7 +88,33 @@ If everything goes fine, you can start the Web App up by typing:
 
 ### Mobile app installation:
 
-TODO Matte
+The Mobile app is created with React Native framework relying only on without 
+React Native Cli (without using Expo Cli). Before starting, make sure you have
+the environment set up in the section React Native Cli Quickstart for your
+system:
+
+https://reactnative.dev/docs/environment-setup
+
+The Mobile App has been developed using Node.js (v14.3.0) and npm (v6.14
+.4), thus, it is strongly recommended to download the same versions.
+Once you have downloaded the folder, you need to install all the dependencies by
+running:
+    
+    npm install
+    
+After that, you need to run the Metro Bundler. If you want to know more about
+Metro, check: 
+
+https://facebook.github.io/metro/ 
+
+So type in a terminal:
+    
+    react-native start
+    
+Finally install and run the application in a mobile phone or in a Android
+emulator typing:
+ 
+    react-native run-android
 
 
 ## General description
@@ -181,6 +210,12 @@ This can be useful to check the characteristics of each study.
 While the second page, the statistics page, tries to summarize some general
 aspects of a single study (selected by the end-user) or of the BBO algorithms.
 Take a look at the demos below for getting some more insights.
+
+
+## Main features
+
+TODO
+
 
 ## Demos
 
