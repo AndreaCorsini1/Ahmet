@@ -61,7 +61,7 @@ In this folder are placed all files that render the final aspect of the App.
 Entry point of the application. The Screen1 represent the home page 
 and gives you a brief overview of the functionalities available in the App.
 
-![Home](Images/Home.png?raw=true "Home page")
+![Home](./Images/Home.png?raw=true "Home page")
 
 ###Screen2
 
@@ -69,7 +69,7 @@ Is the Studies view. This page presents you the available studies. You can gathe
 information about a study by clicking on a row of the table that redirect you to a more specific table. Once a study is
 selected, you may decide to start/restart, delete the study osr simply go back to main view of all studies created. 
 
-![Studies](Images/Studies.png?raw=true "Studies")
+![Studies](./Images/Studies.png?raw=true "Studies")
 
 ###Screen3
 
@@ -78,13 +78,13 @@ studies are pending, how many trials have been generated and so forth. You
 may also decide to specialize the page by selecting a particular study you are
 interested in.
 
-![Statistics](Images/Statistics.png?raw=true "Statistics")
+![Statistics](./Images/Statistics.png?raw=true "Statistics")
 
 ###Screen4
 
 Login and Logout. This page allow you to connect to the API using credentials. 
 
-![Login](Images/Login.png?raw=true "Login")
+![Login](./Images/Login.png?raw=true "Login")
 
 ## Demos
 
