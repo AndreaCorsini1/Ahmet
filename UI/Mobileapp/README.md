@@ -50,6 +50,43 @@ for the creation of a new study that is left to the Webapp (accessible from a
 web browser).
 
 
-## Main features
+## Inside Mobile Ahmet
 
-TODO
+###Views
+
+In this folder are placed all files that render the final aspect of the App.
+
+###Screen1
+
+Entry point of the application. The Screen1 represent the home page 
+and gives you a brief overview of the functionalities available in the App.
+
+![Home](Images/Home.png?raw=true "Home page")
+
+###Screen2
+
+Is the Studies view. This page presents you the available studies. You can gather more
+information about a study by clicking on a row of the table that redirect you to a more specific table. Once a study is
+selected, you may decide to start/restart, delete the study osr simply go back to main view of all studies created. 
+
+![Home](Images/Studies.png?raw=true "Studies")
+
+###Screen3
+
+The Statistics view. This page show you the graphs of your studies, how many
+studies are pending, how many trials have been generated and so forth. You
+may also decide to specialize the page by selecting a particular study you are
+interested in.
+
+![Home](Images/Statistics.png?raw=true "Statistics")
+
+###Screen4
+
+Login and Logout. This page allow you to connect to the API using credentials. 
+
+![Home](Images/Login.png?raw=true "Login")
+
+## Demos
+
+![NewStudy](Images/Demo1.gif "Demo")
+![NewStudy](Images/Demo2.gif "Demo")
