@@ -10,6 +10,7 @@ has not been tested yet.
 1. [Project structure](#project-structure)
 2. [Installation and startup](#installation-and-startup)
 3. [General description](#general-description)
+4. [Demos](#demos)
 4. [Main features](#main-features)
 
 
@@ -90,3 +91,32 @@ Login and Logout. This page allow you to connect to the API using credentials.
 
 ![NewStudy](Images/Demo1.gif "Demo")
 ![NewStudy](Images/Demo2.gif "Demo")
+
+## Main Features
+
+###Login
+
+The login in insured by connecting to API that respond with
+unique token. Only the verified users can access the API, so
+the App instead. Once logout the token is destroy and for 
+next request the API will generate another one.
+All of these features are inside the Fetcher file.
+
+###Data Update
+
+Into Studies and Statistics views are implemented
+two different ways for updating data.
+The first one is automatic; this means that the API call
+is done every 30 seconds. This time is long enough to not 
+overload the API.
+The second one is manually, so is in the hands of the users that 
+with a simple scroll-down can call the API for update the data.
+
+###Navigation
+
+It provides a way for the app to switch between screens where 
+each new screen is positioned at the top of the stack.
+Whit the DrawerNavigator the app can execute the render that 
+can be opened or closed by gestures.
+This feature is wrapped inside the SidebarMenu. 
+
