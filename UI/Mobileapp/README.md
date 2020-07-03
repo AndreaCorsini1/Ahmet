@@ -72,7 +72,7 @@ selected, you may decide to start/restart, delete the study osr simply go back t
 
 ![Studies](./Images/Studies.png?raw=true "Studies")
 
-###Screen3
+### Screen3
 
 The Statistics view. This page show you the graphs of your studies, how many
 studies are pending, how many trials have been generated and so forth. You
