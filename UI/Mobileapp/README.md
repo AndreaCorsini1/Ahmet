@@ -10,8 +10,8 @@ has not been tested yet.
 1. [Project structure](#project-structure)
 2. [Installation and startup](#installation-and-startup)
 3. [General description](#general-description)
-4. [Demos](#demos)
 4. [Main features](#main-features)
+5. [Demos](#demos)
 
 
 ## Project structure
@@ -53,18 +53,18 @@ web browser).
 
 ## Inside Mobile Ahmet
 
-###Views
+### Views
 
 In this folder are placed all files that render the final aspect of the App.
 
-###Screen1
+### Screen1
 
 Entry point of the application. The Screen1 represent the home page 
 and gives you a brief overview of the functionalities available in the App.
 
 ![Home](./Images/Home.png?raw=true "Home page")
 
-###Screen2
+### Screen2
 
 Is the Studies view. This page presents you the available studies. You can gather more
 information about a study by clicking on a row of the table that redirect you to a more specific table. Once a study is
@@ -81,20 +81,16 @@ interested in.
 
 ![Statistics](./Images/Statistics.png?raw=true "Statistics")
 
-###Screen4
+### Screen4
 
 Login and Logout. This page allow you to connect to the API using credentials. 
 
 ![Login](./Images/Login.png?raw=true "Login")
 
-## Demos
-
-![NewStudy](Images/Demo1.gif "Demo")
-![NewStudy](Images/Demo2.gif "Demo")
 
 ## Main Features
 
-###Login
+### Login
 
 The login in insured by connecting to API that respond with
 unique token. Only the verified users can access the API, so
@@ -102,7 +98,7 @@ the App instead. Once logout the token is destroy and for
 next request the API will generate another one.
 All of these features are inside the Fetcher file.
 
-###Data Update
+### Data Update
 
 Into Studies and Statistics views are implemented
 two different ways for updating data.
@@ -112,11 +108,17 @@ overload the API.
 The second one is manually, so is in the hands of the users that 
 with a simple scroll-down can call the API for update the data.
 
-###Navigation
+### Navigation
 
 It provides a way for the app to switch between screens where 
 each new screen is positioned at the top of the stack.
 Whit the DrawerNavigator the app can execute the render that 
 can be opened or closed by gestures.
 This feature is wrapped inside the SidebarMenu. 
+
+## Demos
+
+![NewStudy](Images/Demo1.gif "Demo")
+![NewStudy](Images/Demo2.gif "Demo")
+
 
