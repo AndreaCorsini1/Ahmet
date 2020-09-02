@@ -138,7 +138,7 @@ emulator typing:
 ### The Framework
 
 Ahmet has been primary designed to evaluate and point out the quality and
-characteristics of different optimization algorithms. The metric used to test
+characteristics of different optimization algorithms. The metrics used to test
 the algorithms are ML and NN models which constitute really tough BBO
 problems.
 
@@ -153,7 +153,7 @@ algorithm must inherit. In this way, Ahmet can rely on a well established
 interface for interacting with the algorithms, even if their internal behavior
 is completely unknown. The same apply to the Metric and the Dataset.
 
-The available BBO algorithms available in the framework are:
+The available BBO algorithms in the framework are:
 
 - Grid Search
 - Random Search
@@ -168,7 +168,7 @@ While the metrics are:
 - Nearest Neighbor
 - Multi Layer Perceptron
 
-And the dataset:
+And the datasets:
 
 - Mnist/Digits
 - Boston
@@ -179,7 +179,7 @@ And the dataset:
 ### Inside Ahmet
 
 What Ahmet does is to take a searching space, the hyperparameter space, and 
-produce configurations of hyperparameter, or trials, from such space. 
+produce configurations of hyperparameters, or trials, from such space. 
 Depending on the algorithm selected in a running study, these trials might be
 generated in a completely different way. Broadly speaking, an algorithm samples
 trials from the study space and it refines its exploration based on the
@@ -214,7 +214,16 @@ Take a look at the demos below for getting some more insights.
 
 ## Main features
 
-TODO
+### API
+
+![APISchema](Gifs/API_schema.png "API schema")
+
+- **Model View Controller** paradigm.
+- **Introspection** for easily adding new algorithms, datasets and metrics.
+- **Multi-threading** for asynchronous requests-responses. This part can be
+ further improved with a broker and a pool of processes.
+- **Django Rest Framework**.
+- **API token-based** protection.
 
 
 ## Demos
