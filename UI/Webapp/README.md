@@ -109,7 +109,10 @@ You can refer to it for interacting directly with the API.
 
 ## Main features
 
-- Login ...
-- Fetcher ...
-- Multi-step form ...
-- Charts ...
+- **Single Page Application** paradigm.
+- **Login** for getting the token and storing it in the session storage of
+ the browser.
+- **Fetcher** for centralizing access to the API.
+- **Multi-step form** for creating new studies.
+- **Polling requests** with browser timer for checking studies status.
+- **Charts**.
